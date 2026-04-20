@@ -8,3 +8,12 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/kelola_pertanyaan', function () {
+    return view('kelola_pertanyaan');
+});
+Route::get('/kelola_akun', function () {
+    return view('kelola_akun');
+});
+Route::get('/kelola_edukasi', function () {
+    return view('kelola_edukasi');
+});
