@@ -17,3 +17,6 @@ Route::get('/kelola_akun', function () {
 Route::get('/kelola_edukasi', function () {
     return view('kelola_edukasi');
 });
+Route::get('/monitoring_prediksi', function () {
+    return view('monitoring_prediksi');
+});
