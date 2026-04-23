@@ -2,15 +2,15 @@
 @section('content')
 
 <div class="page-eyebrow">Dashboard Admin</div>
-<h1 class="welcome-title">Selamat datang, <span>Dr. Setiawan.</span></h1>
+<h1 class="welcome-title">Selamat datang, <span>Admin</span></h1>
 <p class="welcome-subtitle">
-    Guardian AI menganalisis <strong>42 siklus tidur pasien baru</strong> hari ini.
-    3 pasien menunjukkan tanda-tanda obstructive apnea akut.
+    Noctura menganalisis <strong>42 gangguan tidur pengguna baru</strong> hari ini.
+    3 pengguna menunjukkan tanda-tanda obstructive apnea akut.
 </p>
 
 <div class="alert-banner">
     <div class="alert-text">
-        <div class="alert-title">3 Pasien Membutuhkan Perhatian Segera</div>
+        <div class="alert-title">3 Pengguna Membutuhkan Perhatian Segera</div>
         <div class="alert-desc">
             Cluster A — Severe obstructive apnea terdeteksi.
         </div>
