@@ -348,56 +348,45 @@ tbody tr:hover td {
   border: 1px solid #fdba74;
 }
 
-/* Action Buttons */
-.action-buttons {
+/* ========== GAYA TOMBOL AKSI (seperti kelola akun) ========== */
+.act-btns {
   display: flex;
-  gap: 12px;
   align-items: center;
+  gap: 8px;
 }
 
-.btn-icon {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 10px;
-  border-radius: 12px;
-  transition: all 0.2s ease;
+.act-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 42px;
-  height: 42px;
-  font-size: 18px;
+  gap: 6px;
+  padding: 6px 13px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  border: 1px solid var(--border-light);
+  background: var(--bg-light);
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
 }
 
-.btn-icon-view,
-.btn-icon-edit {
-  color: var(--navy-600);
+.act-btn:hover {
   background: var(--navy-50);
-  border: 1px solid var(--navy-100);
+  border-color: var(--navy-200);
+  color: var(--navy-600);
 }
 
-.btn-icon-view:hover,
-.btn-icon-edit:hover {
-  background: var(--navy-600);
-  color: white;
-  border-color: var(--navy-600);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(26, 58, 122, 0.2);
+.act-btn svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
 }
 
-.btn-icon-delete {
-  color: var(--accent-red);
-  background: #fff0f0;
-  border: 1px solid #fecaca;
-}
-
-.btn-icon-delete:hover {
-  background: var(--accent-red);
-  color: white;
-  border-color: var(--accent-red);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(239, 68, 68, 0.2);
+.act-btn.btn-delete:hover {
+  background: #fee2e2;
+  border-color: #fecaca;
+  color: #b91c1c;
 }
 
 /* Modal */
@@ -650,7 +639,6 @@ textarea.f-input {
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -668,15 +656,12 @@ textarea.f-input {
   .stats-bar {
     grid-template-columns: 1fr;
   }
-
   .f-row.col2 {
     grid-template-columns: 1fr;
   }
-
   .toolbar-right {
     flex-wrap: wrap;
   }
-
   .search-input {
     width: 100%;
   }
