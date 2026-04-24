@@ -37,7 +37,6 @@
   max-width: 1500px;
   margin: 0 auto;
   font-size: 15px;
-  /* base font lebih besar */
 }
 
 /* Typography */
@@ -52,7 +51,6 @@
 
 .page-title {
   font-size: 32px;
-  /* lebih besar */
   font-weight: 700;
   color: var(--navy-900);
   margin-bottom: 12px;
@@ -77,7 +75,6 @@
 
 .page-subtitle {
   font-size: 15px;
-  /* diperbesar */
   color: var(--text-body);
   max-width: 680px;
   line-height: 1.7;
@@ -389,7 +386,42 @@ tbody tr:hover td {
   background: linear-gradient(135deg, #ef4444, #f87171);
 }
 
-/* Action Buttons */
+/* ========== GAYA TOMBOL AKSI SEPERTI MONITORING ========== */
+.act-btns {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.act-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 13px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  border: 1px solid var(--border-light);
+  background: var(--bg-light);
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
+}
+
+.act-btn:hover {
+  background: var(--navy-50);
+  border-color: var(--navy-200);
+  color: var(--navy-600);
+}
+
+.act-btn svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* Menghapus style lama action-buttons jika masih ada konflik */
 .action-buttons {
   display: flex;
   gap: 12px;
@@ -664,7 +696,6 @@ tbody tr:hover td {
     opacity: 0;
     transform: translateY(20px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -682,15 +713,12 @@ tbody tr:hover td {
   .stats-bar {
     grid-template-columns: 1fr;
   }
-
   .f-row.col2 {
     grid-template-columns: 1fr;
   }
-
   .toolbar-right {
     flex-wrap: wrap;
   }
-
   .search-input {
     width: 100%;
   }

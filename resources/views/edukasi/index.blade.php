@@ -16,17 +16,17 @@
             <div class="stat-sub">Semua materi</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">🌿 Healthy</div>
+            <div class="stat-label">Healthy</div>
             <div class="stat-val" id="totalHealthy" style="color:var(--accent-green)">0</div>
             <div class="stat-sub">Tidur sehat</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">🌙 Insomnia</div>
+            <div class="stat-label">Insomnia</div>
             <div class="stat-val" id="totalInsomnia" style="color:var(--accent-amber)">0</div>
             <div class="stat-sub">Susah tidur</div>
         </div>
         <div class="stat-card">
-            <div class="stat-label">😴 Sleep Apnea</div>
+            <div class="stat-label">Sleep Apnea</div>
             <div class="stat-val" id="totalSleepApnea" style="color:var(--accent-red)">0</div>
             <div class="stat-sub">Henti napas</div>
         </div>
@@ -40,16 +40,15 @@
                 <span class="count-badge" id="edukasiCountBadge">0 edukasi</span>
             </div>
             <div class="toolbar-right">
-                {{-- Search input --}}
                 <div class="search-wrapper">
                     <span class="search-icon">🔍</span>
                     <input type="text" id="searchInput" placeholder="Cari edukasi..." class="search-input">
                 </div>
                 <select class="filter-select" id="filterKategori">
                     <option value="">Semua Kategori</option>
-                    <option value="Healthy">🌿 Healthy</option>
-                    <option value="Insomnia">🌙 Insomnia</option>
-                    <option value="Sleep Apnea">😴 Sleep Apnea</option>
+                    <option value="Healthy">Healthy</option>
+                    <option value="Insomnia">Insomnia</option>
+                    <option value="Sleep Apnea">Sleep Apnea</option>
                 </select>
                 <button class="btn btn-primary" id="tambahEdukasiBtn">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -76,7 +75,7 @@
     </div>
 </div>
 
-{{-- ==================== MODAL TAMBAH/EDIT EDUKASI ==================== --}}
+{{-- MODAL TAMBAH/EDIT --}}
 <div class="modal-bg" id="edukasiFormModalBg">
     <div class="modal-box">
         <div class="modal-head">
@@ -96,9 +95,9 @@
                 <label class="f-label">Kategori <span class="req">*</span></label>
                 <select class="f-select" id="edukasiKategori">
                     <option value="">Pilih Kategori</option>
-                    <option value="Healthy">🌿 Healthy (Tidur Sehat)</option>
-                    <option value="Insomnia">🌙 Insomnia (Susah Tidur)</option>
-                    <option value="Sleep Apnea">😴 Sleep Apnea (Henti Napas)</option>
+                    <option value="Healthy">Healthy (Tidur Sehat)</option>
+                    <option value="Insomnia">Insomnia (Susah Tidur)</option>
+                    <option value="Sleep Apnea">Sleep Apnea (Henti Napas)</option>
                 </select>
             </div>
         </div>
@@ -127,7 +126,7 @@
     </div>
 </div>
 
-{{-- ==================== MODAL DETAIL EDUKASI ==================== --}}
+{{-- MODAL DETAIL --}}
 <div class="modal-bg" id="edukasiModalBg">
     <div class="modal-box" style="max-width: 700px;">
         <div class="modal-head">
@@ -148,7 +147,7 @@
     </div>
 </div>
 
-{{-- ==================== MODAL HAPUS EDUKASI ==================== --}}
+{{-- MODAL HAPUS --}}
 <div class="modal-bg" id="delEdukasiModalBg">
     <div class="del-modal-box">
         <div class="del-icon">
@@ -163,45 +162,28 @@
         <div class="del-desc">Edukasi "<strong id="delEdukasiName"></strong>" akan dihapus permanen.</div>
         <div class="del-actions">
             <button class="btn btn-ghost" id="batalDelEdukasiBtn">Batal</button>
-            <button class="btn btn-danger" id="confirmDelEdukasiBtn">Ya, Hapus</button>
+            <button class="btn btn-danger" id="confirmDelEdukasiBtn">Hapus</button>
         </div>
     </div>
 </div>
 
-{{-- Toast Notifikasi --}}
+{{-- Toast --}}
 <div class="toast" id="toast">
     <div class="t-icon" id="tIcon"></div>
     <span id="tMsg"></span>
 </div>
 
 <script>
-// ==================== DATA EDUKASI ====================
+// Data edukasi
 let edukasiList = [
-  {
-    id: 1, 
-    kategori: 'Healthy', 
-    judul: '🌿 Panduan Tidur Sehat', 
-    konten: 'Tidur yang berkualitas adalah kunci kesehatan optimal. Berikut tips untuk menjaga kesehatan tidur Anda:\n\n1. Tidur 7-9 jam setiap malam secara teratur\n2. Usahakan tidur dan bangun di jam yang sama setiap hari\n3. Hindari kafein dan alkohol 6 jam sebelum tidur\n4. Matikan layar gadget 1 jam sebelum tidur\n5. Ciptakan lingkungan tidur yang gelap, sejuk, dan tenang\n6. Lakukan relaksasi seperti meditasi atau pernapasan dalam\n\nDengan menerapkan kebiasaan ini, kualitas tidur Anda akan meningkat dan tubuh menjadi lebih sehat!', 
-    sumber: 'American Sleep Association'
-  },
-  {
-    id: 2, 
-    kategori: 'Insomnia', 
-    judul: '🌙 Mengatasi Insomnia', 
-    konten: 'Insomnia adalah kesulitan tidur yang dapat mempengaruhi kesehatan. Berikut cara mengatasinya:\n\n1. Terapi Perilaku Kognitif (CBT-I) - terapi paling efektif untuk insomnia\n2. Batasi waktu di tempat tidur hanya untuk tidur\n3. Jangan memaksakan diri tidur jika tidak mengantuk\n4. Hindari tidur siang lebih dari 30 menit\n5. Lakukan teknik relaksasi seperti meditasi atau yoga\n6. Konsultasikan dengan dokter jika insomnia berlanjut\n\nIngat, insomnia bisa diatasi dengan pendekatan yang tepat dan konsisten!', 
-    sumber: 'Sleep Foundation'
-  },
-  {
-    id: 3, 
-    kategori: 'Sleep Apnea', 
-    judul: '😴 Mengenal dan Menangani Sleep Apnea', 
-    konten: 'Sleep apnea adalah gangguan tidur serius di mana pernapasan berhenti sementara saat tidur. Gejala dan penanganannya:\n\nGejala yang perlu diwaspadai:\n• Mendengkur keras\n• Terengah-engah atau tersedak saat tidur\n• Sakit kepala di pagi hari\n• Mengantuk berlebihan di siang hari\n\nPenanganan Sleep Apnea:\n1. CPAP (Continuous Positive Airway Pressure) - terapi utama\n2. Perubahan gaya hidup: menurunkan berat badan\n3. Tidur miring, bukan telentang\n4. Hindari alkohol dan obat penenang\n5. Konsultasi ke dokter spesialis tidur\n\nSleep apnea dapat dikelola dengan baik jika ditangani sejak dini!', 
-    sumber: 'Mayo Clinic'
-  }
+  { id: 1, kategori: 'Healthy', judul: 'Panduan Tidur Sehat', konten: 'Tidur yang berkualitas adalah kunci kesehatan optimal. Berikut tips untuk menjaga kesehatan tidur Anda:\n\n1. Tidur 7-9 jam setiap malam secara teratur\n2. Usahakan tidur dan bangun di jam yang sama setiap hari\n3. Hindari kafein dan alkohol 6 jam sebelum tidur\n4. Matikan layar gadget 1 jam sebelum tidur\n5. Ciptakan lingkungan tidur yang gelap, sejuk, dan tenang\n6. Lakukan relaksasi seperti meditasi atau pernapasan dalam\n\nDengan menerapkan kebiasaan ini, kualitas tidur Anda akan meningkat dan tubuh menjadi lebih sehat!', sumber: 'American Sleep Association' },
+  { id: 2, kategori: 'Insomnia', judul: 'Mengatasi Insomnia', konten: 'Insomnia adalah kesulitan tidur yang dapat mempengaruhi kesehatan. Berikut cara mengatasinya:\n\n1. Terapi Perilaku Kognitif (CBT-I) - terapi paling efektif untuk insomnia\n2. Batasi waktu di tempat tidur hanya untuk tidur\n3. Jangan memaksakan diri tidur jika tidak mengantuk\n4. Hindari tidur siang lebih dari 30 menit\n5. Lakukan teknik relaksasi seperti meditasi atau yoga\n6. Konsultasikan dengan dokter jika insomnia berlanjut\n\nIngat, insomnia bisa diatasi dengan pendekatan yang tepat dan konsisten!', sumber: 'Sleep Foundation' },
+  { id: 3, kategori: 'Sleep Apnea', judul: 'Mengenal dan Menangani Sleep Apnea', konten: 'Sleep apnea adalah gangguan tidur serius di mana pernapasan berhenti sementara saat tidur. Gejala dan penanganannya:\n\nGejala yang perlu diwaspadai:\n• Mendengkur keras\n• Terengah-engah atau tersedak saat tidur\n• Sakit kepala di pagi hari\n• Mengantuk berlebihan di siang hari\n\nPenanganan Sleep Apnea:\n1. CPAP (Continuous Positive Airway Pressure) - terapi utama\n2. Perubahan gaya hidup: menurunkan berat badan\n3. Tidur miring, bukan telentang\n4. Hindari alkohol dan obat penenang\n5. Konsultasi ke dokter spesialis tidur\n\nSleep apnea dapat dikelola dengan baik jika ditangani sejak dini!', sumber: 'Mayo Clinic' }
 ];
 let deleteEdukasiTarget = null;
+let nextEdukasiId = 4;
 
-// ==================== UTILITY ====================
+// Utility
 function showToast(msg, ok) {
   const toast = document.getElementById('toast');
   const icon = document.getElementById('tIcon');
@@ -213,12 +195,7 @@ function showToast(msg, ok) {
   setTimeout(() => toast.classList.remove('show'), 2500);
 }
 
-// ==================== RENDER HALAMAN ====================
-function renderEdukasiPage() {
-  // Halaman sudah dirender statis, langsung render tabel
-  renderEdukasiTable();
-}
-
+// Render tabel (tombol aksi tanpa ikon)
 function renderEdukasiTable() {
   const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
   const filterKategori = document.getElementById('filterKategori')?.value || '';
@@ -237,22 +214,16 @@ function renderEdukasiTable() {
 
   const tbody = document.getElementById('edukasiTableBody');
   if (!filtered.length) {
-    tbody.innerHTML = `
-      <tr>
-        <td colspan="5" style="text-align:center;padding:40px;">
-          📚 Tidak ada data edukasi.
-        </td>
-      </tr>
-    `;
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;padding:40px;">📚 Tidak ada data edukasi.</td></tr>`;
     return;
   }
 
   tbody.innerHTML = filtered.map((e, idx) => {
     const kategoriBadge = e.kategori === 'Healthy' 
-      ? '<span class="badge badge-healthy">🌿 Healthy</span>'
+      ? '<span class="badge badge-healthy">Healthy</span>'
       : e.kategori === 'Insomnia' 
-      ? '<span class="badge badge-insomnia">🌙 Insomnia</span>'
-      : '<span class="badge badge-apnea">😴 Sleep Apnea</span>';
+      ? '<span class="badge badge-insomnia">Insomnia</span>'
+      : '<span class="badge badge-apnea">Sleep Apnea</span>';
     
     return `
       <tr>
@@ -261,18 +232,45 @@ function renderEdukasiTable() {
         <td>${kategoriBadge}</td>
         <td>${e.sumber || '-'}</td>
         <td>
-          <div class="action-buttons">
-            <button class="btn-icon btn-icon-view" onclick="lihatDetailEdukasi(${e.id})">👁️</button>
-            <button class="btn-icon btn-icon-edit" onclick="editEdukasi(${e.id})">✏️</button>
-            <button class="btn-icon btn-icon-delete" onclick="hapusEdukasi(${e.id})">🗑️</button>
+          <div class="act-btns">
+            <button class="act-btn btn-detail" data-id="${e.id}">Detail</button>
+            <button class="act-btn btn-edit" data-id="${e.id}">Edit</button>
+            <button class="act-btn btn-delete" data-id="${e.id}">Hapus</button>
           </div>
         </td>
       </tr>
     `;
   }).join('');
+
+  // Pasang event listener
+  document.querySelectorAll('.btn-detail[data-id]').forEach(btn => {
+    btn.removeEventListener('click', handleDetail);
+    btn.addEventListener('click', handleDetail);
+  });
+  document.querySelectorAll('.btn-edit[data-id]').forEach(btn => {
+    btn.removeEventListener('click', handleEdit);
+    btn.addEventListener('click', handleEdit);
+  });
+  document.querySelectorAll('.btn-delete[data-id]').forEach(btn => {
+    btn.removeEventListener('click', handleDelete);
+    btn.addEventListener('click', handleDelete);
+  });
 }
 
-// ==================== CRUD ====================
+function handleDetail(e) {
+  const id = parseInt(e.currentTarget.getAttribute('data-id'));
+  lihatDetailEdukasi(id);
+}
+function handleEdit(e) {
+  const id = parseInt(e.currentTarget.getAttribute('data-id'));
+  editEdukasi(id);
+}
+function handleDelete(e) {
+  const id = parseInt(e.currentTarget.getAttribute('data-id'));
+  hapusEdukasi(id);
+}
+
+// CRUD
 function bukaFormEdukasi(isEdit = false, data = null) {
   const modal = document.getElementById('edukasiFormModalBg');
   const title = document.getElementById('edukasiFormTitle');
@@ -283,14 +281,14 @@ function bukaFormEdukasi(isEdit = false, data = null) {
   const sumber = document.getElementById('edukasiSumber');
 
   if (isEdit && data) {
-    title.textContent = '✏️ Edit Edukasi';
+    title.textContent = 'Edit Edukasi';
     editId.value = data.id;
     kategori.value = data.kategori;
     judul.value = data.judul;
     konten.value = data.konten;
     sumber.value = data.sumber || '';
   } else {
-    title.textContent = '➕ Tambah Edukasi';
+    title.textContent = 'Tambah Edukasi';
     editId.value = '';
     kategori.value = '';
     judul.value = '';
@@ -299,11 +297,9 @@ function bukaFormEdukasi(isEdit = false, data = null) {
   }
   modal.classList.add('open');
 }
-
 function tutupFormEdukasi() {
   document.getElementById('edukasiFormModalBg').classList.remove('open');
 }
-
 function simpanEdukasi() {
   const editId = document.getElementById('editEdukasiId').value;
   const kategori = document.getElementById('edukasiKategori').value;
@@ -316,7 +312,6 @@ function simpanEdukasi() {
     return;
   }
 
-  // Cek apakah kategori sudah ada (karena hanya boleh 1 per kategori)
   const kategoriExists = edukasiList.some(e => e.kategori === kategori && (editId ? e.id != parseInt(editId) : true));
   if (kategoriExists) {
     showToast(`❌ Kategori ${kategori} sudah memiliki edukasi! Hanya boleh 1 edukasi per kategori.`, false);
@@ -330,19 +325,16 @@ function simpanEdukasi() {
       showToast('✅ Edukasi berhasil diupdate!', true);
     }
   } else {
-    const newId = Math.max(...edukasiList.map(e => e.id), 0) + 1;
-    edukasiList.push({ id: newId, kategori, judul, konten, sumber: sumber || '-' });
+    edukasiList.push({ id: nextEdukasiId++, kategori, judul, konten, sumber: sumber || '-' });
     showToast('✅ Edukasi berhasil ditambahkan!', true);
   }
   tutupFormEdukasi();
   renderEdukasiTable();
 }
-
 function editEdukasi(id) {
   const data = edukasiList.find(e => e.id === id);
   if (data) bukaFormEdukasi(true, data);
 }
-
 function hapusEdukasi(id) {
   const data = edukasiList.find(e => e.id === id);
   if (data) {
@@ -351,12 +343,10 @@ function hapusEdukasi(id) {
     document.getElementById('delEdukasiModalBg').classList.add('open');
   }
 }
-
 function tutupDelEdukasiModal() {
   document.getElementById('delEdukasiModalBg').classList.remove('open');
   deleteEdukasiTarget = null;
 }
-
 function konfirmasiHapusEdukasi() {
   if (deleteEdukasiTarget !== null) {
     const data = edukasiList.find(e => e.id === deleteEdukasiTarget);
@@ -367,28 +357,25 @@ function konfirmasiHapusEdukasi() {
   }
 }
 
+// Fungsi lihat detail (tanpa emoji)
 function lihatDetailEdukasi(id) {
   const data = edukasiList.find(e => e.id === id);
   if (!data) return;
-  const kategoriIcon = data.kategori === 'Healthy' ? '🌿' : data.kategori === 'Insomnia' ? '🌙' : '😴';
-  document.getElementById('edukasiModalTitle').textContent = `${kategoriIcon} ${data.judul}`;
+  document.getElementById('edukasiModalTitle').textContent = data.judul;
   document.getElementById('edukasiModalSub').textContent = `Kategori: ${data.kategori}`;
   document.getElementById('edukasiDetailContent').innerHTML = `
     <div class="edu-detail-content">
-      <strong>📖 Materi Edukasi:</strong>
+      <strong>Materi Edukasi:</strong>
       <p style="margin-top:10px;line-height:1.7;white-space:pre-line;">${data.konten}</p>
     </div>
-    ${data.sumber && data.sumber !== '-' ? `<div class="edu-sumber">📚 Sumber: ${data.sumber}</div>` : ''}
-    <div style="font-size:12px;color:var(--text-muted);margin-top:12px;">🆔 ID: ${data.id}</div>
+    ${data.sumber && data.sumber !== '-' ? `<div class="edu-sumber">Sumber: ${data.sumber}</div>` : ''}
+    <div style="font-size:12px;color:var(--text-muted);margin-top:12px;">ID: ${data.id}</div>
   `;
   document.getElementById('edukasiModalBg').classList.add('open');
 }
-
 function tutupModalEdukasi() {
   document.getElementById('edukasiModalBg').classList.remove('open');
 }
-
-// Fungsi untuk dipanggil saat prediksi (expose global)
 function getEdukasiByPrediction(hasilPrediksi) {
   const edukasi = edukasiList.find(e => e.kategori === hasilPrediksi);
   if (edukasi) {
@@ -400,15 +387,11 @@ function getEdukasiByPrediction(hasilPrediksi) {
   }
 }
 
-// ==================== EVENT LISTENERS ====================
+// Event listeners
 document.addEventListener('DOMContentLoaded', () => {
-  // Render awal
-  renderEdukasiPage();
+  renderEdukasiTable();
 
-  // Tombol Tambah
   document.getElementById('tambahEdukasiBtn').addEventListener('click', () => bukaFormEdukasi(false));
-  
-  // Filter dan search
   document.getElementById('filterKategori').addEventListener('change', renderEdukasiTable);
   document.getElementById('searchInput').addEventListener('input', renderEdukasiTable);
 
@@ -435,7 +418,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-// Expose fungsi ke global
+// Expose global
 window.lihatDetailEdukasi = lihatDetailEdukasi;
 window.editEdukasi = editEdukasi;
 window.hapusEdukasi = hapusEdukasi;

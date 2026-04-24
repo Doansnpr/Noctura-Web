@@ -100,7 +100,7 @@
                 </div>
             </div>
 
-            <a href="" class="nav-item" data-nav="visual">
+            <a href="{{ route('visualisasi') }}" class="sub-nav-item" data-sub="edu">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="9" width="4" height="12" rx="1" />
                     <rect x="10" y="5" width="4" height="16" rx="1" />
@@ -109,14 +109,14 @@
                 <span>Visualisasi</span>
             </a>
 
-            <a href="" class="nav-item" data-nav="predict">
-                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="3" />
-                    <path d="M19.07 4.93A10 10 0 1 1 4.93 19.07" />
-                    <path d="M12 2v2M12 20v2M2 12h2M20 12h2" />
-                </svg>
-                <span>Monitoring Prediksi</span>
-            </a>
+            <a href="{{ route('monitoring') }}" class="nav-item {{ request()->routeIs('monitoring') ? 'active' : '' }}">
+    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.07 4.93A10 10 0 1 1 4.93 19.07"/>
+        <path d="M12 2v2M12 20v2M2 12h2M20 12h2"/>
+    </svg>
+    <span>Monitoring Prediksi</span>
+</a>
         </nav>
 
         <div class="sidebar-footer">
