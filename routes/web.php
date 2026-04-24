@@ -22,4 +22,4 @@ Route::get('/pertanyaan', [PertanyaanController::class, 'index'])->name('pertany
 Route::get('/jawaban', [JawabanController::class, 'index'])->name('jawaban');
 Route::get('/monitoring', [MonitoringPrediksiController::class, 'index'])->name('monitoring');
 Route::get('/visualisasi', [VisualisasiController::class, 'index'])->name('visualisasi');
-
+Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class, 'destroy']);
