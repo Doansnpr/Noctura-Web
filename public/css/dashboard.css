@@ -73,6 +73,7 @@ body {
 /* ═══════════════════════════════════════
    SIDEBAR
 ═══════════════════════════════════════ */
+
 .sidebar {
     width: var(--sidebar-w);
     min-width: var(--sidebar-w);
