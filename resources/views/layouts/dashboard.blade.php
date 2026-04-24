@@ -100,7 +100,7 @@
                 </div>
             </div>
 
-            <a href="" class="nav-item" data-nav="visual">
+            <a href="{{ route('visualisasi') }}" class="sub-nav-item" data-sub="edu">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="9" width="4" height="12" rx="1" />
                     <rect x="10" y="5" width="4" height="16" rx="1" />
