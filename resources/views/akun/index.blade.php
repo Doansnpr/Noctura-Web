@@ -143,10 +143,12 @@
         <div class="del-actions">
             <button class="btn btn-ghost" id="batalDelBtn">Batal</button>
             <button class="btn btn-danger" id="confirmDelBtn">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                    <polyline points="3 6 5 6 21 6"/>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;">
+                    <path d="M3 6h18M9 6v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M5 6v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
                 </svg>
-                Ya, Hapus
+                Hapus
             </button>
         </div>
     </div>
@@ -225,8 +227,8 @@ function renderTableAkun() {
 
   tbody.innerHTML = filtered.map((a, i) => {
     const badge = a.role === 'Admin' 
-      ? '<span class="role-badge badge-admin">⭐ Admin</span>'
-      : '<span class="role-badge badge-user">👤 Pengguna</span>';
+      ? '<span class="role-badge badge-admin">Admin</span>'
+      : '<span class="role-badge badge-user">Pengguna</span>';
     return `
       <tr>
         <td>${i+1}</td>
@@ -240,14 +242,46 @@ function renderTableAkun() {
         <td>${a.email}</td>
         <td>${formatDate(a.createdAt)}</td>
         <td>
-          <div class="action-buttons">
-            <button class="btn-icon btn-icon-edit" onclick="openEdit(${a.id})">✏️</button>
-            <button class="btn-icon btn-icon-delete" onclick="openDelete(${a.id})">🗑️</button>
+          <div class="act-btns">
+            <button class="act-btn btn-edit" data-id="${a.id}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M17 3l4 4-7 7H10v-4l7-7zM4 20h16"/>
+              </svg>
+              Edit
+            </button>
+            <button class="act-btn btn-delete" data-id="${a.id}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 6h18M9 6v-2a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M5 6v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6"/>
+                <line x1="10" y1="11" x2="10" y2="17"/>
+                <line x1="14" y1="11" x2="14" y2="17"/>
+              </svg>
+              Hapus
+            </button>
           </div>
         </td>
       </tr>
     `;
   }).join('');
+
+  // Event listener untuk tombol Edit
+  document.querySelectorAll('.btn-edit[data-id]').forEach(btn => {
+    btn.removeEventListener('click', handleEdit);
+    btn.addEventListener('click', handleEdit);
+  });
+  // Event listener untuk tombol Hapus
+  document.querySelectorAll('.btn-delete[data-id]').forEach(btn => {
+    btn.removeEventListener('click', handleDelete);
+    btn.addEventListener('click', handleDelete);
+  });
+}
+
+function handleEdit(e) {
+  const id = parseInt(e.currentTarget.getAttribute('data-id'));
+  openEdit(id);
+}
+function handleDelete(e) {
+  const id = parseInt(e.currentTarget.getAttribute('data-id'));
+  openDelete(id);
 }
 
 // CRUD functions
@@ -298,7 +332,7 @@ function openDelete(id) {
   const a = accounts.find(x => x.id === id);
   if(!a) return;
   deleteTarget = id;
-  document.getElementById('delName').textContent = a.name;
+  document.getElementById('delName').innerHTML = a.name;
   document.getElementById('delModalBg').classList.add('open');
 }
 function closeDelModal() {
@@ -335,9 +369,5 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('batalDelBtn').addEventListener('click', closeDelModal);
   document.getElementById('confirmDelBtn').addEventListener('click', confirmDelete);
 });
-
-// Expose functions to global for onclick
-window.openEdit = openEdit;
-window.openDelete = openDelete;
 </script>
 @endsection
