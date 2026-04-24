@@ -8,6 +8,8 @@ use App\Http\Controllers\PertanyaanController;
 use App\Http\Controllers\JawabanController;
 use App\Http\Controllers\MonitoringPrediksiController;
 use App\Http\Controllers\VisualisasiController;
+use App\Http\Controllers\LoginController;
+use App\Http\Controllers\RegisterController;
 
 
 Route::get('/', function () {
@@ -23,3 +25,5 @@ Route::get('/jawaban', [JawabanController::class, 'index'])->name('jawaban');
 Route::get('/monitoring', [MonitoringPrediksiController::class, 'index'])->name('monitoring');
 Route::get('/visualisasi', [VisualisasiController::class, 'index'])->name('visualisasi');
 Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class, 'destroy']);
+Route::get('/auth', [LoginController::class, 'index'])->name('auth');
+Route::get('/register', [RegisterController::class, 'index'])->name('register');
