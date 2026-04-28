@@ -26,7 +26,7 @@ Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class,
 Route::get('/auth/login', [LoginController::class, 'index'])->name('login');
 Route::post('/auth/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-
+ 
 
 Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index')->middleware('auth');
 Route::post('/edukasi', [EdukasiController::class, 'store']);
