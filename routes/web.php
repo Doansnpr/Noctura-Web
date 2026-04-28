@@ -19,7 +19,6 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 Route::get('/akun', [AkunController::class, 'index'])->name('akun');
-Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi');
 Route::get('/pertanyaan', [PertanyaanController::class, 'index'])->name('pertanyaan');
 Route::get('/jawaban', [JawabanController::class, 'index'])->name('jawaban');
 Route::get('/monitoring', [MonitoringPrediksiController::class, 'index'])->name('monitoring');
@@ -27,3 +26,10 @@ Route::get('/visualisasi', [VisualisasiController::class, 'index'])->name('visua
 Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class, 'destroy']);
 Route::get('/auth', [LoginController::class, 'index'])->name('auth');
 Route::get('/register', [RegisterController::class, 'index'])->name('register');
+
+
+
+Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index');
+Route::post('/edukasi', [EdukasiController::class, 'store']);
+Route::put('/edukasi/{id}', [EdukasiController::class, 'update']);
+Route::delete('/edukasi/{id}', [EdukasiController::class, 'destroy']);
