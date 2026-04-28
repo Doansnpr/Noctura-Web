@@ -936,6 +936,25 @@ table.pred-table {
             </tbody>
         </table>
     </div>
+
+</div>
+
+<div class="grid-bottom">
+
+    <div class="card">
+        <div class="stat-label">Akurasi</div>
+        <div class="stat-value green">98.4%</div>
+    </div>
+
+    <div class="card">
+        <div class="stat-label">Latency</div>
+        <div class="stat-value navy">1.2s</div>
+    </div>
+    <form action="{{ route('logout') }}" method="POST">
+    @csrf
+    <button type="submit">Logout</button>
+</form>
+
 </div>
 
 @endsection

@@ -112,6 +112,34 @@ return [
             // 'encrypt' => env('DB_ENCRYPT', 'yes'),
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
+        'mongodb' => [
+            'driver'   => 'mongodb',
+            'host'     => env('DB_HOST', '127.0.0.1'),
+            'port'     => env('DB_PORT', 27017),
+            'database' => env('DB_DATABASE', 'noctura'),
+            'options'  => [
+                // jika memakai Atlas, Anda bisa menambahkan parameter lain di sini
+                // 'tls' => true,
+            ],
+        ], 
+
+        'mongodb' => [
+            'driver'   => 'mongodb',
+            'host'     => env('DB_HOST', '127.0.0.1'),
+            'port'     => env('DB_PORT', 27017),
+            'database' => env('DB_DATABASE', 'noctura'),
+            'username' => env('DB_USERNAME', ''),
+            'password' => env('DB_PASSWORD', ''),
+            'options'  => [
+                
+            ],
+        ],
+
+        'mongodb' => [
+            'driver'   => 'mongodb',
+            'dsn'      => env('DB_URI'),
+            'database' => env('DB_DATABASE', 'noctura'),
+        ],
 
         'mongodb' => [
         'driver'   => 'mongodb',
@@ -125,7 +153,9 @@ return [
     ],
 
     ],
+     
 
+    
     /*
     |--------------------------------------------------------------------------
     | Migration Repository Table
@@ -190,5 +220,7 @@ return [
         ],
 
     ],
+
+   
 
 ];
