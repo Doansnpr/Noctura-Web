@@ -7,8 +7,6 @@
 <div class="kelola-akun-container">
     <div class="section-label">Master Data / Kelola Akun</div>
     <h1 class="page-title">Manajemen <span>Akun</span></h1>
-    <p class="page-subtitle">Kelola daftar akun pengguna dan administrator sistem Noctura. Atur hak akses dan informasi akun setiap pengguna terdaftar.</p>
-
     {{-- Card Daftar Akun --}}
     <div class="card">
         <div class="toolbar">
