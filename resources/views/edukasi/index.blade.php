@@ -213,384 +213,404 @@
     </div>
 
     @push('scripts')
-        <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const state = {
-        edukasiList: normalizeData(@json($edukasi)),
-        deleteTarget: null,
-        csrf: document.querySelector('meta[name="csrf-token"]').content,
-        baseUrl: "{{ url('/edukasi') }}"
-    };
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const state = {
+                edukasiList: normalizeData(@json($edukasi)),
+                deleteTarget: null,
+                csrf: document.querySelector('meta[name="csrf-token"]').content,
+                baseUrl: "{{ url('/edukasi') }}"
+            };
 
-    function normalizeData(data) {
-        if (!data) return [];
+            function normalizeData(data) {
+                if (!data) return [];
 
-        return data.map(item => ({
-            id: String(item.id || item._id?.$oid || item._id || ''),
-            title: item.title || '',
-            category: item.category || '',
-            summary: item.summary || '',
-            content: item.content || '',
-            author: item.author || 'Admin',
-            image_url: item.image_url || '',
-            read_time: item.read_time || '',
-            tags: Array.isArray(item.tags) ? item.tags : [],
-            is_published: Boolean(item.is_published),
-        })).filter(item => item.id);
-    }
-
-    function escapeHtml(text) {
-        return String(text ?? '')
-            .replaceAll('&', '&amp;')
-            .replaceAll('<', '&lt;')
-            .replaceAll('>', '&gt;')
-            .replaceAll('"', '&quot;')
-            .replaceAll("'", '&#039;');
-    }
-
-    function imageSrc(path) {
-        if (!path) return '';
-        if (path.startsWith('http')) return path;
-        return `/storage/${path}`;
-    }
-
-    function showToast(message, success = true) {
-        const toast = document.getElementById('toast');
-        const icon = document.getElementById('tIcon');
-        const msg = document.getElementById('tMsg');
-
-        msg.textContent = message;
-        icon.className = `t-icon ${success ? 't-green' : 't-red'}`;
-        icon.innerHTML = success ? '✓' : '✕';
-
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2500);
-    }
-
-    function badgeKategori(kategori) {
-        if (kategori === 'Healthy') return '<span class="badge badge-healthy">Healthy</span>';
-        if (kategori === 'Insomnia') return '<span class="badge badge-insomnia">Insomnia</span>';
-        if (kategori === 'Sleep Apnea') return '<span class="badge badge-apnea">Sleep Apnea</span>';
-        return '<span class="badge">Lainnya</span>';
-    }
-
-    function renderEdukasiTable() {
-        const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
-        const filterKategori = document.getElementById('filterKategori')?.value || '';
-        const tbody = document.getElementById('edukasiTableBody');
-        const badge = document.getElementById('edukasiCountBadge');
-
-        const filtered = state.edukasiList.filter(e => {
-            const matchSearch =
-                e.title.toLowerCase().includes(search) ||
-                e.content.toLowerCase().includes(search) ||
-                e.summary.toLowerCase().includes(search);
-
-            const matchKategori = !filterKategori || e.category === filterKategori;
-
-            return matchSearch && matchKategori;
-        });
-
-        badge.textContent = `${filtered.length} edukasi`;
-
-        if (!filtered.length) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">
-                        Tidak ada data edukasi.
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        tbody.innerHTML = filtered.map((e, idx) => `
-            <tr>
-                <td>${idx + 1}</td>
-                <td>
-                    <strong>${escapeHtml(e.title)}</strong><br>
-                    <small class="konten-preview">
-                        ${escapeHtml(e.summary || e.content.substring(0, 80))}
-                        ${e.content.length > 80 ? '...' : ''}
-                    </small>
-                </td>
-                <td>${badgeKategori(e.category)}</td>
-                <td>${escapeHtml(e.author || '-')}</td>
-                <td>
-                    <div class="act-btns">
-                        <button class="act-btn btn-detail" data-id="${e.id}">Detail</button>
-                        <button class="act-btn btn-edit" data-id="${e.id}">Edit</button>
-                        <button class="act-btn btn-delete" data-id="${e.id}">Hapus</button>
-                    </div>
-                </td>
-            </tr>
-        `).join('');
-
-        document.querySelectorAll('.btn-detail').forEach(btn => {
-            btn.onclick = () => lihatDetailEdukasi(btn.dataset.id);
-        });
-
-        document.querySelectorAll('.btn-edit').forEach(btn => {
-            btn.onclick = () => editEdukasi(btn.dataset.id);
-        });
-
-        document.querySelectorAll('.btn-delete').forEach(btn => {
-            btn.onclick = () => hapusEdukasi(btn.dataset.id);
-        });
-    }
-
-    function resetPreview() {
-        const preview = document.getElementById('previewImg');
-        const input = document.getElementById('edukasiImage');
-
-        if (preview) {
-            preview.src = '';
-            preview.style.display = 'none';
-        }
-
-        if (input) input.value = '';
-    }
-
-    function setPreview(src) {
-        const preview = document.getElementById('previewImg');
-
-        if (!preview || !src) return;
-
-        preview.src = src;
-        preview.style.display = 'block';
-    }
-
-    function bukaFormEdukasi(isEdit = false, data = null) {
-        document.getElementById('edukasiFormTitle').textContent = isEdit ? 'Edit Edukasi' : 'Tambah Edukasi';
-
-        document.getElementById('editEdukasiId').value = isEdit ? data.id : '';
-        document.getElementById('edukasiKategori').value = isEdit ? data.category : '';
-        document.getElementById('edukasiJudul').value = isEdit ? data.title : '';
-        document.getElementById('edukasiSummary').value = isEdit ? data.summary : '';
-        document.getElementById('edukasiKonten').value = isEdit ? data.content : '';
-        document.getElementById('edukasiAuthor').value = isEdit ? data.author : 'Admin';
-        document.getElementById('edukasiTags').value = isEdit ? data.tags.join(', ') : '';
-        document.getElementById('edukasiReadTime').value = isEdit ? data.read_time : '';
-        document.getElementById('edukasiPublished').checked = isEdit ? Boolean(data.is_published) : true;
-
-        resetPreview();
-
-        if (isEdit && data.image_url) {
-            setPreview(imageSrc(data.image_url));
-        }
-
-        document.getElementById('edukasiFormModalBg').classList.add('open');
-    }
-
-    function tutupFormEdukasi() {
-        document.getElementById('edukasiFormModalBg').classList.remove('open');
-        document.getElementById('edukasiForm').reset();
-        document.getElementById('editEdukasiId').value = '';
-        resetPreview();
-    }
-
-    async function simpanEdukasi() {
-        const editId = document.getElementById('editEdukasiId').value;
-
-        const title = document.getElementById('edukasiJudul').value.trim();
-        const category = document.getElementById('edukasiKategori').value;
-        const content = document.getElementById('edukasiKonten').value.trim();
-
-        if (!title || !category || !content) {
-            showToast('Judul, kategori, dan content wajib diisi.', false);
-            return;
-        }
-
-        const formData = new FormData();
-
-        formData.append('title', title);
-        formData.append('category', category);
-        formData.append('summary', document.getElementById('edukasiSummary').value.trim());
-        formData.append('content', content);
-        formData.append('author', document.getElementById('edukasiAuthor').value.trim());
-        formData.append('tags', document.getElementById('edukasiTags').value.trim());
-        formData.append('read_time', document.getElementById('edukasiReadTime').value.trim());
-        formData.append('is_published', document.getElementById('edukasiPublished').checked ? 1 : 0);
-
-        const fileInput = document.getElementById('edukasiImage');
-        if (fileInput.files.length > 0) {
-            formData.append('image', fileInput.files[0]);
-        }
-
-        let url = state.baseUrl;
-
-        if (editId) {
-            url += `/${editId}`;
-            formData.append('_method', 'PUT');
-        }
-
-        try {
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': state.csrf,
-                    'Accept': 'application/json',
-                },
-                body: formData
-            });
-
-            const result = await res.json();
-
-            if (!res.ok || !result.success) {
-                showToast(result.message || 'Gagal menyimpan data.', false);
-                return;
+                return data.map(item => ({
+                    id: String(item.id || item._id?.$oid || item._id || ''),
+                    title: item.title || '',
+                    category: item.category || '',
+                    summary: item.summary || '',
+                    content: item.content || '',
+                    author: item.author || 'Admin',
+                    image_url: item.image_url || '',
+                    read_time: item.read_time || '',
+                    tags: Array.isArray(item.tags) ? item.tags : [],
+                    is_published: Boolean(item.is_published),
+                })).filter(item => item.id);
             }
 
-            const freshData = normalizeData([result.data])[0];
-
-            if (editId) {
-                const idx = state.edukasiList.findIndex(e => e.id === editId);
-                if (idx !== -1) state.edukasiList[idx] = freshData;
-                showToast('Data berhasil diupdate.');
-            } else {
-                state.edukasiList.push(freshData);
-                showToast('Data berhasil ditambahkan.');
+            function escapeHtml(text) {
+                return String(text ?? '')
+                    .replaceAll('&', '&amp;')
+                    .replaceAll('<', '&lt;')
+                    .replaceAll('>', '&gt;')
+                    .replaceAll('"', '&quot;')
+                    .replaceAll("'", '&#039;');
             }
 
-            tutupFormEdukasi();
-            renderEdukasiTable();
+            function imageSrc(path) {
+                if (!path) return '';
+                if (path.startsWith('http')) return path;
+                return `/storage/${path}`;
+            }
 
-        } catch (err) {
-            console.error(err);
-            showToast('Terjadi kesalahan sistem.', false);
-        }
-    }
+            function showToast(message, success = true) {
+                const toast = document.getElementById('toast');
+                const icon = document.getElementById('tIcon');
+                const msg = document.getElementById('tMsg');
 
-    function editEdukasi(id) {
-        const data = state.edukasiList.find(e => e.id === id);
-        if (data) bukaFormEdukasi(true, data);
-    }
+                msg.textContent = message;
+                icon.className = `t-icon ${success ? 't-green' : 't-red'}`;
+                icon.innerHTML = success ? '✓' : '✕';
 
-    function lihatDetailEdukasi(id) {
-        const data = state.edukasiList.find(e => e.id === id);
-        if (!data) return;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2500);
+            }
 
-        document.getElementById('edukasiModalTitle').textContent = data.title;
-        document.getElementById('edukasiModalSub').textContent = `Kategori: ${data.category}`;
+            function badgeKategori(kategori) {
+                if (kategori === 'Healthy') return '<span class="badge badge-healthy">Healthy</span>';
+                if (kategori === 'Insomnia') return '<span class="badge badge-insomnia">Insomnia</span>';
+                if (kategori === 'Sleep Apnea') return '<span class="badge badge-apnea">Sleep Apnea</span>';
+                return '<span class="badge">Lainnya</span>';
+            }
 
-        document.getElementById('edukasiDetailContent').innerHTML = `
-            ${data.image_url ? `
-                <img src="${escapeHtml(imageSrc(data.image_url))}"
-                     style="max-width:100%;border-radius:12px;margin-bottom:14px;"
-                     onerror="this.style.display='none'">
-            ` : ''}
+            function renderEdukasiTable() {
+                const search = document.getElementById('searchInput')?.value.toLowerCase() || '';
+                const filterKategori = document.getElementById('filterKategori')?.value || '';
+                const tbody = document.getElementById('edukasiTableBody');
+                const badge = document.getElementById('edukasiCountBadge');
 
-            <div class="edu-detail-content">
-                <strong>Summary:</strong>
-                <p style="margin-top:8px;line-height:1.7;">${escapeHtml(data.summary || '-')}</p>
+                const filtered = state.edukasiList.filter(e => {
+                    const matchSearch =
+                        e.title.toLowerCase().includes(search) ||
+                        e.content.toLowerCase().includes(search) ||
+                        e.summary.toLowerCase().includes(search);
 
-                <strong>Materi Edukasi:</strong>
-                <p style="margin-top:8px;line-height:1.7;white-space:pre-line;">${escapeHtml(data.content)}</p>
-            </div>
+                    const matchKategori = !filterKategori || e.category === filterKategori;
 
-            <div class="edu-sumber">Author: ${escapeHtml(data.author || '-')}</div>
-            <div class="edu-sumber">Tags: ${escapeHtml(data.tags.join(', ') || '-')}</div>
-            <div class="edu-sumber">Read Time: ${escapeHtml(data.read_time || '-')}</div>
-            <div class="edu-sumber">Status: ${data.is_published ? 'Published' : 'Draft'}</div>
-            <div style="font-size:12px;color:var(--text-muted);margin-top:12px;">ID: ${escapeHtml(data.id)}</div>
-        `;
+                    return matchSearch && matchKategori;
+                });
 
-        document.getElementById('edukasiModalBg').classList.add('open');
-    }
+                badge.textContent = `${filtered.length} edukasi`;
 
-    function tutupModalEdukasi() {
-        document.getElementById('edukasiModalBg').classList.remove('open');
-    }
-
-    function hapusEdukasi(id) {
-        const data = state.edukasiList.find(e => e.id === id);
-        if (!data) return;
-
-        state.deleteTarget = id;
-        document.getElementById('delEdukasiName').textContent = data.title;
-        document.getElementById('delEdukasiModalBg').classList.add('open');
-    }
-
-    function tutupDelEdukasiModal() {
-        document.getElementById('delEdukasiModalBg').classList.remove('open');
-        state.deleteTarget = null;
-    }
-
-    async function konfirmasiHapusEdukasi() {
-        if (!state.deleteTarget) return;
-
-        try {
-            const res = await fetch(`${state.baseUrl}/${state.deleteTarget}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': state.csrf,
-                    'Accept': 'application/json',
+                if (!filtered.length) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align:center;padding:40px;color:var(--text-muted);">
+                                Tidak ada data edukasi.
+                            </td>
+                        </tr>
+                    `;
+                    return;
                 }
-            });
 
-            const result = await res.json();
+                tbody.innerHTML = filtered.map((e, idx) => `
+                    <tr>
+                        <td>${idx + 1}</td>
+                        <td>
+                            <strong>${escapeHtml(e.title)}</strong><br>
+                            <small class="konten-preview">
+                                ${escapeHtml(e.summary || e.content.substring(0, 80))}
+                                ${e.content.length > 80 ? '...' : ''}
+                            </small>
+                        </td>
+                        <td>${badgeKategori(e.category)}</td>
+                        <td>${escapeHtml(e.author || '-')}</td>
+                        <td>
+                            <div class="act-btns">
+                                <button class="act-btn btn-detail" data-id="${e.id}">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                        <circle cx="12" cy="12" r="3"/>
+                                    </svg>
+                                    Detail
+                                </button>
+                                <button class="act-btn btn-edit" data-id="${e.id}">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                    Edit
+                                </button>
+                                <button class="act-btn btn-delete" data-id="${e.id}">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"/>
+                                        <path d="M19 6l-1 14H6L5 6"/>
+                                        <path d="M10 11v6M14 11v6"/>
+                                        <path d="M9 6V4h6v2"/>
+                                    </svg>
+                                    Hapus
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
 
-            if (!res.ok || !result.success) {
-                showToast(result.message || 'Gagal menghapus data.', false);
-                return;
+                document.querySelectorAll('.btn-detail').forEach(btn => {
+                    btn.onclick = () => lihatDetailEdukasi(btn.dataset.id);
+                });
+
+                document.querySelectorAll('.btn-edit').forEach(btn => {
+                    btn.onclick = () => editEdukasi(btn.dataset.id);
+                });
+
+                document.querySelectorAll('.btn-delete').forEach(btn => {
+                    btn.onclick = () => hapusEdukasi(btn.dataset.id);
+                });
             }
 
-            state.edukasiList = state.edukasiList.filter(e => e.id !== state.deleteTarget);
+            function resetPreview() {
+                const preview = document.getElementById('previewImg');
+                const input = document.getElementById('edukasiImage');
 
-            tutupDelEdukasiModal();
+                if (preview) {
+                    preview.src = '';
+                    preview.style.display = 'none';
+                }
+
+                if (input) input.value = '';
+            }
+
+            function setPreview(src) {
+                const preview = document.getElementById('previewImg');
+
+                if (!preview || !src) return;
+
+                preview.src = src;
+                preview.style.display = 'block';
+            }
+
+            function bukaFormEdukasi(isEdit = false, data = null) {
+                document.getElementById('edukasiFormTitle').textContent = isEdit ? 'Edit Edukasi' : 'Tambah Edukasi';
+
+                document.getElementById('editEdukasiId').value = isEdit ? data.id : '';
+                document.getElementById('edukasiKategori').value = isEdit ? data.category : '';
+                document.getElementById('edukasiJudul').value = isEdit ? data.title : '';
+                document.getElementById('edukasiSummary').value = isEdit ? data.summary : '';
+                document.getElementById('edukasiKonten').value = isEdit ? data.content : '';
+                document.getElementById('edukasiAuthor').value = isEdit ? data.author : 'Admin';
+                document.getElementById('edukasiTags').value = isEdit ? data.tags.join(', ') : '';
+                document.getElementById('edukasiReadTime').value = isEdit ? data.read_time : '';
+                document.getElementById('edukasiPublished').checked = isEdit ? Boolean(data.is_published) : true;
+
+                resetPreview();
+
+                if (isEdit && data.image_url) {
+                    setPreview(imageSrc(data.image_url));
+                }
+
+                document.getElementById('edukasiFormModalBg').classList.add('open');
+            }
+
+            function tutupFormEdukasi() {
+                document.getElementById('edukasiFormModalBg').classList.remove('open');
+                document.getElementById('edukasiForm').reset();
+                document.getElementById('editEdukasiId').value = '';
+                resetPreview();
+            }
+
+            async function simpanEdukasi() {
+                const editId = document.getElementById('editEdukasiId').value;
+
+                const title = document.getElementById('edukasiJudul').value.trim();
+                const category = document.getElementById('edukasiKategori').value;
+                const content = document.getElementById('edukasiKonten').value.trim();
+
+                if (!title || !category || !content) {
+                    showToast('Judul, kategori, dan content wajib diisi.', false);
+                    return;
+                }
+
+                const formData = new FormData();
+
+                formData.append('title', title);
+                formData.append('category', category);
+                formData.append('summary', document.getElementById('edukasiSummary').value.trim());
+                formData.append('content', content);
+                formData.append('author', document.getElementById('edukasiAuthor').value.trim());
+                formData.append('tags', document.getElementById('edukasiTags').value.trim());
+                formData.append('read_time', document.getElementById('edukasiReadTime').value.trim());
+                formData.append('is_published', document.getElementById('edukasiPublished').checked ? 1 : 0);
+
+                const fileInput = document.getElementById('edukasiImage');
+                if (fileInput.files.length > 0) {
+                    formData.append('image', fileInput.files[0]);
+                }
+
+                let url = state.baseUrl;
+
+                if (editId) {
+                    url += `/${editId}`;
+                    formData.append('_method', 'PUT');
+                }
+
+                try {
+                    const res = await fetch(url, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': state.csrf,
+                            'Accept': 'application/json',
+                        },
+                        body: formData
+                    });
+
+                    const result = await res.json();
+
+                    if (!res.ok || !result.success) {
+                        showToast(result.message || 'Gagal menyimpan data.', false);
+                        return;
+                    }
+
+                    const freshData = normalizeData([result.data])[0];
+
+                    if (editId) {
+                        const idx = state.edukasiList.findIndex(e => e.id === editId);
+                        if (idx !== -1) state.edukasiList[idx] = freshData;
+                        showToast('Data berhasil diupdate.');
+                    } else {
+                        state.edukasiList.unshift(freshData);
+                        showToast('Data berhasil ditambahkan.');
+                    }
+
+                    tutupFormEdukasi();
+                    renderEdukasiTable();
+
+                } catch (err) {
+                    console.error(err);
+                    showToast('Terjadi kesalahan sistem.', false);
+                }
+            }
+
+            function editEdukasi(id) {
+                const data = state.edukasiList.find(e => e.id === id);
+                if (data) bukaFormEdukasi(true, data);
+            }
+
+            function lihatDetailEdukasi(id) {
+                const data = state.edukasiList.find(e => e.id === id);
+                if (!data) return;
+
+                document.getElementById('edukasiModalTitle').textContent = data.title;
+                document.getElementById('edukasiModalSub').textContent = `Kategori: ${data.category}`;
+
+                document.getElementById('edukasiDetailContent').innerHTML = `
+                    ${data.image_url ? `
+                        <img src="${escapeHtml(imageSrc(data.image_url))}"
+                            style="max-width:100%;border-radius:12px;margin-bottom:14px;"
+                            onerror="this.style.display='none'">
+                    ` : ''}
+
+                    <div class="edu-detail-content">
+                        <strong>Summary:</strong>
+                        <p style="margin-top:8px;line-height:1.7;">${escapeHtml(data.summary || '-')}</p>
+
+                        <strong>Materi Edukasi:</strong>
+                        <p style="margin-top:8px;line-height:1.7;white-space:pre-line;">${escapeHtml(data.content)}</p>
+                    </div>
+
+                    <div class="edu-sumber">Author: ${escapeHtml(data.author || '-')}</div>
+                    <div class="edu-sumber">Tags: ${escapeHtml(data.tags.join(', ') || '-')}</div>
+                    <div class="edu-sumber">Read Time: ${escapeHtml(data.read_time || '-')}</div>
+                    <div class="edu-sumber">Status: ${data.is_published ? 'Published' : 'Draft'}</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:12px;">ID: ${escapeHtml(data.id)}</div>
+                `;
+
+                document.getElementById('edukasiModalBg').classList.add('open');
+            }
+
+            function tutupModalEdukasi() {
+                document.getElementById('edukasiModalBg').classList.remove('open');
+            }
+
+            function hapusEdukasi(id) {
+                const data = state.edukasiList.find(e => e.id === id);
+                if (!data) return;
+
+                state.deleteTarget = id;
+                document.getElementById('delEdukasiName').textContent = data.title;
+                document.getElementById('delEdukasiModalBg').classList.add('open');
+            }
+
+            function tutupDelEdukasiModal() {
+                document.getElementById('delEdukasiModalBg').classList.remove('open');
+                state.deleteTarget = null;
+            }
+
+            async function konfirmasiHapusEdukasi() {
+                if (!state.deleteTarget) return;
+
+                try {
+                    const res = await fetch(`${state.baseUrl}/${state.deleteTarget}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': state.csrf,
+                            'Accept': 'application/json',
+                        }
+                    });
+
+                    const result = await res.json();
+
+                    if (!res.ok || !result.success) {
+                        showToast(result.message || 'Gagal menghapus data.', false);
+                        return;
+                    }
+
+                    state.edukasiList = state.edukasiList.filter(e => e.id !== state.deleteTarget);
+
+                    tutupDelEdukasiModal();
+                    renderEdukasiTable();
+                    showToast('Data berhasil dihapus.');
+
+                } catch (err) {
+                    console.error(err);
+                    showToast('Terjadi error saat menghapus data.', false);
+                }
+            }
+
+            document.getElementById('edukasiImage')?.addEventListener('change', function () {
+                const file = this.files[0];
+
+                if (!file) {
+                    resetPreview();
+                    return;
+                }
+
+                if (!file.type.startsWith('image/')) {
+                    showToast('File harus berupa gambar.', false);
+                    resetPreview();
+                    return;
+                }
+
+                setPreview(URL.createObjectURL(file));
+            });
+
+            document.getElementById('tambahEdukasiBtn')?.addEventListener('click', () => bukaFormEdukasi(false));
+            document.getElementById('simpanEdukasiBtn')?.addEventListener('click', simpanEdukasi);
+
+            document.getElementById('searchInput')?.addEventListener('input', renderEdukasiTable);
+            document.getElementById('filterKategori')?.addEventListener('change', renderEdukasiTable);
+
+            document.getElementById('closeEdukasiFormBtn')?.addEventListener('click', tutupFormEdukasi);
+            document.getElementById('batalEdukasiFormBtn')?.addEventListener('click', tutupFormEdukasi);
+
+            document.getElementById('closeEdukasiModalBtn')?.addEventListener('click', tutupModalEdukasi);
+            document.getElementById('tutupEdukasiModalBtn')?.addEventListener('click', tutupModalEdukasi);
+
+            document.getElementById('batalDelEdukasiBtn')?.addEventListener('click', tutupDelEdukasiModal);
+            document.getElementById('confirmDelEdukasiBtn')?.addEventListener('click', konfirmasiHapusEdukasi);
+
+            ['edukasiFormModalBg', 'edukasiModalBg', 'delEdukasiModalBg'].forEach(id => {
+                document.getElementById(id)?.addEventListener('click', e => {
+                    if (e.target !== e.currentTarget) return;
+
+                    if (id === 'edukasiFormModalBg') tutupFormEdukasi();
+                    if (id === 'edukasiModalBg') tutupModalEdukasi();
+                    if (id === 'delEdukasiModalBg') tutupDelEdukasiModal();
+                });
+            });
+
             renderEdukasiTable();
-            showToast('Data berhasil dihapus.');
-
-        } catch (err) {
-            console.error(err);
-            showToast('Terjadi error saat menghapus data.', false);
-        }
-    }
-
-    document.getElementById('edukasiImage')?.addEventListener('change', function () {
-        const file = this.files[0];
-
-        if (!file) {
-            resetPreview();
-            return;
-        }
-
-        if (!file.type.startsWith('image/')) {
-            showToast('File harus berupa gambar.', false);
-            resetPreview();
-            return;
-        }
-
-        setPreview(URL.createObjectURL(file));
-    });
-
-    document.getElementById('tambahEdukasiBtn')?.addEventListener('click', () => bukaFormEdukasi(false));
-    document.getElementById('simpanEdukasiBtn')?.addEventListener('click', simpanEdukasi);
-
-    document.getElementById('searchInput')?.addEventListener('input', renderEdukasiTable);
-    document.getElementById('filterKategori')?.addEventListener('change', renderEdukasiTable);
-
-    document.getElementById('closeEdukasiFormBtn')?.addEventListener('click', tutupFormEdukasi);
-    document.getElementById('batalEdukasiFormBtn')?.addEventListener('click', tutupFormEdukasi);
-
-    document.getElementById('closeEdukasiModalBtn')?.addEventListener('click', tutupModalEdukasi);
-    document.getElementById('tutupEdukasiModalBtn')?.addEventListener('click', tutupModalEdukasi);
-
-    document.getElementById('batalDelEdukasiBtn')?.addEventListener('click', tutupDelEdukasiModal);
-    document.getElementById('confirmDelEdukasiBtn')?.addEventListener('click', konfirmasiHapusEdukasi);
-
-    ['edukasiFormModalBg', 'edukasiModalBg', 'delEdukasiModalBg'].forEach(id => {
-        document.getElementById(id)?.addEventListener('click', e => {
-            if (e.target !== e.currentTarget) return;
-
-            if (id === 'edukasiFormModalBg') tutupFormEdukasi();
-            if (id === 'edukasiModalBg') tutupModalEdukasi();
-            if (id === 'delEdukasiModalBg') tutupDelEdukasiModal();
         });
-    });
-
-    renderEdukasiTable();
-});
-</script>
+        </script>
     @endpush
 @endsection
