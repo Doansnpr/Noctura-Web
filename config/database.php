@@ -141,6 +141,17 @@ return [
             'database' => env('DB_DATABASE', 'noctura'),
         ],
 
+        'mongodb' => [
+        'driver'   => 'mongodb',
+        'host'     => env('DB_HOST', '127.0.0.1'),
+        'port'     => env('DB_PORT', 27017),
+        'database' => env('DB_DATABASE', 'noctura'),
+        'options'  => [
+            // jika memakai Atlas, Anda bisa menambahkan parameter lain di sini
+            // 'tls' => true,
+        ],
+    ],
+
     ],
      
 
