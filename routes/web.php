@@ -18,7 +18,12 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-Route::get('/akun', [AkunController::class, 'index'])->name('akun');
+Route::prefix('akun')->name('akun.')->group(function () {
+    Route::get('/',          [AkunController::class, 'index'])->name('index');
+    Route::post('/',         [AkunController::class, 'store'])->name('store');
+    Route::put('/{id}',      [AkunController::class, 'update'])->name('update');
+    Route::delete('/{id}',   [AkunController::class, 'destroy'])->name('destroy');
+});
 Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi');
 Route::get('/pertanyaan', [PertanyaanController::class, 'index'])->name('pertanyaan');
 Route::get('/jawaban', [JawabanController::class, 'index'])->name('jawaban');
