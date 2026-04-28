@@ -9,21 +9,20 @@ use App\Http\Controllers\JawabanController;
 use App\Http\Controllers\MonitoringPrediksiController;
 use App\Http\Controllers\VisualisasiController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\RegisterController;
-
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
+Route::get('/akun', [AkunController::class, 'index'])->name('akun')->middleware('auth');
+Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi')->middleware('auth');
+Route::get('/pertanyaan', [PertanyaanController::class, 'index'])->name('pertanyaan')->middleware('auth');
+Route::get('/jawaban', [JawabanController::class, 'index'])->name('jawaban')->middleware('auth');
+Route::get('/monitoring', [MonitoringPrediksiController::class, 'index'])->name('monitoring')->middleware('auth');
+Route::get('/visualisasi', [VisualisasiController::class, 'index'])->name('visualisasi')->middleware('auth');
+Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class, 'destroy'])->middleware('auth');
 
-Route::get('/akun', [AkunController::class, 'index'])->name('akun');
-Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi');
-Route::get('/pertanyaan', [PertanyaanController::class, 'index'])->name('pertanyaan');
-Route::get('/jawaban', [JawabanController::class, 'index'])->name('jawaban');
-Route::get('/monitoring', [MonitoringPrediksiController::class, 'index'])->name('monitoring');
-Route::get('/visualisasi', [VisualisasiController::class, 'index'])->name('visualisasi');
-Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class, 'destroy']);
-Route::get('/auth', [LoginController::class, 'index'])->name('auth');
-Route::get('/register', [RegisterController::class, 'index'])->name('register');
+Route::get('/auth/login', [LoginController::class, 'index'])->name('login');
+Route::post('/auth/login', [LoginController::class, 'login'])->name('login.post');
+Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
