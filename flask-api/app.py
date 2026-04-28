@@ -100,4 +100,5 @@ def health():
     return jsonify({'status': 'ok', 'model': 'XGBoost'})
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    # FIX: host 0.0.0.0 supaya bisa diakses dari HP/device lain
+    app.run(debug=True, host='0.0.0.0', port=8000)
