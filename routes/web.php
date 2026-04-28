@@ -15,7 +15,6 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
-Route::get('/akun', [AkunController::class, 'index'])->name('akun')->middleware('auth');
 Route::get('/pertanyaan', [PertanyaanController::class, 'index'])->name('pertanyaan')->middleware('auth');
 Route::get('/jawaban', [JawabanController::class, 'index'])->name('jawaban')->middleware('auth');
 Route::get('/monitoring', [MonitoringPrediksiController::class, 'index'])->name('monitoring')->middleware('auth');
@@ -32,3 +31,8 @@ Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index
 Route::post('/edukasi', [EdukasiController::class, 'store']);
 Route::put('/edukasi/{id}', [EdukasiController::class, 'update']);
 Route::delete('/edukasi/{id}', [EdukasiController::class, 'destroy']);
+
+Route::get('/akun', [AkunController::class, 'index'])->name('akun.index')->middleware('auth');
+Route::post('/akun', [AkunController::class, 'store']);
+Route::put('/akun/{id}', [AkunController::class, 'update']);
+Route::delete('/akun/{id}', [AkunController::class, 'destroy']);

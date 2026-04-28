@@ -113,7 +113,7 @@
 }
 
 .stat-val {
-  font-family: 'Space Mono', monospace;
+  font-family: 'DM Sans', sans-serif;
   font-size: 36px;
   font-weight: 700;
   line-height: 1;
@@ -386,7 +386,7 @@ tbody tr:hover td {
   background: linear-gradient(135deg, #ef4444, #f87171);
 }
 
-/* ========== GAYA TOMBOL AKSI SEPERTI MONITORING ========== */
+/* Action Buttons */
 .act-btns {
   display: flex;
   align-items: center;
@@ -421,7 +421,6 @@ tbody tr:hover td {
   flex-shrink: 0;
 }
 
-/* Menghapus style lama action-buttons jika masih ada konflik */
 .action-buttons {
   display: flex;
   gap: 12px;
@@ -589,6 +588,48 @@ tbody tr:hover td {
   background: #fff;
 }
 
+/* Email split input */
+.email-wrapper {
+  display: flex;
+  align-items: center;
+  background: var(--bg-light);
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.email-wrapper:focus-within {
+  border-color: var(--navy-300);
+  box-shadow: 0 0 0 3px rgba(74, 122, 212, .12);
+  background: #fff;
+}
+
+.email-prefix-input {
+  border: none !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  flex: 1;
+  min-width: 0;
+}
+
+.email-prefix-input:focus {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.email-suffix {
+  padding: 12px 14px 12px 4px;
+  font-size: 15px;
+  color: var(--text-muted);
+  font-family: 'DM Sans', sans-serif;
+  white-space: nowrap;
+  user-select: none;
+  font-weight: 500;
+}
+
 .modal-foot {
   display: flex;
   justify-content: flex-end;
@@ -688,6 +729,17 @@ tbody tr:hover td {
 
 .t-red {
   background: var(--accent-red);
+}
+
+.modal-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--navy-400);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-light);
 }
 
 /* Animations */
