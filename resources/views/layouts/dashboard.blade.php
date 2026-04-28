@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Noctura — Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
@@ -68,7 +69,7 @@
                 </div>
                 <div class="sub-nav">
                     <div class="flyout-title">Master Data</div>
-                    <a href="{{ route('akun') }}" class="sub-nav-item" data-sub="akun">
+                    <a href="{{ route('akun.index') }}" class="sub-nav-item" data-sub="akun">
                         <svg class="sub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                             <circle cx="12" cy="7" r="4" />
