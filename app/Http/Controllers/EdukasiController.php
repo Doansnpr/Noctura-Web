@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Edukasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EdukasiController extends Controller
 {
@@ -13,16 +14,24 @@ class EdukasiController extends Controller
         return view('edukasi.index', compact('edukasi'));
     }
 
+    
+
     public function store(Request $request)
     {
         $request->validate([
             'title' => 'required|string',
             'category' => 'required',
             'content' => 'required',
+            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
         ]);
 
         try {
-            // Pastikan tags selalu menjadi array
+            $imagePath = null;
+
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('edukasi', 'public');
+            }
+
             $tags = $request->tags;
             if (is_string($tags)) {
                 $tags = array_map('trim', explode(',', $tags));
@@ -33,20 +42,22 @@ class EdukasiController extends Controller
                 'category'     => $request->category,
                 'summary'      => $request->summary,
                 'content'      => $request->content,
-                'image_url'    => $request->image_url,
+                'image_url'    => $imagePath, // simpan path
                 'author'       => $request->author ?? 'Admin',
-                'tags'         => $tags ?: [], // Jika kosong kasih array kosong
+                'tags'         => $tags ?: [],
                 'read_time'    => $request->read_time,
-                'is_published' => filter_var($request->is_published, FILTER_VALIDATE_BOOLEAN),
+                'is_published' => $request->is_published ? true : false,
             ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data berhasil disimpan',
-                'data'    => $edukasi
+                'data' => $edukasi
             ]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -61,6 +72,11 @@ class EdukasiController extends Controller
                 $data['tags'] = array_map('trim', explode(',', $data['tags']));
             }
 
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('edukasi', 'public');
+                $data['image_url'] = $imagePath;
+            }
+            
             $edukasi->update($data);
 
             return response()->json([
