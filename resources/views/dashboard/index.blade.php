@@ -49,6 +49,10 @@
         <div class="stat-label">Latency</div>
         <div class="stat-value navy">1.2s</div>
     </div>
+    <form action="{{ route('logout') }}" method="POST">
+    @csrf
+    <button type="submit">Logout</button>
+</form>
 
 </div>
 
