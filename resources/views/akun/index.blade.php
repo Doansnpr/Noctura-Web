@@ -2,43 +2,13 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/kelola_akun.css') }}">
-<<<<<<< HEAD
-=======
 <meta name="csrf-token" content="{{ csrf_token() }}">
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
 
 <div class="kelola-akun-container">
     <div class="section-label">Master Data / Kelola Akun</div>
     <h1 class="page-title">Manajemen <span>Akun</span></h1>
     <p class="page-subtitle">Kelola daftar akun pengguna dan administrator sistem Noctura. Atur hak akses dan informasi akun setiap pengguna terdaftar.</p>
 
-<<<<<<< HEAD
-    {{-- Statistik --}}
-    <div class="stats-bar">
-        <div class="stat-card">
-            <div class="stat-label">Total Akun</div>
-            <div class="stat-val" id="sTotal">0</div>
-            <div class="stat-sub">Semua pengguna</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Admin</div>
-            <div class="stat-val" id="sAdmin" style="color:var(--accent-purple)">0</div>
-            <div class="stat-sub">Hak akses penuh</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Pengguna</div>
-            <div class="stat-val" id="sUser" style="color:var(--accent-teal)">0</div>
-            <div class="stat-sub">Akun reguler</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Terdaftar Bulan Ini</div>
-            <div class="stat-val" id="sNew" style="color:var(--accent-green)">0</div>
-            <div class="stat-sub">Pendaftaran terbaru</div>
-        </div>
-    </div>
-
-=======
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
     {{-- Card Daftar Akun --}}
     <div class="card">
         <div class="toolbar">
@@ -48,15 +18,11 @@
             </div>
             <div class="toolbar-right">
                 <div class="search-wrapper">
-<<<<<<< HEAD
-                    <span class="search-icon">🔍</span>
-=======
                     <span class="search-icon">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
                         </svg>
                     </span>
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
                     <input type="text" id="searchInput" placeholder="Cari akun..." class="search-input" autocomplete="off">
                 </div>
                 <select class="filter-select" id="filterRole">
@@ -108,10 +74,6 @@
 
         <input type="hidden" id="editId">
 
-<<<<<<< HEAD
-        {{-- Section: Informasi Akun --}}
-=======
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
         <div class="modal-section-title">Informasi Akun</div>
 
         <div class="f-row col2">
@@ -149,10 +111,6 @@
             </div>
         </div>
 
-<<<<<<< HEAD
-        {{-- Section: Profil --}}
-=======
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
         <div class="modal-section-title" style="margin-top:8px;">Informasi Profil</div>
 
         <div class="f-row col1">
@@ -177,10 +135,6 @@
             </div>
         </div>
 
-<<<<<<< HEAD
-        {{-- Footer Modal --}}
-=======
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
         <div class="modal-foot">
             <button class="btn btn-ghost" id="batalModalBtn">Batal</button>
             <button class="btn btn-primary" id="simpanModalBtn">
@@ -239,11 +193,7 @@ let accounts = @json($accounts).map(a => ({
 
 let deleteTarget = null;
 
-<<<<<<< HEAD
-// Utility functions (getInitials, getAvatarColor, formatDate, showToast) - tidak berubah
-=======
 // Utility functions
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
 function getInitials(name) {
     return name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
 }
@@ -262,13 +212,9 @@ function showToast(msg, ok) {
     const icon   = document.getElementById('tIcon');
     const msgEl  = document.getElementById('tMsg');
     icon.className    = 't-icon ' + (ok ? 't-green' : 't-red');
-<<<<<<< HEAD
-    icon.innerHTML    = ok ? '✓' : '✕';
-=======
     icon.innerHTML    = ok 
         ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>`
         : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>`;
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
     msgEl.textContent = msg;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
@@ -289,11 +235,7 @@ function blockLettersOnPhone() {
     el.addEventListener('input', function() { this.value = this.value.replace(/\D/g, ''); });
 }
 
-<<<<<<< HEAD
-// Render Tabel
-=======
 // Render Tabel (dengan tombol aksi gaya Edukasi)
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
 function renderTableAkun() {
     const search     = document.getElementById('searchInput').value.toLowerCase();
     const filterRole = document.getElementById('filterRole').value;
@@ -305,19 +247,6 @@ function renderTableAkun() {
     );
 
     document.getElementById('countBadge').textContent = filtered.length + ' akun';
-<<<<<<< HEAD
-    document.getElementById('sTotal').textContent     = accounts.length;
-    document.getElementById('sAdmin').textContent     = accounts.filter(a => a.role === 'Admin').length;
-    document.getElementById('sUser').textContent      = accounts.filter(a => a.role === 'Pengguna').length;
-    document.getElementById('sNew').textContent       = accounts.filter(a =>
-        a.createdAt.getMonth()    === now.getMonth() &&
-        a.createdAt.getFullYear() === now.getFullYear()
-    ).length;
-
-    const tbody = document.getElementById('tableBody');
-    if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:36px;color:var(--text-muted);">📭 Tidak ada akun yang ditemukan.</td></tr>`;
-=======
 
     const tbody = document.getElementById('tableBody');
     if (!filtered.length) {
@@ -327,37 +256,11 @@ function renderTableAkun() {
             </svg>
             Tidak ada akun yang ditemukan.
         </td></tr>`;
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
         return;
     }
 
     tbody.innerHTML = filtered.map((a, i) => {
         const badge = a.role === 'Admin'
-<<<<<<< HEAD
-            ? '<span class="role-badge badge-admin">Admin</span>'
-            : '<span class="role-badge badge-user">Pengguna</span>';
-        return `
-        <tr>
-            <td>${i + 1}</td>
-            <td>
-                <div class="name-cell">
-                    <div class="avatar ${getAvatarColor(a.name)}">${getInitials(a.name)}</div>
-                    <div><div class="acc-name">${a.name}</div></div>
-                </div>
-            </td>
-            <td>${badge}</td>
-            <td>${a.email}</td>
-            <td>${formatDate(a.createdAt)}</td>
-            <td>
-                <div class="act-btns">
-                    <button class="act-btn btn-edit" data-id="${a.id}">Edit</button>
-                    <button class="act-btn btn-delete" data-id="${a.id}">Hapus</button>
-                </div>
-            </td>
-        </tr>`;
-    }).join('');
-
-=======
             ? '<span class="badge badge-admin">Admin</span>'
             : '<span class="badge badge-user">Pengguna</span>';
         return `
@@ -396,7 +299,6 @@ function renderTableAkun() {
     }).join('');
 
     // Attach event listeners
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
     document.querySelectorAll('.btn-edit').forEach(btn =>
         btn.addEventListener('click', e => openEdit(e.currentTarget.dataset.id))
     );
@@ -405,8 +307,6 @@ function renderTableAkun() {
     );
 }
 
-<<<<<<< HEAD
-=======
 function escapeHtml(text) {
     if (!text) return '';
     return String(text)
@@ -417,7 +317,6 @@ function escapeHtml(text) {
         .replace(/'/g, '&#39;');
 }
 
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
 // Form modal
 function clearForm() {
     ['editId','fName','fEmailPrefix','fPassword','fFullName','fPhone'].forEach(id => {
@@ -449,30 +348,18 @@ function closeModal() {
     document.getElementById('modalBg').classList.remove('open');
 }
 
-<<<<<<< HEAD
-// ========== SIMPAN AKUN (TAMBAH/EDIT) - TANPA RELOAD ==========
-=======
 // Simpan akun (tambah/edit)
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
 async function saveAccount() {
     const name = document.getElementById('fName').value.trim();
     const emailPrefix = document.getElementById('fEmailPrefix').value.trim();
     const email = emailPrefix + '@gmail.com';
-<<<<<<< HEAD
-    const roleRaw = document.getElementById('fRole').value; // 'admin' atau 'pengguna'
-=======
     const roleRaw = document.getElementById('fRole').value;
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
     const password = document.getElementById('fPassword').value;
     const eid = document.getElementById('editId').value;
     const fullName = document.getElementById('fFullName').value.trim();
     const gender = document.getElementById('fGender').value;
     const phone = document.getElementById('fPhone').value.trim();
 
-<<<<<<< HEAD
-    // Validasi
-=======
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
     if (!name || !emailPrefix || !roleRaw) {
         showToast('Harap isi semua field yang wajib!', false);
         return;
@@ -524,22 +411,9 @@ async function saveAccount() {
             body: JSON.stringify(body),
         });
 
-<<<<<<< HEAD
-        // Baca response sebagai text dulu untuk debugging
-        const text = await res.text();
-        let data;
-        try {
-            data = JSON.parse(text);
-        } catch(e) {
-            console.error('Response bukan JSON:', text);
-            showToast('Server mengirim respons tidak valid.', false);
-            return;
-        }
-=======
         const text = await res.text();
         let data;
         try { data = JSON.parse(text); } catch(e) { data = { message: 'Respons tidak valid' }; }
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
 
         if (!res.ok) {
             let errMsg = data.message || 'Terjadi kesalahan.';
@@ -549,17 +423,6 @@ async function saveAccount() {
         }
 
         if (!data.data) {
-<<<<<<< HEAD
-            showToast('Respons server tidak lengkap (data akun tidak ditemukan).', false);
-            console.error('Data response:', data);
-            return;
-        }
-
-        const savedAccount = data.data;
-        const formattedAccount = {
-            ...savedAccount,
-            createdAt: new Date(savedAccount.createdAt)
-=======
             showToast('Respons server tidak lengkap.', false);
             return;
         }
@@ -567,22 +430,14 @@ async function saveAccount() {
         const savedAccount = {
             ...data.data,
             createdAt: new Date(data.data.createdAt)
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
         };
 
         if (isEdit) {
             const idx = accounts.findIndex(acc => acc.id === eid);
-<<<<<<< HEAD
-            if (idx !== -1) accounts[idx] = formattedAccount;
-            else accounts.push(formattedAccount);
-        } else {
-            accounts.push(formattedAccount);
-=======
             if (idx !== -1) accounts[idx] = savedAccount;
             else accounts.push(savedAccount);
         } else {
             accounts.push(savedAccount);
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
         }
 
         renderTableAkun();
@@ -594,11 +449,7 @@ async function saveAccount() {
     }
 }
 
-<<<<<<< HEAD
-// ========== HAPUS AKUN ==========
-=======
 // Hapus akun
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
 function openDelete(id) {
     const a = accounts.find(x => x.id === id);
     if (!a) return;
@@ -634,11 +485,7 @@ async function confirmDelete() {
     }
 }
 
-<<<<<<< HEAD
-// ========== INIT ==========
-=======
 // Init
->>>>>>> 211e21825d45efab596d985654862b25cbc6c0d1
 document.addEventListener('DOMContentLoaded', () => {
     renderTableAkun();
     blockNumbersOnFullName();
