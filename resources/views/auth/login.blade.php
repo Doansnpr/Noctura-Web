@@ -500,7 +500,7 @@ input:focus {
           </span>
           <span class="chk-text">Ingat Saya</span>
         </label>
-        <a href="#" class="forgot">Lupa Kata Sandi?</a>
+        <a href="{{ route('forgot-password') }}" class="forgot">Lupa Kata Sandi?</a>
       </div>
 
       {{-- Submit --}}

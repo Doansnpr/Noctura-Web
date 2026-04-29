@@ -2,35 +2,12 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/kelola_akun.css') }}">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 
 <div class="kelola-akun-container">
     <div class="section-label">Master Data / Kelola Akun</div>
     <h1 class="page-title">Manajemen <span>Akun</span></h1>
     <p class="page-subtitle">Kelola daftar akun pengguna dan administrator sistem Noctura. Atur hak akses dan informasi akun setiap pengguna terdaftar.</p>
-
-    {{-- Statistik --}}
-    <div class="stats-bar">
-        <div class="stat-card">
-            <div class="stat-label">Total Akun</div>
-            <div class="stat-val" id="sTotal">0</div>
-            <div class="stat-sub">Semua pengguna</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Admin</div>
-            <div class="stat-val" id="sAdmin" style="color:var(--accent-purple)">0</div>
-            <div class="stat-sub">Hak akses penuh</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Pengguna</div>
-            <div class="stat-val" id="sUser" style="color:var(--accent-teal)">0</div>
-            <div class="stat-sub">Akun reguler</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-label">Terdaftar Bulan Ini</div>
-            <div class="stat-val" id="sNew" style="color:var(--accent-green)">0</div>
-            <div class="stat-sub">Pendaftaran terbaru</div>
-        </div>
-    </div>
 
     {{-- Card Daftar Akun --}}
     <div class="card">
@@ -41,7 +18,11 @@
             </div>
             <div class="toolbar-right">
                 <div class="search-wrapper">
-                    <span class="search-icon">🔍</span>
+                    <span class="search-icon">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+                        </svg>
+                    </span>
                     <input type="text" id="searchInput" placeholder="Cari akun..." class="search-input" autocomplete="off">
                 </div>
                 <select class="filter-select" id="filterRole">
@@ -93,7 +74,6 @@
 
         <input type="hidden" id="editId">
 
-        {{-- Section: Informasi Akun --}}
         <div class="modal-section-title">Informasi Akun</div>
 
         <div class="f-row col2">
@@ -131,7 +111,6 @@
             </div>
         </div>
 
-        {{-- Section: Profil --}}
         <div class="modal-section-title" style="margin-top:8px;">Informasi Profil</div>
 
         <div class="f-row col1">
@@ -156,7 +135,6 @@
             </div>
         </div>
 
-        {{-- Footer Modal --}}
         <div class="modal-foot">
             <button class="btn btn-ghost" id="batalModalBtn">Batal</button>
             <button class="btn btn-primary" id="simpanModalBtn">
@@ -215,7 +193,7 @@ let accounts = @json($accounts).map(a => ({
 
 let deleteTarget = null;
 
-// Utility functions (getInitials, getAvatarColor, formatDate, showToast) - tidak berubah
+// Utility functions
 function getInitials(name) {
     return name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase();
 }
@@ -234,7 +212,9 @@ function showToast(msg, ok) {
     const icon   = document.getElementById('tIcon');
     const msgEl  = document.getElementById('tMsg');
     icon.className    = 't-icon ' + (ok ? 't-green' : 't-red');
-    icon.innerHTML    = ok ? '✓' : '✕';
+    icon.innerHTML    = ok 
+        ? `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg>`
+        : `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3"><path d="M18 6L6 18M6 6l12 12"/></svg>`;
     msgEl.textContent = msg;
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 2500);
@@ -255,7 +235,7 @@ function blockLettersOnPhone() {
     el.addEventListener('input', function() { this.value = this.value.replace(/\D/g, ''); });
 }
 
-// Render Tabel
+// Render Tabel (dengan tombol aksi gaya Edukasi)
 function renderTableAkun() {
     const search     = document.getElementById('searchInput').value.toLowerCase();
     const filterRole = document.getElementById('filterRole').value;
@@ -267,51 +247,74 @@ function renderTableAkun() {
     );
 
     document.getElementById('countBadge').textContent = filtered.length + ' akun';
-    document.getElementById('sTotal').textContent     = accounts.length;
-    document.getElementById('sAdmin').textContent     = accounts.filter(a => a.role === 'Admin').length;
-    document.getElementById('sUser').textContent      = accounts.filter(a => a.role === 'Pengguna').length;
-    document.getElementById('sNew').textContent       = accounts.filter(a =>
-        a.createdAt.getMonth()    === now.getMonth() &&
-        a.createdAt.getFullYear() === now.getFullYear()
-    ).length;
 
     const tbody = document.getElementById('tableBody');
     if (!filtered.length) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:36px;color:var(--text-muted);">📭 Tidak ada akun yang ditemukan.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:48px;color:var(--text-muted);">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 12px;display:block;opacity:.4">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            </svg>
+            Tidak ada akun yang ditemukan.
+        </td></tr>`;
         return;
     }
 
     tbody.innerHTML = filtered.map((a, i) => {
         const badge = a.role === 'Admin'
-            ? '<span class="role-badge badge-admin">Admin</span>'
-            : '<span class="role-badge badge-user">Pengguna</span>';
+            ? '<span class="badge badge-admin">Admin</span>'
+            : '<span class="badge badge-user">Pengguna</span>';
         return `
         <tr>
-            <td>${i + 1}</td>
+            <td><span class="row-num">${i + 1}</span></td>
             <td>
                 <div class="name-cell">
                     <div class="avatar ${getAvatarColor(a.name)}">${getInitials(a.name)}</div>
-                    <div><div class="acc-name">${a.name}</div></div>
+                    <div><div class="acc-name">${escapeHtml(a.name)}</div></div>
                 </div>
             </td>
             <td>${badge}</td>
-            <td>${a.email}</td>
+            <td>${escapeHtml(a.email)}</td>
             <td>${formatDate(a.createdAt)}</td>
             <td>
                 <div class="act-btns">
-                    <button class="act-btn btn-edit" data-id="${a.id}">Edit</button>
-                    <button class="act-btn btn-delete" data-id="${a.id}">Hapus</button>
+                    <button class="act-btn btn-edit" data-id="${a.id}">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        Edit
+                    </button>
+                    <button class="act-btn btn-delete" data-id="${a.id}">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="3 6 5 6 21 6"/>
+                            <path d="M19 6l-1 14H6L5 6"/>
+                            <path d="M10 11v6M14 11v6"/>
+                            <path d="M9 6V4h6v2"/>
+                        </svg>
+                        Hapus
+                    </button>
                 </div>
             </td>
-        </tr>`;
+        <tr>`;
     }).join('');
 
+    // Attach event listeners
     document.querySelectorAll('.btn-edit').forEach(btn =>
         btn.addEventListener('click', e => openEdit(e.currentTarget.dataset.id))
     );
     document.querySelectorAll('.btn-delete').forEach(btn =>
         btn.addEventListener('click', e => openDelete(e.currentTarget.dataset.id))
     );
+}
+
+function escapeHtml(text) {
+    if (!text) return '';
+    return String(text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }
 
 // Form modal
@@ -345,19 +348,18 @@ function closeModal() {
     document.getElementById('modalBg').classList.remove('open');
 }
 
-// ========== SIMPAN AKUN (TAMBAH/EDIT) - TANPA RELOAD ==========
+// Simpan akun (tambah/edit)
 async function saveAccount() {
     const name = document.getElementById('fName').value.trim();
     const emailPrefix = document.getElementById('fEmailPrefix').value.trim();
     const email = emailPrefix + '@gmail.com';
-    const roleRaw = document.getElementById('fRole').value; // 'admin' atau 'pengguna'
+    const roleRaw = document.getElementById('fRole').value;
     const password = document.getElementById('fPassword').value;
     const eid = document.getElementById('editId').value;
     const fullName = document.getElementById('fFullName').value.trim();
     const gender = document.getElementById('fGender').value;
     const phone = document.getElementById('fPhone').value.trim();
 
-    // Validasi
     if (!name || !emailPrefix || !roleRaw) {
         showToast('Harap isi semua field yang wajib!', false);
         return;
@@ -409,16 +411,9 @@ async function saveAccount() {
             body: JSON.stringify(body),
         });
 
-        // Baca response sebagai text dulu untuk debugging
         const text = await res.text();
         let data;
-        try {
-            data = JSON.parse(text);
-        } catch(e) {
-            console.error('Response bukan JSON:', text);
-            showToast('Server mengirim respons tidak valid.', false);
-            return;
-        }
+        try { data = JSON.parse(text); } catch(e) { data = { message: 'Respons tidak valid' }; }
 
         if (!res.ok) {
             let errMsg = data.message || 'Terjadi kesalahan.';
@@ -428,23 +423,21 @@ async function saveAccount() {
         }
 
         if (!data.data) {
-            showToast('Respons server tidak lengkap (data akun tidak ditemukan).', false);
-            console.error('Data response:', data);
+            showToast('Respons server tidak lengkap.', false);
             return;
         }
 
-        const savedAccount = data.data;
-        const formattedAccount = {
-            ...savedAccount,
-            createdAt: new Date(savedAccount.createdAt)
+        const savedAccount = {
+            ...data.data,
+            createdAt: new Date(data.data.createdAt)
         };
 
         if (isEdit) {
             const idx = accounts.findIndex(acc => acc.id === eid);
-            if (idx !== -1) accounts[idx] = formattedAccount;
-            else accounts.push(formattedAccount);
+            if (idx !== -1) accounts[idx] = savedAccount;
+            else accounts.push(savedAccount);
         } else {
-            accounts.push(formattedAccount);
+            accounts.push(savedAccount);
         }
 
         renderTableAkun();
@@ -456,7 +449,7 @@ async function saveAccount() {
     }
 }
 
-// ========== HAPUS AKUN ==========
+// Hapus akun
 function openDelete(id) {
     const a = accounts.find(x => x.id === id);
     if (!a) return;
@@ -492,7 +485,7 @@ async function confirmDelete() {
     }
 }
 
-// ========== INIT ==========
+// Init
 document.addEventListener('DOMContentLoaded', () => {
     renderTableAkun();
     blockNumbersOnFullName();
