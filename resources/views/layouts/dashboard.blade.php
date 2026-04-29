@@ -10,6 +10,56 @@
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
 
+<style>
+        .sidebar-moon-icon {
+            width: 46px;
+            height: 46px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(8px);
+            box-shadow:
+                0 4px 16px rgba(0, 0, 0, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.12);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            flex-shrink: 0;
+        }
+ 
+        .sidebar-brand:hover .sidebar-moon-icon {
+            transform: scale(1.05);
+            box-shadow:
+                0 6px 20px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+        }
+ 
+        .sidebar-moon-icon svg {
+            width: 25px;
+            height: 25px;
+            filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.35));
+        }
+ 
+        /* Override brand-icon default sizing so our wrapper controls it */
+        .brand-icon {
+            width: auto !important;
+            height: auto !important;
+        }
+ 
+        /* Brand name: Fraunces serif matching login */
+        .brand-name {
+            font-family: 'Fraunces', serif !important;
+            letter-spacing: 0.13em !important;
+        }
+ 
+        /* Collapsed: shrink moon icon nicely */
+        body.sidebar-collapsed .sidebar-moon-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+        }
+  </style>
 
     @stack('styles')
 </head>

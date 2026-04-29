@@ -13,7 +13,17 @@ le_gender = joblib.load('model/noctura_le_gender.pkl')
 le_occ    = joblib.load('model/noctura_le_occupation.pkl')
 le_bmi    = joblib.load('model/noctura_le_bmi.pkl')
 
+# ← FIX: hardcode mapping karena le_target menyimpan integer (0,1,2)
+LABEL_MAP = {0: 'Healthy', 1: 'Insomnia', 2: 'Sleep Apnea'}
+
 print('✅ Noctura XGBoost Model loaded!')
+print(f'   Gender classes    : {le_gender.classes_.tolist()}')
+print(f'   Occupation classes: {le_occ.classes_.tolist()}')
+print(f'   BMI classes       : {le_bmi.classes_.tolist()}')
+
+# ============================================
+# ROUTES
+# ============================================
 
 @app.route('/', methods=['GET'])
 def index():
@@ -24,17 +34,36 @@ def index():
         'version': '1.0.0'
     })
 
+@app.route('/health', methods=['GET'])
+def health():
+    return jsonify({'status': 'ok', 'model': 'XGBoost'})
+
+@app.route('/options', methods=['GET'])
+def options():
+    return jsonify({
+        'genders'       : le_gender.classes_.tolist(),
+        'occupations'   : le_occ.classes_.tolist(),
+        'bmi_categories': le_bmi.classes_.tolist(),
+    })
+
 @app.route('/predict', methods=['POST'])
 def predict():
     try:
-        data = request.get_json()
+        data = request.get_json(force=True)
 
-        # Validasi field wajib
-        required = ['gender', 'age', 'occupation', 'sleep_duration',
-                    'quality_of_sleep', 'physical_activity_level',
-                    'stress_level', 'bmi_category', 'heart_rate',
-                    'daily_steps', 'systolic', 'diastolic']
+        if not data:
+            return jsonify({
+                'status' : 'error',
+                'message': 'Request body kosong atau bukan JSON'
+            }), 400
 
+        # ── Validasi field wajib ──────────────────────────────────────
+        required = [
+            'gender', 'age', 'occupation', 'sleep_duration',
+            'quality_of_sleep', 'physical_activity_level',
+            'stress_level', 'bmi_category', 'heart_rate',
+            'daily_steps', 'systolic', 'diastolic'
+        ]
         missing = [f for f in required if f not in data]
         if missing:
             return jsonify({
@@ -42,12 +71,32 @@ def predict():
                 'message': f'Field tidak ditemukan: {missing}'
             }), 400
 
-        # Encode kategorikal
-        gender_enc = le_gender.transform([data['gender']])[0]
-        occ_enc    = le_occ.transform([data['occupation']])[0]
-        bmi_enc    = le_bmi.transform([data['bmi_category']])[0]
+        # ── Encode kategorikal ────────────────────────────────────────
+        try:
+            gender_enc = int(le_gender.transform([str(data['gender'])])[0])
+        except ValueError:
+            return jsonify({
+                'status' : 'error',
+                'message': f"Gender '{data['gender']}' tidak dikenali. Pilihan: {le_gender.classes_.tolist()}"
+            }), 400
 
-        # Susun fitur sesuai urutan training
+        try:
+            occ_enc = int(le_occ.transform([str(data['occupation'])])[0])
+        except ValueError:
+            return jsonify({
+                'status' : 'error',
+                'message': f"Occupation '{data['occupation']}' tidak dikenali. Pilihan: {le_occ.classes_.tolist()}"
+            }), 400
+
+        try:
+            bmi_enc = int(le_bmi.transform([str(data['bmi_category'])])[0])
+        except ValueError:
+            return jsonify({
+                'status' : 'error',
+                'message': f"BMI Category '{data['bmi_category']}' tidak dikenali. Pilihan: {le_bmi.classes_.tolist()}"
+            }), 400
+
+        # ── Susun fitur sesuai urutan training ───────────────────────
         features = np.array([[
             gender_enc,
             int(data['age']),
@@ -61,18 +110,19 @@ def predict():
             int(data['daily_steps']),
             int(data['systolic']),
             int(data['diastolic']),
-        ]])
+        ]], dtype=float)
 
-        prediction = model.predict(features)[0]
+        # ── Prediksi ─────────────────────────────────────────────────
+        prediction = int(model.predict(features)[0])
         proba      = model.predict_proba(features)[0]
-        label      = le_target.inverse_transform([int(prediction)])[0]
+        label      = LABEL_MAP[prediction]  # ← FIX: pakai LABEL_MAP
 
         return jsonify({
             'status'    : 'success',
             'prediction': label,
             'confidence': {
-                cls: round(float(prob), 4)
-                for cls, prob in zip(le_target.classes_, proba)
+                LABEL_MAP[i]: round(float(p), 4)
+                for i, p in enumerate(proba)
             }
         })
 
@@ -87,18 +137,5 @@ def predict():
             'message': str(e)
         }), 500
 
-@app.route('/options', methods=['GET'])
-def options():
-    return jsonify({
-        'genders'        : le_gender.classes_.tolist(),
-        'occupations'    : le_occ.classes_.tolist(),
-        'bmi_categories' : le_bmi.classes_.tolist(),
-    })
-
-@app.route('/health', methods=['GET'])
-def health():
-    return jsonify({'status': 'ok', 'model': 'XGBoost'})
-
 if __name__ == '__main__':
-    # FIX: host 0.0.0.0 supaya bisa diakses dari HP/device lain
     app.run(debug=True, host='0.0.0.0', port=8000)

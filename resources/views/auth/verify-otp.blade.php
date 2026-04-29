@@ -693,7 +693,10 @@ const combined = document.getElementById('otp-combined');
 inputs.forEach((input, i) => {
   input.addEventListener('input', () => {
     input.value = input.value.replace(/[^0-9]/g, '');
+<<<<<<< HEAD
+=======
     input.classList.toggle('filled', input.value !== '');
+>>>>>>> a7b3c78c32afdd4d3690aaea0e5898d21ee69058
     if (input.value && i < inputs.length - 1) inputs[i + 1].focus();
     combined.value = Array.from(inputs).map(x => x.value).join('');
   });
