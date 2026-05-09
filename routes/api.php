@@ -1,11 +1,25 @@
 <?php
+// routes/api.php
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ProfileController; 
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+// ─── KODE TEMAN (JANGAN DIUBAH) ───────────────────────────
+Route::post('/login', [AuthController::class, 'login']);
+Route::get('/user', [AuthController::class, 'me']);
 
 require __DIR__.'/api_jawaban.php';
 require __DIR__.'/api_predict.php';
+// ──────────────────────────────────────────────────────────
+
+// ─── TAMBAHAN BARU ────────────────────────────────────────
+// Pakai full class path, tidak perlu register di Kernel/bootstrap
+Route::middleware(\App\Http\Middleware\ApiAuthenticate::class)->group(function () {
+    Route::get('/profile',             [ProfileController::class, 'show']);
+    Route::put('/profile',             [ProfileController::class, 'update']);
+    Route::put('/profile/password',    [ProfileController::class, 'updatePassword']);
+    Route::put('/profile/sleep-goal',  [ProfileController::class, 'updateSleepGoal']);
+    Route::put('/profile/preferences', [ProfileController::class, 'updatePreferences']);
+});
