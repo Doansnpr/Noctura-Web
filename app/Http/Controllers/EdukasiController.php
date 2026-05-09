@@ -14,22 +14,21 @@ class EdukasiController extends Controller
         return view('edukasi.index', compact('edukasi'));
     }
 
-    
-
     public function store(Request $request)
     {
         $request->validate([
-            'title' => 'required|string',
+            'title'    => 'required|string',
             'category' => 'required',
-            'content' => 'required',
-            'image' => 'nullable|image|mimes:jpg,jpeg,png|max:2048'
+            'content'  => 'required',
+            'image'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
         ]);
 
         try {
             $imagePath = null;
 
             if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('edukasi', 'public');
+                // storePublicly → set visibility = public → tidak 403
+                $imagePath = $request->file('image')->storePublicly('edukasi', 'public');
             }
 
             $tags = $request->tags;
@@ -42,7 +41,7 @@ class EdukasiController extends Controller
                 'category'     => $request->category,
                 'summary'      => $request->summary,
                 'content'      => $request->content,
-                'image_url'    => $imagePath, // simpan path
+                'image_url'    => $imagePath,
                 'author'       => $request->author ?? 'Admin',
                 'tags'         => $tags ?: [],
                 'read_time'    => $request->read_time,
@@ -51,7 +50,7 @@ class EdukasiController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $edukasi
+                'data'    => $edukasi
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -65,18 +64,22 @@ class EdukasiController extends Controller
     {
         try {
             $edukasi = Edukasi::findOrFail($id);
-            $data = $request->all();
 
-            // Pastikan tags dikirim sebagai array ke MongoDB
+            $data = $request->except(['_method', '_token']);
+
             if (isset($data['tags']) && is_string($data['tags'])) {
                 $data['tags'] = array_map('trim', explode(',', $data['tags']));
             }
 
             if ($request->hasFile('image')) {
-                $imagePath = $request->file('image')->store('edukasi', 'public');
-                $data['image_url'] = $imagePath;
+                // Hapus gambar lama jika ada
+                if ($edukasi->image_url) {
+                    Storage::disk('public')->delete($edukasi->image_url);
+                }
+                // storePublicly → visibility = public
+                $data['image_url'] = $request->file('image')->storePublicly('edukasi', 'public');
             }
-            
+
             $edukasi->update($data);
 
             return response()->json([
@@ -85,18 +88,28 @@ class EdukasiController extends Controller
                 'data'    => $edukasi->fresh()
             ]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
     public function destroy($id)
     {
         try {
-            // Mencari data berdasarkan ID string yang dikirim JS
             $edukasi = Edukasi::where('_id', $id)->first();
 
             if (!$edukasi) {
-                return response()->json(['success' => false, 'message' => 'Data tidak ditemukan'], 404);
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Data tidak ditemukan'
+                ], 404);
+            }
+
+            // Hapus file gambar juga saat delete data
+            if ($edukasi->image_url) {
+                Storage::disk('public')->delete($edukasi->image_url);
             }
 
             $edukasi->delete();
@@ -106,7 +119,10 @@ class EdukasiController extends Controller
                 'message' => 'Data berhasil dihapus'
             ]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 }

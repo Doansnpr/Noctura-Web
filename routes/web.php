@@ -9,6 +9,7 @@ use App\Http\Controllers\JawabanController;
 use App\Http\Controllers\MonitoringPrediksiController;
 use App\Http\Controllers\VisualisasiController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\ForgotPasswordController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -37,6 +38,9 @@ Route::post('/akun', [AkunController::class, 'store']);
 Route::put('/akun/{id}', [AkunController::class, 'update']);
 Route::delete('/akun/{id}', [AkunController::class, 'destroy']);
 
-Route::get('edukasi/published', [EdukasiController::class, 'published']);
-Route::get('edukasi/kategori/{kategori}', [EdukasiController::class, 'byCategory']);
-Route::apiResource('edukasi', EdukasiController::class);
+Route::get('/forgot-password', [ForgotPasswordController::class, 'index'])->name('forgot-password');
+Route::post('/forgot-password/send', [ForgotPasswordController::class, 'sendOtp'])->name('forgot-password.send');
+Route::get('/forgot-password/verify', [ForgotPasswordController::class, 'verifyForm'])->name('forgot-password.verify');
+Route::post('/forgot-password/verify', [ForgotPasswordController::class, 'verifyOtp'])->name('forgot-password.verify.post');
+Route::get('/forgot-password/reset', [ForgotPasswordController::class, 'resetForm'])->name('forgot-password.reset');
+Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'resetPassword'])->name('forgot-password.reset.post');
