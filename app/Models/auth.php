@@ -20,6 +20,8 @@ class Auth extends Authenticatable
         'password',
         'role',
         'profile',
+        'sleep_goal',       
+        'preferences',
         'created_at',
     ];
 
@@ -28,9 +30,10 @@ class Auth extends Authenticatable
         'remember_token',
     ];
 
-    protected $casts = [
-        'profile' => 'array',
-    ];
+     protected $casts = [
+    'profile' => 'array',
+    'sleep_goal' => 'array',
+    'preferences' => 'array',];
 
     public function getCollection()  // ← tambah ini
     {
@@ -38,7 +41,7 @@ class Auth extends Authenticatable
     }
 
     public function getAuthIdentifierName()
-{
-    return '_id';
-}
+    {
+        return '_id';
+    }
 }
