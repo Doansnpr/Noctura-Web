@@ -36,3 +36,7 @@ Route::get('/akun', [AkunController::class, 'index'])->name('akun.index')->middl
 Route::post('/akun', [AkunController::class, 'store']);
 Route::put('/akun/{id}', [AkunController::class, 'update']);
 Route::delete('/akun/{id}', [AkunController::class, 'destroy']);
+
+Route::get('edukasi/published', [EdukasiController::class, 'published']);
+Route::get('edukasi/kategori/{kategori}', [EdukasiController::class, 'byCategory']);
+Route::apiResource('edukasi', EdukasiController::class);
