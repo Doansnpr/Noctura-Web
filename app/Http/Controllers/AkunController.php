@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Akun;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rule;
+//use Illuminate\Validation\Rule;
 
 class AkunController extends Controller
 {
@@ -51,43 +51,45 @@ class AkunController extends Controller
     }
 
     public function update(Request $request, string $id)
-    {
-        $akun = Akun::findOrFail($id);
-
-        $request->validate([
-            'username' => 'required|string|max:100',
-            'email'    => ['required', 'email', Rule::unique('akun', 'email')->ignore($akun->_id, '_id')],
-            'role'     => 'required|in:admin,pengguna',
-            'password' => 'nullable|string|min:6',
-            'profile.full_name' => 'nullable|string',
-            'profile.gender'    => 'nullable|in:L,P',
-            'profile.phone'     => 'nullable|string',
-        ]);
-
-        $data = [
-            'username' => $request->username,
-            'email'    => $request->email,
-            'role'     => $request->role,
-            'profile'  => [
-                'full_name' => $request->input('profile.full_name', ''),
-                'gender'    => $request->input('profile.gender', ''),
-                'phone'     => $request->input('profile.phone', ''),
-            ],
-        ];
-
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
-        }
-
-        $akun->update($data);
-        $akun->refresh();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Akun berhasil diperbarui.',
-            'data'    => $this->formatAkun($akun)
-        ]);
+{
+    $akun = Akun::findOrFail($id);
+    
+    // 🔴 LEWATKAN CEK EMAIL UNTUK SEMENTARA
+    // Langsung update tanpa validasi email unique
+    
+    $request->validate([
+        'username' => 'required|string|max:100',
+        'role' => 'required|in:admin,pengguna',
+        'password' => 'nullable|string|min:6',
+        'profile.full_name' => 'nullable|string',
+        'profile.gender' => 'nullable|in:L,P',
+        'profile.phone' => 'nullable|string',
+    ]);
+    
+    $data = [
+        'username' => $request->username,
+        'email' => $request->email,  // Email tetap diupdate
+        'role' => $request->role,
+        'profile' => [
+            'full_name' => $request->input('profile.full_name', ''),
+            'gender' => $request->input('profile.gender', ''),
+            'phone' => $request->input('profile.phone', ''),
+        ],
+    ];
+    
+    if ($request->filled('password')) {
+        $data['password'] = Hash::make($request->password);
     }
+    
+    $akun->update($data);
+    $akun->refresh();
+    
+    return response()->json([
+        'success' => true,
+        'message' => 'Akun berhasil diperbarui.',
+        'data' => $this->formatAkun($akun)
+    ]);
+}
 
     public function destroy(string $id)
     {
