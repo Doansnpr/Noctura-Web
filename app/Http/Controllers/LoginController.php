@@ -47,6 +47,15 @@ class LoginController extends Controller
         Auth::login($user, $request->boolean('remember'));
         $request->session()->regenerate();
         
+        if ($user->role !== 'admin') {
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+            return back()
+                ->withInput($request->only('email'))
+                ->with('error', 'Akses ditolak. Hanya admin yang diizinkan masuk.');
+        }
+        
 
         return redirect()->intended(route('dashboard'));
     }

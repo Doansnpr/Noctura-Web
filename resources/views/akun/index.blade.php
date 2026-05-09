@@ -385,6 +385,11 @@ async function saveAccount() {
         return;
     }
 
+    // 👇 TAMBAHKAN INI - deklarasi isEdit dan url
+    const isEdit = Boolean(eid);
+    const url = isEdit ? `/akun/${eid}` : '/akun';
+    
+    // 👇 TAMBAHKAN INI - body dengan _method untuk edit
     const body = {
         username: name,
         email: email,
@@ -395,25 +400,37 @@ async function saveAccount() {
             phone: phone
         }
     };
+    
+    // 👇 TAMBAHKAN INI - method spoofing untuk edit
+    if (isEdit) {
+        body._method = 'PUT';
+    }
+    
     if (password) body.password = password;
 
-    const isEdit = Boolean(eid);
-    const url = isEdit ? `/akun/${eid}` : '/akun';
-    const method = isEdit ? 'PUT' : 'POST';
+    const method = 'POST';
 
     try {
         const res = await fetch(url, {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
             },
             body: JSON.stringify(body),
         });
 
         const text = await res.text();
+        console.log("RAW RESPONSE:", text);
         let data;
-        try { data = JSON.parse(text); } catch(e) { data = { message: 'Respons tidak valid' }; }
+        try { 
+            data = JSON.parse(text); 
+        } catch(e) { 
+            console.error("Invalid JSON:", text);
+            showToast('Respons tidak valid: ' + text.substring(0, 150), false);
+            return;
+        }
 
         if (!res.ok) {
             let errMsg = data.message || 'Terjadi kesalahan.';
