@@ -50,6 +50,10 @@ body { background: var(--bg-page); }
 /* ─── Page wrapper ─── */
 .visualisasi-container {
     padding: 0 4px;
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    overflow-x: hidden;
 }
 
 /* ─── Section header ─── */
@@ -80,9 +84,11 @@ body { background: var(--bg-page); }
 /* ─── Grid ─── */
 .vis-grid-2 {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 18px;
     margin-bottom: 18px;
+    width: 100%;
+    min-width: 0;
 }
 
 /* ─── Cards ─── */
@@ -95,6 +101,9 @@ body { background: var(--bg-page); }
     overflow: hidden;
     box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 4px 12px rgba(0,0,0,0.04);
     transition: box-shadow .25s, border-color .25s;
+    min-width: 0;
+    box-sizing: border-box;
+    width: 100%;
 }
 .vis-card:hover {
     box-shadow: 0 2px 8px rgba(0,0,0,0.07), 0 8px 24px rgba(0,0,0,0.06);
@@ -216,15 +225,16 @@ body { background: var(--bg-page); }
 .vis-donut-layout {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 16px;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .vis-donut-wrap {
     position: relative;
-    width: 150px;
-    height: 150px;
+    width: 130px;
+    height: 130px;
     flex-shrink: 0;
-    /* subtle ring bg */
     background: radial-gradient(circle at center, #f8fafc 58%, transparent 58%);
     border-radius: 50%;
 }
@@ -264,18 +274,22 @@ body { background: var(--bg-page); }
     display: flex;
     flex-direction: column;
     gap: 11px;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .vis-donut-leg-item {
     display: flex;
     flex-direction: column;
     gap: 5px;
+    min-width: 0;
 }
 
 .vis-donut-leg-top {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    min-width: 0;
 }
 
 .vis-leg-dot {
@@ -286,25 +300,32 @@ body { background: var(--bg-page); }
 }
 
 .vis-donut-leg-name {
-    font-size: 12.5px;
+    font-size: 12px;
     color: var(--text-body);
     flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
     line-height: 1.3;
 }
 
 .vis-donut-leg-pct {
-    font-size: 12px;
+    font-size: 11.5px;
     font-weight: 700;
     font-family: 'Space Mono', monospace;
     color: var(--text-dark);
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .vis-donut-leg-count {
     font-size: 10px;
     font-family: 'Space Mono', monospace;
     color: var(--text-muted);
-    margin-left: auto;
-    padding-left: 4px;
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding-left: 2px;
 }
 
 /* Progress track */
@@ -321,10 +342,98 @@ body { background: var(--bg-page); }
 }
 
 /* ─── Responsive ─── */
-@media (max-width: 960px) {
-    .vis-grid-2 { grid-template-columns: 1fr; }
+
+/* Tablet landscape (≤1024px) */
+@media (max-width: 1024px) {
+    .vis-grid-2 {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 14px;
+    }
+    .vis-card {
+        padding: 18px 20px 20px;
+    }
 }
+
+/* Tablet portrait (≤768px) — stack semua jadi 1 kolom */
 @media (max-width: 768px) {
-    .vis-donut-layout { flex-direction: column; align-items: flex-start; }
-    .vis-donut-wrap { width: 120px; height: 120px; }
+    .visualisasi-container {
+        padding: 0;
+    }
+    .vis-grid-2 {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+        margin-bottom: 14px;
+    }
+    .vis-card {
+        padding: 16px 18px 18px;
+    }
+    .vis-card-title {
+        font-size: 14px;
+    }
+    .page-title {
+        font-size: 22px;
+    }
+    .page-subtitle {
+        font-size: 13px;
+    }
+
+    .vis-chart-wrap[style*="height:220px"] { height: 180px !important; }
+    .vis-chart-wrap[style*="height:200px"] { height: 160px !important; }
+
+    .vis-donut-layout {
+        flex-direction: row;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+    .vis-donut-wrap {
+        width: 130px;
+        height: 130px;
+    }
+    .vis-donut-num { font-size: 22px; }
+    .vis-donut-legend { min-width: 0; }
+    .vis-donut-leg-name { font-size: 11.5px; }
+}
+
+/* Mobile (≤480px) */
+@media (max-width: 480px) {
+    .vis-card {
+        padding: 14px 14px 16px;
+        border-radius: 12px;
+    }
+    .vis-grid-2 {
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+    .vis-card-head {
+        margin-bottom: 12px;
+    }
+    .vis-card-title { font-size: 13.5px; }
+    .vis-card-label { font-size: 9px; }
+    .vis-badge { font-size: 9.5px; padding: 3px 8px; }
+    .page-title { font-size: 19px; }
+    .page-subtitle { font-size: 12.5px; }
+
+    .vis-chart-wrap[style*="height:220px"] { height: 150px !important; }
+    .vis-chart-wrap[style*="height:200px"] { height: 140px !important; }
+
+    .vis-donut-layout {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 14px;
+    }
+    .vis-donut-wrap {
+        width: 110px;
+        height: 110px;
+        align-self: center;
+    }
+    .vis-donut-num { font-size: 20px; }
+    .vis-donut-sub { font-size: 9px; }
+    .vis-donut-legend { width: 100%; gap: 9px; }
+    .vis-donut-leg-name { font-size: 11px; }
+    .vis-donut-leg-pct  { font-size: 11px; }
+    .vis-donut-leg-count { font-size: 9px; }
+    .vis-chart-label { font-size: 9px; }
+    .vis-chart-footer { font-size: 10px; padding: 6px 10px; }
+    .vis-chart-footer-val { font-size: 12px; }
 }
