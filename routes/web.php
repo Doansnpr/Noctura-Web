@@ -18,7 +18,6 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::get('/pertanyaan', [PertanyaanController::class, 'index'])->name('pertanyaan')->middleware('auth');
 Route::get('/jawaban', [JawabanController::class, 'index'])->name('jawaban')->middleware('auth');
-Route::get('/monitoring', [MonitoringPrediksiController::class, 'index'])->name('monitoring')->middleware('auth');
 Route::get('/visualisasi', [VisualisasiController::class, 'index'])->name('visualisasi')->middleware('auth');
 Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class, 'destroy'])->middleware('auth');
 
@@ -44,3 +43,10 @@ Route::get('/forgot-password/verify', [ForgotPasswordController::class, 'verifyF
 Route::post('/forgot-password/verify', [ForgotPasswordController::class, 'verifyOtp'])->name('forgot-password.verify.post');
 Route::get('/forgot-password/reset', [ForgotPasswordController::class, 'resetForm'])->name('forgot-password.reset');
 Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'resetPassword'])->name('forgot-password.reset.post');
+
+
+Route::get('/monitoring-prediksi', [MonitoringPrediksiController::class, 'index'])
+    ->name('monitoring-prediksi.index')->middleware('auth');
+
+Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class, 'destroy'])
+    ->name('monitoring-prediksi.destroy');
