@@ -21,23 +21,22 @@ class AuthController extends Controller
         if (!$akun) {
             return response()->json([
                 'success' => false,
-                'message' => 'Username tidak ditemukan',
-            ], 404);
+                'message' => 'Nama pengguna tidak ditemukan',
+            ], 200);
         }
 
         if (!Hash::check($request->password, $akun->password)) {
             return response()->json([
                 'success' => false,
-                'message' => 'Password salah',
-            ], 401);
+                'message' => 'Kata sandi salah',
+            ], 200);
         }
 
-        // BLOKIR ADMIN LOGIN DI MOBILE
         if ($akun->role === 'admin') {
             return response()->json([
                 'success' => false,
                 'message' => 'Akun admin hanya dapat login melalui web',
-            ], 403);
+            ], 200);
         }
 
         return response()->json([

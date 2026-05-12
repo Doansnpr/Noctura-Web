@@ -7,14 +7,12 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ProfileController; 
 use App\Http\Controllers\Api\EdukasiController;
 
-// ─── KODE TEMAN (JANGAN DIUBAH) ───────────────────────────
 Route::get('/user', [AuthController::class, 'me']);
 
 
 // API Edukasi
 Route::get('edukasi/published', [EdukasiController::class, 'published']);
 Route::get('edukasi/kategori/{kategori}', [EdukasiController::class, 'byCategory']);
-Route::apiResource('edukasi', EdukasiController::class);
 
 require __DIR__.'/api_jawaban.php';
 require __DIR__.'/api_predict.php';
