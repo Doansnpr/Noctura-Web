@@ -1,8 +1,6 @@
-@extends('layouts.dashboard')
-
-@section('content')
-<link rel="stylesheet" href="{{ asset('css/kelola_edukasi.css') }}">
-<meta name="csrf-token" content="{{ csrf_token() }}">
+<?php $__env->startSection('content'); ?>
+<link rel="stylesheet" href="<?php echo e(asset('css/kelola_edukasi.css')); ?>">
+<meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
 
 <style>
     /* ================= PAGINATION ================= */
@@ -422,7 +420,7 @@
     </div>
 </div>
 
-{{-- MODAL TAMBAH / EDIT --}}
+
 <div class="modal-bg" id="edukasiFormModalBg">
     <div class="modal-box">
         <form id="edukasiForm">
@@ -570,7 +568,7 @@
     </div>
 </div>
 
-{{-- MODAL DETAIL --}}
+
 <div class="modal-bg" id="edukasiModalBg">
     <div class="modal-box" style="max-width:760px;">
         <div class="modal-head">
@@ -594,7 +592,7 @@
     </div>
 </div>
 
-{{-- MODAL HAPUS --}}
+
 <div class="modal-bg" id="delEdukasiModalBg">
     <div class="del-modal-box">
         <div class="del-icon">
@@ -618,20 +616,20 @@
     </div>
 </div>
 
-{{-- TOAST --}}
+
 <div class="toast" id="toast">
     <div class="t-icon" id="tIcon"></div>
     <span id="tMsg"></span>
 </div>
 
-@push('scripts')
+<?php $__env->startPush('scripts'); ?>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const state = {
-        edukasiList : normalizeData(@json($edukasi)),
+        edukasiList : normalizeData(<?php echo json_encode($edukasi, 15, 512) ?>),
         deleteTarget: null,
         csrf        : document.querySelector('meta[name="csrf-token"]').content,
-        baseUrl     : "{{ url('/edukasi') }}",
+        baseUrl     : "<?php echo e(url('/edukasi')); ?>",
         currentPage : 1,
         rowsPerPage : 5
     };
@@ -1297,5 +1295,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderEdukasiTable();
 });
 </script>
-@endpush
-@endsection
+<?php $__env->stopPush(); ?>
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\noctura\resources\views/edukasi/index.blade.php ENDPATH**/ ?>

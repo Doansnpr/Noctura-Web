@@ -12,24 +12,22 @@ class Edukasi extends Model
     protected $primaryKey = '_id';
 
     protected $fillable = [
-        'title',
-        'category',
-        'summary',
-        'content',
-        'image_url',
-        'author',
-        'tags',
-        'read_time',
-        'is_published'
+        'judul_artikel',
+        'kategori_gangguan_tidur',
+        'jenis_edukasi',
+        'ringkasan',
+        'isi_artikel',
+        'gambar_artikel',
+        'tips_penanganan',
+        'saran_konsultasi',
+        'penulis',
+        'estimasi_waktu_baca',
+        'status_publish',
     ];
 
-    // Mengonversi _id menjadi id (string) secara otomatis di JSON
-    protected $appends = ['id'];
-
     protected $casts = [
-        'is_published' => 'boolean',
+        'status_publish' => 'boolean',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
-        // 'tags' sengaja dikosongkan karena MongoDB sudah menyimpannya sebagai array
     ];
 }
