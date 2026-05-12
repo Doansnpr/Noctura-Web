@@ -17,6 +17,7 @@ class Akun extends Model
         'password',
         'role',
         'profile',
+        'api_token',
     ];
 
     protected $hidden = ['password'];
