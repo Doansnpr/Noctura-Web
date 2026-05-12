@@ -13,7 +13,6 @@ le_gender = joblib.load('model/noctura_le_gender.pkl')
 le_occ    = joblib.load('model/noctura_le_occupation.pkl')
 le_bmi    = joblib.load('model/noctura_le_bmi.pkl')
 
-# ← FIX: hardcode mapping karena le_target menyimpan integer (0,1,2)
 LABEL_MAP = {0: 'Healthy', 1: 'Insomnia', 2: 'Sleep Apnea'}
 
 print('✅ Noctura XGBoost Model loaded!')
@@ -21,9 +20,9 @@ print(f'   Gender classes    : {le_gender.classes_.tolist()}')
 print(f'   Occupation classes: {le_occ.classes_.tolist()}')
 print(f'   BMI classes       : {le_bmi.classes_.tolist()}')
 
-# ============================================
+# ============================================================
 # ROUTES
-# ============================================
+# ============================================================
 
 @app.route('/', methods=['GET'])
 def index():
@@ -57,7 +56,6 @@ def predict():
                 'message': 'Request body kosong atau bukan JSON'
             }), 400
 
-        # ── Validasi field wajib ──────────────────────────────────────
         required = [
             'gender', 'age', 'occupation', 'sleep_duration',
             'quality_of_sleep', 'physical_activity_level',
@@ -71,7 +69,6 @@ def predict():
                 'message': f'Field tidak ditemukan: {missing}'
             }), 400
 
-        # ── Encode kategorikal ────────────────────────────────────────
         try:
             gender_enc = int(le_gender.transform([str(data['gender'])])[0])
         except ValueError:
@@ -96,7 +93,6 @@ def predict():
                 'message': f"BMI Category '{data['bmi_category']}' tidak dikenali. Pilihan: {le_bmi.classes_.tolist()}"
             }), 400
 
-        # ── Susun fitur sesuai urutan training ───────────────────────
         features = np.array([[
             gender_enc,
             int(data['age']),
@@ -112,10 +108,9 @@ def predict():
             int(data['diastolic']),
         ]], dtype=float)
 
-        # ── Prediksi ─────────────────────────────────────────────────
         prediction = int(model.predict(features)[0])
         proba      = model.predict_proba(features)[0]
-        label      = LABEL_MAP[prediction]  # ← FIX: pakai LABEL_MAP
+        label      = LABEL_MAP[prediction]
 
         return jsonify({
             'status'    : 'success',
@@ -127,15 +122,11 @@ def predict():
         })
 
     except ValueError as e:
-        return jsonify({
-            'status' : 'error',
-            'message': f'Nilai input tidak valid: {str(e)}'
-        }), 400
+        return jsonify({'status': 'error', 'message': f'Nilai input tidak valid: {str(e)}'}), 400
     except Exception as e:
-        return jsonify({
-            'status' : 'error',
-            'message': str(e)
-        }), 500
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    # ✅ FIX: port 5000 agar tidak bentrok dengan Laravel (port 8000)
+    app.run(debug=True, host='0.0.0.0', port=5000)
