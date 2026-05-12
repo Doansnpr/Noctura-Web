@@ -1,7 +1,5 @@
-@extends('layouts.dashboard')
-
-@section('content')
-<link rel="stylesheet" href="{{ asset('css/visualisasi.css') }}">
+<?php $__env->startSection('content'); ?>
+<link rel="stylesheet" href="<?php echo e(asset('css/visualisasi.css')); ?>">
 
 <div class="visualisasi-container">
     <div class="section-label">Visualisasi</div>
@@ -11,10 +9,10 @@
     </p>
     <br>
 
-    {{-- ROW 1: Donut Gangguan + Line Tren --}}
+    
     <div class="vis-grid-2">
 
-        {{-- Chart 1: Donut — Distribusi Jenis Gangguan --}}
+        
         <div class="vis-card">
             <div class="vis-card-head">
                 <div>
@@ -35,7 +33,7 @@
             </div>
         </div>
 
-        {{-- Chart 2: Line — Tren Prediksi per Bulan --}}
+        
         <div class="vis-card">
             <div class="vis-card-head">
                 <div>
@@ -51,12 +49,12 @@
             </div>
         </div>
 
-    </div>{{-- end row 1 --}}
+    </div>
 
-    {{-- ROW 2: Bar Usia + Donut Gender --}}
+    
     <div class="vis-grid-2">
 
-        {{-- Chart 3: Bar — Distribusi Usia --}}
+        
         <div class="vis-card">
             <div class="vis-card-head">
                 <div>
@@ -75,7 +73,7 @@
             </div>
         </div>
 
-        {{-- Chart 4: Donut — Perbandingan Gender --}}
+        
         <div class="vis-card">
             <div class="vis-card-head">
                 <div>
@@ -96,7 +94,7 @@
             </div>
         </div>
 
-    </div>{{-- end row 2 --}}
+    </div>
 
 </div>
 
@@ -365,4 +363,5 @@
         loadData();
     });
 </script>
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\sleep-detection-backend\resources\views/visualisasi/index.blade.php ENDPATH**/ ?>

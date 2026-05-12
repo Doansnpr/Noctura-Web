@@ -22,4 +22,5 @@ class PredictionResult extends Model
         'confidence'   => 'array',
         'predicted_at' => 'datetime',
     ];
+    protected $dates = ['created_at', 'predicted_at', 'updated_at'];        
 }
