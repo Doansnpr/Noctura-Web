@@ -100,7 +100,7 @@
                 <span>Visualisasi</span>
             </a>
 
-            <a href="{{ route('monitoring') }}" class="nav-item {{ request()->routeIs('monitoring') ? 'active' : '' }}">
+            <a href="{{ route('monitoring-prediksi.index') }}" class="nav-item {{ request()->routeIs('monitoring-prediksi.*') ? 'active' : '' }}">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M19.07 4.93A10 10 0 1 1 4.93 19.07"/>

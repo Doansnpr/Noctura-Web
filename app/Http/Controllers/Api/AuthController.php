@@ -40,16 +40,17 @@ class AuthController extends Controller
             ], 200);
         }
 
-        // Generate token dan simpan ke database
         $token = Str::random(60);
-        $akun->update(['api_token' => $token]);
+
+        $akun->api_token = hash('sha256', $token);
+        $akun->save();
 
         return response()->json([
             'success' => true,
             'message' => 'Login berhasil',
-            'token'   => $token,
-            'user'    => [
-                'id'       => (string) $akun->getKey(),
+            'token' => $token,
+            'user' => [
+                'id' => (string) $akun->getKey(),
                 'username' => $akun->username,
                 'email'    => $akun->email,
                 'role'     => $akun->role,
