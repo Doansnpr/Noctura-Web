@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Akun;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -39,9 +40,15 @@ class AuthController extends Controller
             ], 200);
         }
 
+        $token = Str::random(60);
+
+        $akun->api_token = hash('sha256', $token);
+        $akun->save();
+
         return response()->json([
             'success' => true,
             'message' => 'Login berhasil',
+            'token' => $token,
             'user' => [
                 'id' => (string) $akun->getKey(),
                 'username' => $akun->username,

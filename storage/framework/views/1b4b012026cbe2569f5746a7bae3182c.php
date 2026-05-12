@@ -1,7 +1,6 @@
-@extends('layouts.dashboard')
-@section('content')
+<?php $__env->startSection('content'); ?>
 
-<link rel="stylesheet" href="{{ asset('css/dashboard-view.css') }}">
+<link rel="stylesheet" href="<?php echo e(asset('css/dashboard-view.css')); ?>">
 <div>
 <div class="page-eyebrow">Dashboard Admin</div>
 <h1 class="page-title">Selamat Datang, <span>Admin</span></h1>
@@ -252,7 +251,7 @@
             <div class="card-title">Prediksi Terbaru</div>
             <div class="card-sub">10 prediksi terakhir dari aplikasi mobile</div>
         </div>
-        <a href="{{ route('monitoring-prediksi.index') }}" class="card-badge" style="text-decoration:none;cursor:pointer;">Lihat Semua →</a>
+        <a href="<?php echo e(route('monitoring-prediksi.index')); ?>" class="card-badge" style="text-decoration:none;cursor:pointer;">Lihat Semua →</a>
     </div>
     <div class="table-wrap">
         <table class="pred-table">
@@ -363,4 +362,5 @@
 </div>
 
 
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\noctura\resources\views/dashboard/index.blade.php ENDPATH**/ ?>
