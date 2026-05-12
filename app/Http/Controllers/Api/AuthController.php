@@ -52,9 +52,9 @@ class AuthController extends Controller
             'user' => [
                 'id' => (string) $akun->getKey(),
                 'username' => $akun->username,
-                'email' => $akun->email,
-                'role' => $akun->role,
-                'profile' => $akun->profile ?? null,
+                'email'    => $akun->email,
+                'role'     => $akun->role,
+                'profile'  => $akun->profile ?? null,
             ],
         ], 200);
     }
@@ -63,11 +63,11 @@ class AuthController extends Controller
     {
         $request->validate([
             'username' => 'required|string|min:3',
-            'email' => 'required|email',
+            'email'    => 'required|email',
             'password' => 'required|string|min:6',
             'full_name' => 'required|string',
-            'gender' => 'required|string|in:L,P',
-            'phone' => 'required|string',
+            'gender'   => 'required|string|in:L,P',
+            'phone'    => 'required|string',
         ]);
 
         $existingUsername = Akun::where('username', $request->username)->first();
@@ -90,25 +90,25 @@ class AuthController extends Controller
 
         $akun = Akun::create([
             'username' => $request->username,
-            'email' => $request->email,
+            'email'    => $request->email,
             'password' => Hash::make($request->password),
-            'role' => 'user',
-            'profile' => [
+            'role'     => 'user',
+            'profile'  => [
                 'full_name' => $request->full_name,
-                'gender' => $request->gender,
-                'phone' => $request->phone,
+                'gender'    => $request->gender,
+                'phone'     => $request->phone,
             ],
         ]);
 
         return response()->json([
             'success' => true,
             'message' => 'Registrasi berhasil',
-            'user' => [
-                'id' => (string) $akun->getKey(),
+            'user'    => [
+                'id'       => (string) $akun->getKey(),
                 'username' => $akun->username,
-                'email' => $akun->email,
-                'role' => $akun->role,
-                'profile' => $akun->profile,
+                'email'    => $akun->email,
+                'role'     => $akun->role,
+                'profile'  => $akun->profile,
             ],
         ], 201);
     }

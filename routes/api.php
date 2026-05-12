@@ -16,6 +16,7 @@ Route::get('edukasi/kategori/{kategori}', [EdukasiController::class, 'byCategory
 
 require __DIR__.'/api_jawaban.php';
 require __DIR__.'/api_predict.php';
+require __DIR__.'/api_history.php';
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
