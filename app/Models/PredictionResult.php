@@ -29,22 +29,5 @@ class PredictionResult extends Model
         'solution'     => 'array',
         'predicted_at' => 'datetime',
     ];
-
-    // ── Relasi ke User ────────────────────────────────────────────────────────
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    // ── Scope: filter by authenticated user ───────────────────────────────────
-    public function scopeForUser($query, string $userId)
-    {
-        return $query->where('user_id', $userId);
-    }
-
-    // ── Accessor: cek apakah solusi sudah di-cache ────────────────────────────
-    public function hasSolution(): bool
-    {
-        return !empty($this->solution);
-    }
+    protected $dates = ['created_at', 'predicted_at', 'updated_at'];        
 }

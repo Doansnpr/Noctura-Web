@@ -54,20 +54,8 @@
 }
 
 .page-title span {
-  color: var(--navy-500);
+  color: var(--navy-600);
   position: relative;
-}
-
-.page-title span::after {
-  content: '';
-  position: absolute;
-  bottom: 4px;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: var(--navy-200);
-  border-radius: 2px;
-  opacity: .5;
 }
 
 .page-subtitle {
@@ -683,4 +671,6 @@ tbody tr:hover td {
   .act-btns {
     flex-wrap: wrap;
   }
+
+  
 }

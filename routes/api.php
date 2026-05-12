@@ -10,14 +10,14 @@ use App\Http\Controllers\Api\MobileAuthController;
 use App\Http\Controllers\Api\SleepPredictionController;
 use App\Http\Controllers\Api\SleepSolutionController;
 
-// ─── KODE TEMAN (JANGAN DIUBAH) ───────────────────────────────────────────────
 Route::get('/user', [AuthController::class, 'me']);
 
 Route::get('edukasi/published', [EdukasiController::class, 'published']);
 Route::get('edukasi/kategori/{kategori}', [EdukasiController::class, 'byCategory']);
 
-require __DIR__ . '/api_jawaban.php';
-require __DIR__ . '/api_predict.php';
+require __DIR__.'/api_jawaban.php';
+require __DIR__.'/api_predict.php';
+require __DIR__.'/api_history.php';
 
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/register', [AuthController::class, 'register']);
