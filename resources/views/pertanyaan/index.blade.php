@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ asset('css/kelola_pertanyaan.css') }}">
 
 <div class="kelola-pertanyaan-container">
-    <div class="section-label">Master Data / Kelola Pertanyaan</div>
+    <div class="page-eyebrow">Master Data / Kelola Pertanyaan</div>
     <h1 class="page-title">Manajemen <span>Pertanyaan</span></h1>
     <p class="page-subtitle">Kelola daftar pertanyaan asesmen gangguan tidur untuk fitur prediksi. Setiap pertanyaan merepresentasikan satu fitur input model machine learning.</p>
 

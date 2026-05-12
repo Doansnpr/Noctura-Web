@@ -5,61 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Noctura — Dashboard</title>
+    <title>Dashboard Admin - Noctura</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
-
-<style>
-        .sidebar-moon-icon {
-            width: 46px;
-            height: 46px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.16);
-            border-radius: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            backdrop-filter: blur(8px);
-            box-shadow:
-                0 4px 16px rgba(0, 0, 0, 0.25),
-                inset 0 1px 0 rgba(255, 255, 255, 0.12);
-            transition: transform 0.25s ease, box-shadow 0.25s ease;
-            flex-shrink: 0;
-        }
- 
-        .sidebar-brand:hover .sidebar-moon-icon {
-            transform: scale(1.05);
-            box-shadow:
-                0 6px 20px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.15);
-        }
- 
-        .sidebar-moon-icon svg {
-            width: 25px;
-            height: 25px;
-            filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.35));
-        }
- 
-        /* Override brand-icon default sizing so our wrapper controls it */
-        .brand-icon {
-            width: auto !important;
-            height: auto !important;
-        }
- 
-        /* Brand name: Fraunces serif matching login */
-        .brand-name {
-            font-family: 'Fraunces', serif !important;
-            letter-spacing: 0.13em !important;
-        }
- 
-        /* Collapsed: shrink moon icon nicely */
-        body.sidebar-collapsed .sidebar-moon-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-        }
-  </style>
 
     @stack('styles')
 </head>
@@ -151,7 +100,7 @@
                 <span>Visualisasi</span>
             </a>
 
-            <a href="{{ route('monitoring') }}" class="nav-item {{ request()->routeIs('monitoring') ? 'active' : '' }}">
+            <a href="{{ route('monitoring-prediksi.index') }}" class="nav-item {{ request()->routeIs('monitoring-prediksi.*') ? 'active' : '' }}">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M19.07 4.93A10 10 0 1 1 4.93 19.07"/>
@@ -181,16 +130,6 @@
             </button>
 
             <div class="topbar-divider"></div>
-
-            <div class="topbar-search">
-                <span class="search-icon">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <circle cx="11" cy="11" r="8" />
-                        <path d="m21 21-4.35-4.35" />
-                    </svg>
-                </span>
-                <input type="text" placeholder="Cari sesuatu...">
-            </div>
 
             <div class="topbar-actions">
                 <!-- Notification Button -->

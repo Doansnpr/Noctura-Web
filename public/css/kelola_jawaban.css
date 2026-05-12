@@ -32,15 +32,6 @@ margin: 0 auto;
 font-size: 15px;
 }
 
-/* ── Breadcrumb ── */
-.section-label {
-font-family: 'Space Mono', monospace;
-font-size: 11px;
-color: var(--navy-400);
-letter-spacing: .15em;
-text-transform: uppercase;
-margin-bottom: 14px;
-}
 
 /* ── Page header ── */
 .page-title { font-size:32px; font-weight:700; color:var(--navy-900); margin-bottom:12px; }

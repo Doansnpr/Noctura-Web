@@ -10,87 +10,112 @@ class EdukasiController extends Controller
 {
     public function index()
     {
-        $edukasi = Edukasi::all();
+        $edukasi = Edukasi::orderBy('created_at', 'desc')->get();
+
         return view('edukasi.index', compact('edukasi'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'title'    => 'required|string',
-            'category' => 'required',
-            'content'  => 'required',
-            'image'    => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
+        $validated = $request->validate([
+            'judul_artikel'             => 'required|string|max:150',
+            'kategori_gangguan_tidur'   => 'required|string|in:healthy,insomnia,sleep_apnea',
+            'jenis_edukasi'             => 'required|string|in:informasi_umum,gejala,penyebab,penanganan,tips_tidur,pencegahan',
+            'ringkasan'                 => 'required|string|max:500',
+            'isi_artikel'               => 'required|string',
+            'tips_penanganan'           => 'nullable|string',
+            'saran_konsultasi'          => 'nullable|string',
+            'penulis'                   => 'nullable|string|max:100',
+            'estimasi_waktu_baca'       => 'nullable|string|max:50',
+            'status_publish'            => 'nullable',
+            'gambar_artikel'            => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
         try {
-            $imagePath = null;
+            $gambarPath = null;
 
-            if ($request->hasFile('image')) {
-                // storePublicly → set visibility = public → tidak 403
-                $imagePath = $request->file('image')->storePublicly('edukasi', 'public');
-            }
-
-            $tags = $request->tags;
-            if (is_string($tags)) {
-                $tags = array_map('trim', explode(',', $tags));
+            if ($request->hasFile('gambar_artikel')) {
+                $gambarPath = $request->file('gambar_artikel')->storePublicly('edukasi', 'public');
             }
 
             $edukasi = Edukasi::create([
-                'title'        => $request->title,
-                'category'     => $request->category,
-                'summary'      => $request->summary,
-                'content'      => $request->content,
-                'image_url'    => $imagePath,
-                'author'       => $request->author ?? 'Admin',
-                'tags'         => $tags ?: [],
-                'read_time'    => $request->read_time,
-                'is_published' => $request->is_published ? true : false,
+                'judul_artikel'           => $validated['judul_artikel'],
+                'kategori_gangguan_tidur' => $validated['kategori_gangguan_tidur'],
+                'jenis_edukasi'           => $validated['jenis_edukasi'],
+                'ringkasan'               => $validated['ringkasan'],
+                'isi_artikel'             => $validated['isi_artikel'],
+                'gambar_artikel'          => $gambarPath,
+                'tips_penanganan'         => $this->formatTipsPenanganan($request->tips_penanganan),
+                'saran_konsultasi'        => $request->saran_konsultasi,
+                'penulis'                 => $request->penulis ?: 'Admin Noctura',
+                'estimasi_waktu_baca'     => $request->estimasi_waktu_baca ?: '3 menit',
+                'status_publish'          => $request->boolean('status_publish'),
             ]);
 
             return response()->json([
                 'success' => true,
-                'data'    => $edukasi
+                'message' => 'Artikel edukasi berhasil ditambahkan.',
+                'data'    => $edukasi->fresh(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Gagal menambahkan edukasi: ' . $e->getMessage(),
             ], 500);
         }
     }
 
     public function update(Request $request, $id)
     {
+        $validated = $request->validate([
+            'judul_artikel'             => 'required|string|max:150',
+            'kategori_gangguan_tidur'   => 'required|string|in:healthy,insomnia,sleep_apnea',
+            'jenis_edukasi'             => 'required|string|in:informasi_umum,gejala,penyebab,penanganan,tips_tidur,pencegahan',
+            'ringkasan'                 => 'required|string|max:500',
+            'isi_artikel'               => 'required|string',
+            'tips_penanganan'           => 'nullable|string',
+            'saran_konsultasi'          => 'nullable|string',
+            'penulis'                   => 'nullable|string|max:100',
+            'estimasi_waktu_baca'       => 'nullable|string|max:50',
+            'status_publish'            => 'nullable',
+            'gambar_artikel'            => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+        ]);
+
         try {
             $edukasi = Edukasi::findOrFail($id);
 
-            $data = $request->except(['_method', '_token']);
+            $data = [
+                'judul_artikel'           => $validated['judul_artikel'],
+                'kategori_gangguan_tidur' => $validated['kategori_gangguan_tidur'],
+                'jenis_edukasi'           => $validated['jenis_edukasi'],
+                'ringkasan'               => $validated['ringkasan'],
+                'isi_artikel'             => $validated['isi_artikel'],
+                'tips_penanganan'         => $this->formatTipsPenanganan($request->tips_penanganan),
+                'saran_konsultasi'        => $request->saran_konsultasi,
+                'penulis'                 => $request->penulis ?: 'Admin Noctura',
+                'estimasi_waktu_baca'     => $request->estimasi_waktu_baca ?: '3 menit',
+                'status_publish'          => $request->boolean('status_publish'),
+            ];
 
-            if (isset($data['tags']) && is_string($data['tags'])) {
-                $data['tags'] = array_map('trim', explode(',', $data['tags']));
-            }
-
-            if ($request->hasFile('image')) {
-                // Hapus gambar lama jika ada
-                if ($edukasi->image_url) {
-                    Storage::disk('public')->delete($edukasi->image_url);
+            if ($request->hasFile('gambar_artikel')) {
+                if ($edukasi->gambar_artikel) {
+                    Storage::disk('public')->delete($edukasi->gambar_artikel);
                 }
-                // storePublicly → visibility = public
-                $data['image_url'] = $request->file('image')->storePublicly('edukasi', 'public');
+
+                $data['gambar_artikel'] = $request->file('gambar_artikel')->storePublicly('edukasi', 'public');
             }
 
             $edukasi->update($data);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data berhasil diperbarui',
-                'data'    => $edukasi->fresh()
+                'message' => 'Artikel edukasi berhasil diperbarui.',
+                'data'    => $edukasi->fresh(),
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Gagal memperbarui edukasi: ' . $e->getMessage(),
             ], 500);
         }
     }
@@ -98,31 +123,41 @@ class EdukasiController extends Controller
     public function destroy($id)
     {
         try {
-            $edukasi = Edukasi::where('_id', $id)->first();
+            $edukasi = Edukasi::find($id);
 
             if (!$edukasi) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Data tidak ditemukan'
+                    'message' => 'Data edukasi tidak ditemukan.',
                 ], 404);
             }
 
-            // Hapus file gambar juga saat delete data
-            if ($edukasi->image_url) {
-                Storage::disk('public')->delete($edukasi->image_url);
+            if ($edukasi->gambar_artikel) {
+                Storage::disk('public')->delete($edukasi->gambar_artikel);
             }
 
             $edukasi->delete();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Data berhasil dihapus'
+                'message' => 'Artikel edukasi berhasil dihapus.',
             ]);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => 'Gagal menghapus edukasi: ' . $e->getMessage(),
             ], 500);
         }
+    }
+
+    private function formatTipsPenanganan($tips)
+    {
+        if (!$tips) return [];
+
+        return collect(preg_split("/\r\n|\n|\r/", $tips))
+            ->map(fn($item) => trim($item))
+            ->filter()
+            ->values()
+            ->toArray();
     }
 }

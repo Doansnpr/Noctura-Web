@@ -37,16 +37,6 @@ margin: 0 auto;
 font-size: 15px;
 }
 
-/* Typography */
-.section-label {
-font-family: 'Space Mono', monospace;
-font-size: 11px;
-color: var(--navy-400);
-letter-spacing: .15em;
-text-transform: uppercase;
-margin-bottom: 14px;
-}
-
 .page-title {
 font-size: 32px;
 font-weight: 700;
@@ -55,20 +45,8 @@ margin-bottom: 12px;
 }
 
 .page-title span {
-color: var(--navy-500);
+color: var(--navy-600);
 position: relative;
-}
-
-.page-title span::after {
-content: '';
-position: absolute;
-bottom: 4px;
-left: 0;
-right: 0;
-height: 4px;
-background: var(--navy-200);
-border-radius: 2px;
-opacity: .5;
 }
 
 .page-subtitle {

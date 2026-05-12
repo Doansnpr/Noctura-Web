@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ asset('css/kelola_jawaban.css') }}">
 
 <div class="kelola-jawaban-container">
-    <div class="section-label">Master Data / Kelola Jawaban</div>
+    <div class="page-eyebrow">Master Data / Kelola Jawaban</div>
     <h1 class="page-title">Manajemen <span>Jawaban</span></h1>
     <p class="page-subtitle">Kelola pilihan jawaban untuk setiap pertanyaan tipe <strong>Select</strong>, serta konfigurasi batas nilai untuk pertanyaan tipe <strong>Range</strong>.</p>
 
