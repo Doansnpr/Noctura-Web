@@ -18,15 +18,13 @@ Route::get('/', function () {
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
 Route::get('/pertanyaan', [PertanyaanController::class, 'index'])->name('pertanyaan')->middleware('auth');
 Route::get('/jawaban', [JawabanController::class, 'index'])->name('jawaban')->middleware('auth');
-Route::get('/visualisasi', [VisualisasiController::class, 'index'])->name('visualisasi')->middleware('auth');
-Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class, 'destroy'])->middleware('auth');
 
+Route::get('/visualisasi', [VisualisasiController::class, 'index'])->name('visualisasi')->middleware('auth');
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
 Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
  
-
 Route::get('/edukasi', [EdukasiController::class, 'index'])->name('edukasi.index')->middleware('auth');
 Route::post('/edukasi', [EdukasiController::class, 'store']);
 Route::put('/edukasi/{id}', [EdukasiController::class, 'update']);
@@ -44,9 +42,11 @@ Route::post('/forgot-password/verify', [ForgotPasswordController::class, 'verify
 Route::get('/forgot-password/reset', [ForgotPasswordController::class, 'resetForm'])->name('forgot-password.reset');
 Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'resetPassword'])->name('forgot-password.reset.post');
 
-
 Route::get('/monitoring-prediksi', [MonitoringPrediksiController::class, 'index'])
     ->name('monitoring-prediksi.index')->middleware('auth');
 
 Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class, 'destroy'])
     ->name('monitoring-prediksi.destroy');
+
+Route::get('/visualisasi', [VisualisasiController::class, 'index'])->middleware('auth')->name('visualisasi');
+Route::get('/api/chart-data', [VisualisasiController::class, 'getChartData'])->middleware('auth')->name('api.chart-data');
