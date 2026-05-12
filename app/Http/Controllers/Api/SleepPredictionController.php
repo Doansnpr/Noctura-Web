@@ -1,18 +1,17 @@
 <?php
+// app/Http/Controllers/Api/SleepPredictionController.php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api; // ← FIX: tambah \Api
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Models\PredictionResult;
 
-class SleepPredictionController extends Controller
+class SleepPredictionController extends \App\Http\Controllers\Controller
 {
-    private string $flaskBaseUrl = 'http://10.10.183.73:5000';
+    private string $flaskBaseUrl = 'http://127.0.0.1:5000';
     private string $geminiApiKey;
-
-    // Model Gemini — gunakan flash untuk respons cepat & murah
     private string $geminiModel = 'gemini-2.0-flash';
 
     public function __construct()
@@ -20,10 +19,9 @@ class SleepPredictionController extends Controller
         $this->geminiApiKey = env('GEMINI_API_KEY', '');
     }
 
-    // ── Label & warna per kategori prediksi ──────────────────────────────────
     private array $meta = [
-        'None' => [
-            'label'   => 'Healthy',
+        'Healthy' => [
+            'label'   => 'Tidur Sehat',
             'emoji'   => '😴',
             'color'   => '#3B6D11',
             'bgColor' => '#EAF3DE',
@@ -42,40 +40,21 @@ class SleepPredictionController extends Controller
         ],
     ];
 
-    // ── Prompt literatur ilmiah ───────────────────────────────────────────────
     private string $systemPrompt = <<<'PROMPT'
 Kamu adalah asisten kesehatan tidur berbasis literatur ilmiah.
 Tugasmu adalah memberikan deskripsi singkat dan saran praktis berdasarkan hasil klasifikasi gangguan tidur.
 
-Gunakan literatur berikut sebagai dasar saranmu:
-
 [LITERATUR DASAR]
 1. American Academy of Sleep Medicine (AASM, 2014) - ICSD-3:
    - Insomnia: kesulitan memulai/mempertahankan tidur ≥3 malam/minggu selama ≥3 bulan.
-     Penanganan: CBT-I (Cognitive Behavioral Therapy for Insomnia) adalah first-line treatment.
+     Penanganan: CBT-I adalah first-line treatment.
    - Sleep Apnea: henti napas berulang saat tidur (AHI ≥5/jam).
      Penanganan: CPAP therapy, positional therapy, weight management.
-
-2. Morin & Benca (2012) - Lancet: "Chronic insomnia":
-   - Sleep hygiene: konsistensi jadwal tidur, hindari layar 1 jam sebelum tidur,
-     batasi kafein 6 jam sebelum tidur, suhu kamar 18-20°C optimal untuk tidur.
-
-3. Walker (2017) - "Why We Sleep":
-   - Tidur 7-9 jam/malam optimal untuk dewasa.
-   - Olahraga aerobik 150 menit/minggu meningkatkan kualitas tidur secara signifikan.
-   - Alkohol mengganggu REM sleep meski terasa membantu tidur.
-
-4. Epstein & Mardon (2007) - Harvard Medical School Guide to a Good Night's Sleep:
-   - Teknik relaksasi progresif otot (PMR) menurunkan arousal sebelum tidur.
-   - Meditasi mindfulness 10-20 menit/hari terbukti menurunkan insomnia.
-
-5. Punjabi (2008) - Epidemiology of Adult Obstructive Sleep Apnea:
-   - Obesitas (BMI > 30) meningkatkan risiko OSA 3-4x lipat.
-   - Tidur posisi miring mengurangi episode apnea hingga 50% pada kasus ringan-sedang.
-
-6. Grandner et al. (2012) - Sleep Medicine Reviews:
-   - Stres dan kecemasan adalah prediktor utama insomnia.
-   - Journaling sebelum tidur mengurangi intrusive thoughts secara signifikan.
+2. Morin & Benca (2012): sleep hygiene, hindari layar 1 jam sebelum tidur, batasi kafein 6 jam sebelum tidur.
+3. Walker (2017): tidur 7-9 jam/malam, aerobik 150 menit/minggu.
+4. Epstein & Mardon (2007): PMR dan mindfulness turunkan insomnia.
+5. Punjabi (2008): tidur miring kurangi apnea 50%, obesitas tingkatkan risiko OSA 3-4x.
+6. Grandner et al. (2012): journaling sebelum tidur kurangi intrusive thoughts.
 
 [FORMAT RESPONS]
 Kamu HARUS merespons hanya dalam format JSON berikut, tanpa teks tambahan, tanpa markdown, tanpa backtick:
@@ -91,7 +70,6 @@ Kamu HARUS merespons hanya dalam format JSON berikut, tanpa teks tambahan, tanpa
 Gunakan bahasa Indonesia. Sesuaikan saran dengan data user (usia, BMI, stres, aktivitas fisik).
 PROMPT;
 
-    // ── Main predict endpoint ─────────────────────────────────────────────────
     public function predict(Request $request)
     {
         $validated = $request->validate([
@@ -111,7 +89,6 @@ PROMPT;
         ]);
 
         try {
-            // 1. Kirim ke Flask
             $flaskPayload  = collect($validated)->except('user_id')->toArray();
             $flaskResponse = Http::timeout(15)
                 ->acceptJson()
@@ -127,27 +104,25 @@ PROMPT;
             $prediction = $flaskData['prediction'] ?? 'Unknown';
             $confidence = $flaskData['confidence'] ?? [];
 
-            // 2. Ambil meta
-            $meta = $this->meta[$prediction] ?? $this->meta['None'];
+            $meta = $this->meta[$prediction] ?? $this->meta['Healthy'];
 
-            // 3. Generate saran dari Gemini AI
             ['description' => $description, 'suggestions' => $suggestions]
                 = $this->generateSuggestions($prediction, $validated);
 
-            // 4. Simpan ke MongoDB
-            PredictionResult::create([
-                'user_id'      => $validated['user_id'],
+            $record = PredictionResult::create([
+                'user_id'      => $validated['user_id'] ?? null,
                 'prediction'   => $prediction,
                 'label'        => $meta['label'],
                 'confidence'   => $confidence,
                 'description'  => $description,
                 'suggestions'  => $suggestions,
+                'input_data'   => collect($validated)->except('user_id')->toArray(),
                 'predicted_at' => now(),
             ]);
 
-            // 5. Return ke Flutter
             return response()->json([
                 'status'      => 'success',
+                'id'          => (string) $record->_id,
                 'prediction'  => $prediction,
                 'confidence'  => $confidence,
                 'label'       => $meta['label'],
@@ -159,7 +134,7 @@ PROMPT;
             ]);
 
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
-            Log::error('Connection failed', ['error' => $e->getMessage()]);
+            Log::error('Connection to Flask failed', ['error' => $e->getMessage()]);
             return response()->json(['status' => 'error', 'message' => 'Tidak dapat terhubung ke server analisis.'], 503);
         } catch (\Exception $e) {
             Log::error('Prediction error', ['error' => $e->getMessage()]);
@@ -167,16 +142,12 @@ PROMPT;
         }
     }
 
-    // ── Generate saran menggunakan Gemini API ────────────────────────────────
     private function generateSuggestions(string $prediction, array $userData): array
     {
         if (empty($this->geminiApiKey)) {
-            Log::warning('GEMINI_API_KEY tidak ditemukan, pakai fallback');
             return $this->fallbackSuggestions($prediction);
         }
 
-        // Gabungkan system prompt + data user menjadi satu pesan
-        // (Gemini tidak punya system role terpisah di REST API sederhana)
         $fullPrompt = $this->systemPrompt . "\n\n[DATA USER]\n"
             . "Hasil prediksi: {$prediction}\n"
             . "Usia: {$userData['age']} tahun\n"
@@ -193,41 +164,27 @@ PROMPT;
             $url = "https://generativelanguage.googleapis.com/v1beta/models/"
                 . "{$this->geminiModel}:generateContent?key={$this->geminiApiKey}";
 
-            $response = Http::timeout(20)
-                ->post($url, [
-                    'contents' => [
-                        [
-                            'parts' => [
-                                ['text' => $fullPrompt],
-                            ],
-                        ],
-                    ],
-                    'generationConfig' => [
-                        'temperature'     => 0.3,  // lebih deterministik
-                        'maxOutputTokens' => 600,
-                        'responseMimeType' => 'application/json', // paksa Gemini return JSON
-                    ],
-                ]);
+            $response = Http::timeout(20)->post($url, [
+                'contents'         => [['parts' => [['text' => $fullPrompt]]]],
+                'generationConfig' => [
+                    'temperature'      => 0.3,
+                    'maxOutputTokens'  => 600,
+                    'responseMimeType' => 'application/json',
+                ],
+            ]);
 
             if (!$response->successful()) {
-                Log::warning('Gemini API error', [
-                    'status' => $response->status(),
-                    'body'   => $response->body(),
-                ]);
                 return $this->fallbackSuggestions($prediction);
             }
 
-            // Ambil teks dari struktur respons Gemini
-            $text = $response->json('candidates.0.content.parts.0.text') ?? '';
-
-            // Bersihkan jika ada backtick markdown
-            $text = trim(preg_replace('/^```json|```$/m', '', $text));
-
+            $text    = $response->json('candidates.0.content.parts.0.text') ?? '';
+            $text    = trim(preg_replace('/^```json|```$/m', '', $text));
             $decoded = json_decode($text, true);
 
-            if (json_last_error() === JSON_ERROR_NONE
-                && isset($decoded['description'], $decoded['suggestions'])
-                && is_array($decoded['suggestions'])
+            if (
+                json_last_error() === JSON_ERROR_NONE &&
+                isset($decoded['description'], $decoded['suggestions']) &&
+                is_array($decoded['suggestions'])
             ) {
                 return [
                     'description' => $decoded['description'],
@@ -235,20 +192,16 @@ PROMPT;
                 ];
             }
 
-            Log::warning('Gemini response bukan JSON valid', ['text' => $text]);
             return $this->fallbackSuggestions($prediction);
-
         } catch (\Exception $e) {
-            Log::warning('Gemini API call gagal', ['error' => $e->getMessage()]);
             return $this->fallbackSuggestions($prediction);
         }
     }
 
-    // ── Fallback statis jika Gemini API gagal ────────────────────────────────
     private function fallbackSuggestions(string $prediction): array
     {
         $data = [
-            'None' => [
+            'Healthy' => [
                 'description' => 'Kualitas tidurmu baik. Tidak ditemukan indikasi gangguan tidur yang signifikan.',
                 'suggestions' => [
                     'Pertahankan jadwal tidur konsisten 7-9 jam/malam (Walker, 2017).',
@@ -274,10 +227,9 @@ PROMPT;
             ],
         ];
 
-        return $data[$prediction] ?? $data['None'];
+        return $data[$prediction] ?? $data['Healthy'];
     }
 
-    // ── Riwayat prediksi user ─────────────────────────────────────────────────
     public function history(Request $request)
     {
         $userId = $request->query('user_id');
