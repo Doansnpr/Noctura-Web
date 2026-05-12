@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title>Dashboard Admin - Noctura</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <link rel="stylesheet" href="<?php echo e(asset('css/dashboard.css')); ?>">
 
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 
 <body>
@@ -37,7 +37,7 @@
         <nav class="sidebar-nav">
             <div class="nav-section-label">Main Menu</div>
 
-            <a href="{{ route('dashboard') }}" class="nav-item active" data-nav="dashboard">
+            <a href="<?php echo e(route('dashboard')); ?>" class="nav-item active" data-nav="dashboard">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                     <polyline points="9 22 9 12 15 12 15 22" />
@@ -61,14 +61,14 @@
                 </div>
                 <div class="sub-nav">
                     <div class="flyout-title">Master Data</div>
-                    <a href="{{ route('akun.index') }}" class="sub-nav-item" data-sub="akun">
+                    <a href="<?php echo e(route('akun.index')); ?>" class="sub-nav-item" data-sub="akun">
                         <svg class="sub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                             <circle cx="12" cy="7" r="4" />
                         </svg>
                         <span>Kelola Akun</span>
                     </a>
-                    <a href="{{ route('pertanyaan') }}" class="sub-nav-item" data-sub="question">
+                    <a href="<?php echo e(route('pertanyaan')); ?>" class="sub-nav-item" data-sub="question">
                         <svg class="sub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <circle cx="12" cy="12" r="10" />
                             <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
@@ -76,13 +76,13 @@
                         </svg>
                         <span>Kelola Pertanyaan</span>
                     </a>
-                    <a href="{{ route('jawaban') }}" class="sub-nav-item" data-sub="answer">
+                    <a href="<?php echo e(route('jawaban')); ?>" class="sub-nav-item" data-sub="answer">
                         <svg class="sub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                         </svg>
                         <span>Kelola Jawaban</span>
                     </a>
-                    <a href="{{ route('edukasi.index') }}" class="sub-nav-item" data-sub="edu">
+                    <a href="<?php echo e(route('edukasi.index')); ?>" class="sub-nav-item" data-sub="edu">
                         <svg class="sub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                         </svg>
@@ -91,7 +91,7 @@
                 </div>
             </div>
 
-            <a href="{{ route('visualisasi') }}" class="nav-item {{ request()->routeIs('visualisasi') ? 'active' : '' }}" data-nav="visualisasi">
+            <a href="<?php echo e(route('visualisasi')); ?>" class="nav-item <?php echo e(request()->routeIs('visualisasi') ? 'active' : ''); ?>" data-nav="visualisasi">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="9" width="4" height="12" rx="1" />
                     <rect x="10" y="5" width="4" height="16" rx="1" />
@@ -100,7 +100,7 @@
                 <span>Visualisasi</span>
             </a>
 
-            <a href="{{ route('monitoring') }}" class="nav-item {{ request()->routeIs('monitoring') ? 'active' : '' }}">
+            <a href="<?php echo e(route('monitoring')); ?>" class="nav-item <?php echo e(request()->routeIs('monitoring') ? 'active' : ''); ?>">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M19.07 4.93A10 10 0 1 1 4.93 19.07"/>
@@ -160,8 +160,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <div class="dropdown-name">{{ auth()->user()->name ?? 'Dr. Setiawan' }}</div>
-                                <div class="dropdown-email">{{ auth()->user()->email ?? 'dr.setiawan@noctura.id' }}</div>
+                                <div class="dropdown-name"><?php echo e(auth()->user()->name ?? 'Dr. Setiawan'); ?></div>
+                                <div class="dropdown-email"><?php echo e(auth()->user()->email ?? 'dr.setiawan@noctura.id'); ?></div>
                             </div>
                         </div>
                         <div class="dropdown-divider"></div>
@@ -184,8 +184,8 @@
 
                         <div class="dropdown-divider"></div>
 
-                        <form action="{{ route('logout') }}" method="POST" id="logoutForm" onsubmit="handleLogoutSubmit(event)">
-                            @csrf
+                        <form action="<?php echo e(route('logout')); ?>" method="POST" id="logoutForm" onsubmit="handleLogoutSubmit(event)">
+                            <?php echo csrf_field(); ?>
                             <button type="submit" class="dropdown-item dropdown-logout" id="logoutBtn">
                                 <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -201,7 +201,7 @@
         </header>
 
         <main class="dashboard-body" id="mainContent">
-            @yield('content')
+            <?php echo $__env->yieldContent('content'); ?>
         </main>
     </div>
 
@@ -229,11 +229,11 @@
                 <div class="profile-view">
                     <div class="profile-row">
                         <label>Nama Lengkap</label>
-                        <div class="profile-value">{{ auth()->user()->name ?? '-' }}</div>
+                        <div class="profile-value"><?php echo e(auth()->user()->name ?? '-'); ?></div>
                     </div>
                     <div class="profile-row">
                         <label>Email</label>
-                        <div class="profile-value">{{ auth()->user()->email ?? '-' }}</div>
+                        <div class="profile-value"><?php echo e(auth()->user()->email ?? '-'); ?></div>
                     </div>
                     <div class="profile-row">
                         <label>Role</label>
@@ -242,7 +242,8 @@
                     <div class="profile-row">
                         <label>Terdaftar Sejak</label>
                         <div class="profile-value">
-                            {{ auth()->user()->created_at?->format('d F Y') ?? '-' }}
+                            <?php echo e(auth()->user()->created_at?->format('d F Y') ?? '-'); ?>
+
                         </div>
                     </div>
                 </div>
@@ -487,7 +488,8 @@
             }
         })();
     </script>
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 
 </html>
+<?php /**PATH C:\xampp\htdocs\noctura\resources\views/layouts/dashboard.blade.php ENDPATH**/ ?>

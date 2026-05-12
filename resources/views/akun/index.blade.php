@@ -3,11 +3,105 @@
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/kelola_akun.css') }}">
 <meta name="csrf-token" content="{{ csrf_token() }}">
+<style>
+.pagination-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 4px 0;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.pagination-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.pagination-select {
+  height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  background: var(--bg-white);
+  color: var(--text-body);
+  font-size: 13px;
+  font-family: 'DM Sans', sans-serif;
+  outline: none;
+  cursor: pointer;
+  box-shadow: var(--shadow-sm);
+}
+
+.pagination-select:focus {
+  border-color: var(--navy-500);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+}
+
+.pagination-btn,
+.pagination-page {
+  height: 38px;
+  min-width: 38px;
+  padding: 0 13px;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  background: var(--bg-white);
+  color: var(--text-body);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  transition: all .2s ease;
+  box-shadow: var(--shadow-sm);
+}
+
+.pagination-btn:hover,
+.pagination-page:hover {
+  background: var(--navy-50);
+  border-color: var(--navy-500);
+  color: var(--navy-600);
+}
+
+.pagination-page.active {
+  background: var(--navy-600);
+  border-color: var(--navy-600);
+  color: #fff;
+  box-shadow: var(--shadow-navy);
+}
+
+.pagination-btn:disabled {
+  background: #f8fafc;
+  color: #94a3b8;
+  border-color: var(--border-light);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.pagination-btn:disabled:hover {
+  background: #f8fafc;
+  color: #94a3b8;
+  border-color: var(--border-light);
+}
+
+.pagination-pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+</style>
 
 <div class="kelola-akun-container">
-    <div class="section-label">Master Data / Kelola Akun</div>
+    <div class="page-eyebrow">Master Data / Kelola Akun</div>
     <h1 class="page-title">Manajemen <span>Akun</span></h1>
-    <p class="page-subtitle">Kelola daftar akun pengguna dan administrator sistem Noctura. Atur hak akses dan informasi akun setiap pengguna terdaftar.</p>
 
     {{-- Card Daftar Akun --}}
     <div class="card">
@@ -54,6 +148,24 @@
                 <tbody id="tableBody"></tbody>
             </table>
         </div>
+        <div class="pagination-wrap">
+        <div class="pagination-info" id="paginationInfo">
+            Menampilkan 0 data
+        </div>
+
+        <div class="pagination-controls">
+            <select id="rowsPerPage" class="pagination-select">
+                <option value="5">5 / halaman</option>
+                <option value="10" selected>10 / halaman</option>
+                <option value="25">25 / halaman</option>
+                <option value="50">50 / halaman</option>
+            </select>
+
+            <button class="pagination-btn" id="prevPageBtn">Sebelumnya</button>
+            <div class="pagination-pages" id="paginationPages"></div>
+            <button class="pagination-btn" id="nextPageBtn">Berikutnya</button>
+        </div>
+    </div>
     </div>
 </div>
 
@@ -192,6 +304,8 @@ let accounts = @json($accounts).map(a => ({
 }));
 
 let deleteTarget = null;
+let currentPage = 1;
+let rowsPerPage = 5;
 
 // Utility functions
 function getInitials(name) {
@@ -239,7 +353,6 @@ function blockLettersOnPhone() {
 function renderTableAkun() {
     const search     = document.getElementById('searchInput').value.toLowerCase();
     const filterRole = document.getElementById('filterRole').value;
-    const now        = new Date();
 
     const filtered = accounts.filter(a =>
         (a.name.toLowerCase().includes(search) || a.email.toLowerCase().includes(search)) &&
@@ -249,6 +362,17 @@ function renderTableAkun() {
     document.getElementById('countBadge').textContent = filtered.length + ' akun';
 
     const tbody = document.getElementById('tableBody');
+
+    const totalData = filtered.length;
+    const totalPages = Math.ceil(totalData / rowsPerPage) || 1;
+
+    if (currentPage > totalPages) currentPage = totalPages;
+    if (currentPage < 1) currentPage = 1;
+
+    const startIndex = (currentPage - 1) * rowsPerPage;
+    const endIndex = startIndex + rowsPerPage;
+    const paginatedData = filtered.slice(startIndex, endIndex);
+
     if (!filtered.length) {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:48px;color:var(--text-muted);">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 12px;display:block;opacity:.4">
@@ -256,16 +380,19 @@ function renderTableAkun() {
             </svg>
             Tidak ada akun yang ditemukan.
         </td></tr>`;
+
+        renderPagination(0, 1, 0, 0);
         return;
     }
 
-    tbody.innerHTML = filtered.map((a, i) => {
+    tbody.innerHTML = paginatedData.map((a, i) => {
         const badge = a.role === 'Admin'
             ? '<span class="badge badge-admin">Admin</span>'
             : '<span class="badge badge-user">Pengguna</span>';
+
         return `
         <tr>
-            <td><span class="row-num">${i + 1}</span></td>
+            <td><span class="row-num">${startIndex + i + 1}</span></td>
             <td>
                 <div class="name-cell">
                     <div class="avatar ${getAvatarColor(a.name)}">${getInitials(a.name)}</div>
@@ -295,16 +422,59 @@ function renderTableAkun() {
                     </button>
                 </div>
             </td>
-        <tr>`;
+        </tr>`;
     }).join('');
 
-    // Attach event listeners
+    renderPagination(totalData, totalPages, startIndex + 1, Math.min(endIndex, totalData));
+
     document.querySelectorAll('.btn-edit').forEach(btn =>
         btn.addEventListener('click', e => openEdit(e.currentTarget.dataset.id))
     );
+
     document.querySelectorAll('.btn-delete').forEach(btn =>
         btn.addEventListener('click', e => openDelete(e.currentTarget.dataset.id))
     );
+}
+
+function renderPagination(totalData, totalPages, startData, endData) {
+    const paginationInfo = document.getElementById('paginationInfo');
+    const paginationPages = document.getElementById('paginationPages');
+    const prevBtn = document.getElementById('prevPageBtn');
+    const nextBtn = document.getElementById('nextPageBtn');
+
+    if (!paginationInfo || !paginationPages || !prevBtn || !nextBtn) return;
+
+    if (totalData === 0) {
+        paginationInfo.textContent = 'Menampilkan 0 data';
+        paginationPages.innerHTML = '';
+        prevBtn.disabled = true;
+        nextBtn.disabled = true;
+        return;
+    }
+
+    paginationInfo.textContent = `Menampilkan ${startData} - ${endData} dari ${totalData} akun`;
+
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+
+    let buttons = '';
+
+    for (let page = 1; page <= totalPages; page++) {
+        buttons += `
+            <button class="pagination-page ${page === currentPage ? 'active' : ''}" data-page="${page}">
+                ${page}
+            </button>
+        `;
+    }
+
+    paginationPages.innerHTML = buttons;
+
+    document.querySelectorAll('.pagination-page').forEach(btn => {
+        btn.addEventListener('click', e => {
+            currentPage = Number(e.currentTarget.dataset.page);
+            renderTableAkun();
+        });
+    });
 }
 
 function escapeHtml(text) {
@@ -508,8 +678,33 @@ document.addEventListener('DOMContentLoaded', () => {
     blockNumbersOnFullName();
     blockLettersOnPhone();
     document.getElementById('btnTambah').addEventListener('click', openAdd);
-    document.getElementById('filterRole').addEventListener('change', renderTableAkun);
-    document.getElementById('searchInput').addEventListener('input', renderTableAkun);
+    document.getElementById('filterRole').addEventListener('change', () => {
+        currentPage = 1;
+        renderTableAkun();
+    });
+
+    document.getElementById('searchInput').addEventListener('input', () => {
+        currentPage = 1;
+        renderTableAkun();
+    });
+
+    document.getElementById('rowsPerPage').addEventListener('change', e => {
+        rowsPerPage = Number(e.target.value);
+        currentPage = 1;
+        renderTableAkun();
+    });
+
+    document.getElementById('prevPageBtn').addEventListener('click', () => {
+        if (currentPage > 1) {
+            currentPage--;
+            renderTableAkun();
+        }
+    });
+
+    document.getElementById('nextPageBtn').addEventListener('click', () => {
+        currentPage++;
+        renderTableAkun();
+    });
     document.getElementById('modalBg').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
     document.getElementById('closeModalBtn').addEventListener('click', closeModal);
     document.getElementById('batalModalBtn').addEventListener('click', closeModal);
