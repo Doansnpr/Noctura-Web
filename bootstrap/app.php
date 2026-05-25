@@ -13,11 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-
-        // ── CORS — harus di posisi paling atas agar OPTIONS preflight
-        //    ter-handle sebelum middleware lain (auth, throttle, dll)
-        $middleware->prepend(HandleCors::class);
-
+         $middleware->prepend(HandleCors::class);
+         $middleware->web(append: [
+         HandleCors::class,
+    ]);
+    
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
