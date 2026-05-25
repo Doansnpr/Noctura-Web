@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Akun;
-use App\Models\AccessToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -43,10 +42,9 @@ class MobileAuthController extends Controller
 
         $token = Str::random(60);
 
-        AccessToken::create([
-            'user_id' => (string) $akun->getKey(),
-            'token'   => hash('sha256', $token),
-        ]);
+        // ✅ Simpan hash ke akun.api_token agar cocok dengan ApiAuthenticate
+        $akun->api_token = hash('sha256', $token);
+        $akun->save();
 
         return response()->json([
             'success' => true,
@@ -65,7 +63,13 @@ class MobileAuthController extends Controller
     public function logout(Request $request)
     {
         $token = $request->bearerToken();
-        AccessToken::where('token', hash('sha256', $token))->delete();
+
+        // ✅ Hapus token dari akun langsung
+        $akun = Akun::where('api_token', hash('sha256', $token))->first();
+        if ($akun) {
+            $akun->api_token = null;
+            $akun->save();
+        }
 
         return response()->json([
             'success' => true,
