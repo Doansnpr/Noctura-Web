@@ -48,3 +48,17 @@ Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class,
 
 Route::get('/visualisasi', [VisualisasiController::class, 'index'])->middleware('auth')->name('visualisasi');
 Route::get('/api/chart-data', [VisualisasiController::class, 'getChartData'])->middleware('auth')->name('api.chart-data');
+
+// routes/web.php
+Route::get('/storage/{path}', function ($path) {
+    $fullPath = storage_path('app/public/' . $path);
+    
+    if (!file_exists($fullPath)) {
+        abort(404);
+    }
+    
+    return response()->file($fullPath, [
+        'Access-Control-Allow-Origin' => '*',
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->where('path', '.*');
