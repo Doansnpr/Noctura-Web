@@ -22,7 +22,7 @@ class ApiAuthenticate
 
         // Cari user berdasarkan api_token (plain) di collection akun
         $user = Akun::on('mongodb')
-            ->where('api_token', $token)
+            ->where('api_token', hash('sha256', $token))
             ->first();
 
         if (!$user) {

@@ -11,20 +11,14 @@ use App\Models\PredictionResult;
 
 class SleepSolutionController extends \App\Http\Controllers\Controller
 {
-    private const GEMINI_MODEL    = 'gemini-2.0-flash';
-    private const GEMINI_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/models';
-
-    private readonly string $geminiApiKey;
-
-    public function __construct()
-    {
-        $this->geminiApiKey = config('services.gemini.api_key', '');
-    }
+    // ── Ollama config ─────────────────────────────────────────────────────────
+    private const OLLAMA_BASE_URL = 'http://127.0.0.1:11434';
+    private const OLLAMA_MODEL    = 'llama3.2';
 
     // ── POST /api/v1/predictions/{id}/solution ────────────────────────────────
     public function generate(Request $request, string $id): JsonResponse
     {
-        // FIX: cari record by _id tanpa ownership check yang crash
+        set_time_limit(180);
         $record = PredictionResult::where('_id', $id)->first();
 
         if (!$record) {
@@ -34,9 +28,7 @@ class SleepSolutionController extends \App\Http\Controllers\Controller
             ], 404);
         }
 
-        // FIX: ownership check aman — hanya jika user login, bandingkan sebagai string
-        // MongoDB menyimpan user_id sebagai string "69feb30030772a6beb089e12"
-        // akun._id adalah ObjectId — keduanya di-cast ke string untuk perbandingan
+        // Ownership check — hanya jika user login
         $user = $request->user();
         if ($user) {
             $userId       = (string) ($user->_id ?? $user->id ?? '');
@@ -60,7 +52,7 @@ class SleepSolutionController extends \App\Http\Controllers\Controller
         }
 
         try {
-            $solution = $this->callGemini($record);
+            $solution = $this->callOllama($record);
             $record->update(['solution' => $solution]);
 
             return response()->json([
@@ -70,7 +62,7 @@ class SleepSolutionController extends \App\Http\Controllers\Controller
             ]);
 
         } catch (\Exception $e) {
-            Log::error('[Solution] Gemini call failed', [
+            Log::error('[Solution] Ollama call failed', [
                 'prediction_id' => $id,
                 'error'         => $e->getMessage(),
             ]);
@@ -84,56 +76,74 @@ class SleepSolutionController extends \App\Http\Controllers\Controller
         }
     }
 
-    private function callGemini(PredictionResult $record): array
-{
-    if (empty($this->geminiApiKey)) {
-        throw new \RuntimeException('GEMINI_API_KEY tidak dikonfigurasi');
-    }
+    // ── Ollama API call ───────────────────────────────────────────────────────
+    private function callOllama(PredictionResult $record): array
+    {
+        $prompt = $this->buildPrompt($record);
+        $url    = self::OLLAMA_BASE_URL . '/api/generate';
 
-    $prompt = $this->buildPrompt($record);
-    $url = sprintf('%s/%s:generateContent?key=%s',
-        self::GEMINI_BASE_URL, self::GEMINI_MODEL, $this->geminiApiKey
-    );
+        // Cek apakah Ollama sedang berjalan
+        try {
+            Http::timeout(5)->get(self::OLLAMA_BASE_URL);
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Ollama tidak berjalan. Jalankan "ollama serve" terlebih dahulu.');
+        }
 
-    // FIX: retry 2x dengan delay 3 detik jika 429
-    $maxRetry = 2;
-    for ($attempt = 0; $attempt <= $maxRetry; $attempt++) {
-        $response = Http::timeout(25)->post($url, [
-            'contents'         => [['parts' => [['text' => $prompt]]]],
-            'generationConfig' => [
-                'temperature'      => 0.4,
-                'maxOutputTokens'  => 900,
-                'responseMimeType' => 'application/json',
+        $response = Http::timeout(120)->post($url, [
+            'model'   => self::OLLAMA_MODEL,
+            'prompt'  => $prompt,
+            'stream'  => false,
+            'format'  => 'json',
+            'options' => [
+                'temperature' => 0.4,
+                'num_predict' => 1500,
             ],
         ]);
 
-        // Retry jika 429, langsung throw jika error lain
-        if ($response->status() === 429 && $attempt < $maxRetry) {
-            sleep(3);
-            continue;
-        }
-
         if (!$response->successful()) {
-            throw new \RuntimeException("Gemini API error: {$response->status()}");
+            throw new \RuntimeException("Ollama API error: {$response->status()}");
         }
 
-        $raw     = $response->json('candidates.0.content.parts.0.text') ?? '';
+        $raw     = $response->json('response') ?? '';
         $cleaned = trim(preg_replace('/^```json|```$/m', '', $raw));
         $decoded = json_decode($cleaned, true);
 
-        if (
-            json_last_error() !== JSON_ERROR_NONE ||
-            !isset($decoded['overview'], $decoded['steps'], $decoded['lifestyle'], $decoded['when_to_see_doctor'])
-        ) {
-            Log::warning('[Solution] Gemini response tidak valid', ['raw' => $raw]);
-            throw new \RuntimeException('Gemini response tidak valid');
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            Log::warning('[Solution] Ollama response tidak valid JSON', ['raw' => $raw]);
+            throw new \RuntimeException('Ollama response tidak valid JSON');
+        }
+
+        // ── Normalisasi key: Ollama kadang pakai huruf kapital ────────────────
+        $decoded = array_change_key_case($decoded, CASE_LOWER);
+
+        // Fix "when_to_see_doctor" — Ollama kadang pakai variasi key berbeda
+        if (!isset($decoded['when_to_see_doctor'])) {
+            foreach ($decoded as $key => $val) {
+                if (strtolower(str_replace([' ', '-'], '_', $key)) === 'when_to_see_doctor') {
+                    $decoded['when_to_see_doctor'] = $val;
+                    break;
+                }
+            }
+        }
+
+        // Fix "lifestyle" — Ollama kadang return array of objects, bukan array of strings
+        if (isset($decoded['lifestyle']) && is_array($decoded['lifestyle'])) {
+            $decoded['lifestyle'] = array_map(function ($item) {
+                if (is_array($item)) {
+                    return $item['title'] ?? $item['detail'] ?? implode(' ', array_values($item));
+                }
+                return (string) $item;
+            }, $decoded['lifestyle']);
+        }
+
+        // Validasi key wajib ada setelah normalisasi
+        if (!isset($decoded['overview'], $decoded['steps'], $decoded['lifestyle'], $decoded['when_to_see_doctor'])) {
+            Log::warning('[Solution] Ollama response key tidak lengkap', ['decoded' => $decoded]);
+            throw new \RuntimeException('Ollama response tidak valid');
         }
 
         return $decoded;
     }
-
-    throw new \RuntimeException('Gemini API error: 429 setelah retry');
-}
 
     private function buildResponse(PredictionResult $record, array $solution): array
     {
@@ -153,7 +163,7 @@ class SleepSolutionController extends \App\Http\Controllers\Controller
         $inputData  = $record->input_data ?? [];
         $prediction = $record->prediction;
 
-        $systemPrompt = <<<'PROMPT'
+$systemPrompt = <<<'PROMPT'
 Kamu adalah dokter spesialis tidur berbasis literatur ilmiah terkini.
 Tugasmu membuat rencana solusi terstruktur dan personal untuk pasien berdasarkan diagnosis gangguan tidur.
 
@@ -165,24 +175,17 @@ Tugasmu membuat rencana solusi terstruktur dan personal untuk pasien berdasarkan
 - Punjabi (2008): Posisi miring kurangi apnea 50%. Penurunan berat badan kurangi AHI secara signifikan.
 - Grandner et al. (2012): Journaling dan manajemen stres adalah intervensi utama insomnia psikofisiologis.
 
-[FORMAT RESPONS — JSON ONLY, tanpa markdown, tanpa backtick]
-{
-  "overview": "2-3 kalimat ringkasan kondisi dan pendekatan solusi secara personal",
-  "steps": [
-    {
-      "title": "Nama langkah singkat",
-      "detail": "Penjelasan praktis dan actionable, sesuaikan dengan data user",
-      "source": "Nama literatur singkat"
-    }
-  ],
-  "lifestyle": [
-    "Perubahan kebiasaan 1 yang spesifik",
-    "Perubahan kebiasaan 2 yang spesifik"
-  ],
-  "when_to_see_doctor": "Kondisi spesifik kapan user harus segera ke dokter"
-}
+[ATURAN WAJIB]
+1. Semua key JSON HARUS huruf kecil
+2. "lifestyle" HARUS array of STRING, BUKAN array of object
+3. "steps" WAJIB berisi TEPAT 5 item, tidak boleh kurang
+4. Setiap step WAJIB memiliki "title", "detail", dan "source"
+5. Balas HANYA JSON mentah tanpa teks lain
 
-Hasilkan tepat 4-5 steps dan 4-5 lifestyle. Gunakan bahasa Indonesia. Sesuaikan dengan data user.
+[FORMAT PERSIS — IKUTI INI]
+{"overview":"...","steps":[{"title":"...","detail":"...","source":"..."},{"title":"...","detail":"...","source":"..."},{"title":"...","detail":"...","source":"..."},{"title":"...","detail":"...","source":"..."},{"title":"...","detail":"...","source":"..."}],"lifestyle":["...","...","...","...","..."],"when_to_see_doctor":"..."}
+
+WAJIB 5 steps dan 5 lifestyle. Gunakan bahasa Indonesia. Sesuaikan dengan data pasien.
 PROMPT;
 
         $age      = $inputData['age']                     ?? '-';
