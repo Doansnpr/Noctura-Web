@@ -1,8 +1,6 @@
-@extends('layouts.dashboard')
+<?php $__env->startSection('content'); ?>
 
-@section('content')
-
-<link rel="stylesheet" href="{{ asset('css/dashboard-view.css') }}">
+<link rel="stylesheet" href="<?php echo e(asset('css/dashboard-view.css')); ?>">
 
 <div class="dashboard-page">
     <div class="page-eyebrow">Dashboard Admin</div>
@@ -12,9 +10,9 @@
     </p>
 
     <div class="quick-actions">
-        <a href="{{ url('/monitoring-prediksi') }}" class="quick-action">Monitoring Prediksi</a>
-        <a href="{{ url('/edukasi') }}" class="quick-action">Kelola Edukasi</a>
-        <a href="{{ url('/akun') }}" class="quick-action">Kelola Akun</a>
+        <a href="<?php echo e(url('/monitoring-prediksi')); ?>" class="quick-action">Monitoring Prediksi</a>
+        <a href="<?php echo e(url('/edukasi')); ?>" class="quick-action">Kelola Edukasi</a>
+        <a href="<?php echo e(url('/akun')); ?>" class="quick-action">Kelola Akun</a>
     </div>
 
     <div class="kpi-grid">
@@ -30,7 +28,7 @@
                 </div>
                 <span class="kpi-chip">Admin</span>
             </div>
-            <div class="kpi-value">{{ number_format($kpi['total_pengguna'], 0, ',', '.') }}</div>
+            <div class="kpi-value"><?php echo e(number_format($kpi['total_pengguna'], 0, ',', '.')); ?></div>
             <div class="kpi-label">Total Pengguna</div>
         </div>
 
@@ -41,9 +39,9 @@
                         <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                     </svg>
                 </div>
-                <span class="kpi-chip success">Hari ini {{ $kpi['prediksi_hari_ini'] }}</span>
+                <span class="kpi-chip success">Hari ini <?php echo e($kpi['prediksi_hari_ini']); ?></span>
             </div>
-            <div class="kpi-value">{{ number_format($kpi['total_prediksi'], 0, ',', '.') }}</div>
+            <div class="kpi-value"><?php echo e(number_format($kpi['total_prediksi'], 0, ',', '.')); ?></div>
             <div class="kpi-label">Total Prediksi</div>
         </div>
 
@@ -55,9 +53,9 @@
                         <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                     </svg>
                 </div>
-                <span class="kpi-chip">{{ $kpi['artikel_published'] }} Published</span>
+                <span class="kpi-chip"><?php echo e($kpi['artikel_published']); ?> Published</span>
             </div>
-            <div class="kpi-value">{{ number_format($kpi['total_edukasi'], 0, ',', '.') }}</div>
+            <div class="kpi-value"><?php echo e(number_format($kpi['total_edukasi'], 0, ',', '.')); ?></div>
             <div class="kpi-label">Artikel Edukasi</div>
         </div>
 
@@ -72,12 +70,12 @@
                 </div>
                 <span class="kpi-chip warning">Monitoring</span>
             </div>
-            <div class="kpi-value">{{ number_format($kpi['indikasi_gangguan'], 0, ',', '.') }}</div>
+            <div class="kpi-value"><?php echo e(number_format($kpi['indikasi_gangguan'], 0, ',', '.')); ?></div>
             <div class="kpi-label">Indikasi Gangguan</div>
         </div>
     </div>
 
-    @php
+    <?php
         $healthyPercent = $caseProfile[0]['percent'] ?? 0;
         $insomniaPercent = $caseProfile[1]['percent'] ?? 0;
         $apneaPercent = $caseProfile[2]['percent'] ?? 0;
@@ -94,7 +92,7 @@
             $totalMonth = ($month['healthy'] ?? 0) + ($month['insomnia'] ?? 0) + ($month['sleep_apnea'] ?? 0);
             $maxMonth = max($maxMonth, $totalMonth);
         }
-    @endphp
+    ?>
 
     <div class="dashboard-compact-grid">
 
@@ -104,35 +102,36 @@
                     <div class="compact-label">Distribusi</div>
                     <div class="compact-title">Jenis Gangguan Tidur</div>
                 </div>
-                <span class="compact-badge">{{ number_format($kpi['total_prediksi'], 0, ',', '.') }} prediksi</span>
+                <span class="compact-badge"><?php echo e(number_format($kpi['total_prediksi'], 0, ',', '.')); ?> prediksi</span>
             </div>
 
             <div class="compact-body split">
                 <div class="mini-donut">
-                    <div class="mini-donut-ring" style="background: {{ $donutBackground }}">
+                    <div class="mini-donut-ring" style="background: <?php echo e($donutBackground); ?>">
                         <div class="mini-donut-center">
-                            <b>{{ number_format($kpi['total_prediksi'], 0, ',', '.') }}</b>
+                            <b><?php echo e(number_format($kpi['total_prediksi'], 0, ',', '.')); ?></b>
                             <span>Total</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="compact-list">
-                    @foreach ($caseProfile as $case)
+                    <?php $__currentLoopData = $caseProfile; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $case): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                         <div class="compact-row">
                             <div class="compact-row-top">
                                 <span>
-                                    <i class="dot dot-{{ $case['key'] }}"></i>
-                                    {{ $case['label'] }}
+                                    <i class="dot dot-<?php echo e($case['key']); ?>"></i>
+                                    <?php echo e($case['label']); ?>
+
                                 </span>
-                                <b>{{ $case['percent'] }}%</b>
+                                <b><?php echo e($case['percent']); ?>%</b>
                             </div>
                             <div class="mini-progress">
-                                <div class="mini-progress-fill fill-{{ $case['key'] }}" style="width: {{ $case['percent'] }}%"></div>
+                                <div class="mini-progress-fill fill-<?php echo e($case['key']); ?>" style="width: <?php echo e($case['percent']); ?>%"></div>
                             </div>
-                            <small>{{ number_format($case['count'], 0, ',', '.') }} data</small>
+                            <small><?php echo e(number_format($case['count'], 0, ',', '.')); ?> data</small>
                         </div>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </div>
             </div>
         </div>
@@ -147,18 +146,18 @@
             </div>
 
             <div class="mini-line-area">
-                @foreach ($monthlyDistribution as $month)
-                    @php
+                <?php $__currentLoopData = $monthlyDistribution; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $month): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <?php
                         $totalMonth = ($month['healthy'] ?? 0) + ($month['insomnia'] ?? 0) + ($month['sleep_apnea'] ?? 0);
                         $height = $totalMonth > 0 ? max(8, ($totalMonth / $maxMonth) * 120) : 5;
-                    @endphp
+                    ?>
 
-                    <div class="mini-line-col" title="{{ $totalMonth }} prediksi">
-                        <div class="mini-line-dot" style="bottom: {{ $height }}px"></div>
-                        <div class="mini-line-bar" style="height: {{ $height }}px"></div>
-                        <span>{{ $month['label'] }}</span>
+                    <div class="mini-line-col" title="<?php echo e($totalMonth); ?> prediksi">
+                        <div class="mini-line-dot" style="bottom: <?php echo e($height); ?>px"></div>
+                        <div class="mini-line-bar" style="height: <?php echo e($height); ?>px"></div>
+                        <span><?php echo e($month['label']); ?></span>
                     </div>
-                @endforeach
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
             </div>
         </div>
 
@@ -168,38 +167,39 @@
                     <div class="compact-label">Edukasi</div>
                     <div class="compact-title">Ringkasan Artikel</div>
                 </div>
-                <a href="{{ url('/edukasi') }}" class="compact-badge">Kelola →</a>
+                <a href="<?php echo e(url('/edukasi')); ?>" class="compact-badge">Kelola →</a>
             </div>
 
             <div class="edu-mini-grid">
                 <div class="edu-mini-item">
                     <span>Total</span>
-                    <b>{{ number_format($kpi['total_edukasi'], 0, ',', '.') }}</b>
+                    <b><?php echo e(number_format($kpi['total_edukasi'], 0, ',', '.')); ?></b>
                 </div>
                 <div class="edu-mini-item">
                     <span>Published</span>
-                    <b>{{ number_format($kpi['artikel_published'], 0, ',', '.') }}</b>
+                    <b><?php echo e(number_format($kpi['artikel_published'], 0, ',', '.')); ?></b>
                 </div>
                 <div class="edu-mini-item">
                     <span>Draft</span>
-                    <b>{{ number_format($kpi['artikel_draft'], 0, ',', '.') }}</b>
+                    <b><?php echo e(number_format($kpi['artikel_draft'], 0, ',', '.')); ?></b>
                 </div>
             </div>
 
             <div class="mini-article-list">
-                @forelse ($recentArticles as $article)
+                <?php $__empty_1 = true; $__currentLoopData = $recentArticles; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $article): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <div class="mini-article-item">
                         <div>
-                            <b>{{ $article['judul'] }}</b>
-                            <span>{{ $article['kategori'] }} • {{ $article['tanggal'] }}</span>
+                            <b><?php echo e($article['judul']); ?></b>
+                            <span><?php echo e($article['kategori']); ?> • <?php echo e($article['tanggal']); ?></span>
                         </div>
-                        <small class="{{ $article['status'] === 'Published' ? 'status-published' : 'status-draft' }}">
-                            {{ $article['status'] }}
+                        <small class="<?php echo e($article['status'] === 'Published' ? 'status-published' : 'status-draft'); ?>">
+                            <?php echo e($article['status']); ?>
+
                         </small>
                     </div>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <div class="empty-mini">Belum ada artikel edukasi.</div>
-                @endforelse
+                <?php endif; ?>
             </div>
         </div>
 
@@ -209,41 +209,43 @@
                     <div class="compact-label">Monitoring</div>
                     <div class="compact-title">Prediksi Terbaru</div>
                 </div>
-                <a href="{{ url('/monitoring-prediksi') }}" class="compact-badge">Lihat Semua →</a>
+                <a href="<?php echo e(url('/monitoring-prediksi')); ?>" class="compact-badge">Lihat Semua →</a>
             </div>
 
             <div class="mini-prediction-list">
-                @forelse ($recentPredictions as $item)
-                    @php
+                <?php $__empty_1 = true; $__currentLoopData = $recentPredictions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $item): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                    <?php
                         $badgeClass = match($item['prediction_key']) {
                             'healthy' => 'badge-healthy',
                             'insomnia' => 'badge-insomnia',
                             'sleep_apnea' => 'badge-apnea',
                             default => 'badge-default',
                         };
-                    @endphp
+                    ?>
 
                     <div class="mini-prediction-item">
                         <div class="prediction-left">
-                            <b>{{ $item['user_id'] }}</b>
-                            <span>{{ $item['tanggal_tampil'] }}</span>
+                            <b><?php echo e($item['user_id']); ?></b>
+                            <span><?php echo e($item['tanggal_tampil']); ?></span>
                         </div>
 
                         <div class="prediction-mid">
-                            <small class="mini-badge {{ $badgeClass }}">{{ $item['prediction'] }}</small>
+                            <small class="mini-badge <?php echo e($badgeClass); ?>"><?php echo e($item['prediction']); ?></small>
                         </div>
 
                         <div class="prediction-confidence">
-                            <b>{{ $item['confidence_utama'] }}%</b>
+                            <b><?php echo e($item['confidence_utama']); ?>%</b>
                         </div>
                     </div>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <div class="empty-mini">Belum ada data prediksi.</div>
-                @endforelse
+                <?php endif; ?>
             </div>
         </div>
 
     </div>
 </div>
 
-@endsection
+<?php $__env->stopSection(); ?>
+
+<?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\noctura\resources\views/dashboard/index.blade.php ENDPATH**/ ?>

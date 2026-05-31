@@ -4,13 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta name="csrf-token" content="<?php echo e(csrf_token()); ?>">
     <title>Dashboard Admin - Noctura</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Poppins:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
+    <link rel="stylesheet" href="<?php echo e(asset('css/dashboard.css')); ?>">
 
-    @stack('styles')
+    <?php echo $__env->yieldPushContent('styles'); ?>
 </head>
 
 <body>
@@ -37,7 +37,7 @@
         <nav class="sidebar-nav">
             <div class="nav-section-label">Main Menu</div>
 
-            <a href="{{ route('dashboard') }}" class="nav-item active" data-nav="dashboard">
+            <a href="<?php echo e(route('dashboard')); ?>" class="nav-item active" data-nav="dashboard">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
                     <polyline points="9 22 9 12 15 12 15 22" />
@@ -61,14 +61,14 @@
                 </div>
                 <div class="sub-nav">
                     <div class="flyout-title">Master Data</div>
-                    <a href="{{ route('akun.index') }}" class="sub-nav-item" data-sub="akun">
+                    <a href="<?php echo e(route('akun.index')); ?>" class="sub-nav-item" data-sub="akun">
                         <svg class="sub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                             <circle cx="12" cy="7" r="4" />
                         </svg>
                         <span>Kelola Akun</span>
                     </a>
-                    <a href="{{ route('edukasi.index') }}" class="sub-nav-item" data-sub="edu">
+                    <a href="<?php echo e(route('edukasi.index')); ?>" class="sub-nav-item" data-sub="edu">
                         <svg class="sub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                         </svg>
@@ -77,7 +77,7 @@
                 </div>
             </div>
 
-            <a href="{{ route('visualisasi') }}" class="nav-item {{ request()->routeIs('visualisasi') ? 'active' : '' }}" data-nav="visualisasi">
+            <a href="<?php echo e(route('visualisasi')); ?>" class="nav-item <?php echo e(request()->routeIs('visualisasi') ? 'active' : ''); ?>" data-nav="visualisasi">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <rect x="3" y="9" width="4" height="12" rx="1" />
                     <rect x="10" y="5" width="4" height="16" rx="1" />
@@ -86,7 +86,7 @@
                 <span>Visualisasi</span>
             </a>
 
-            <a href="{{ route('monitoring-prediksi.index') }}" class="nav-item {{ request()->routeIs('monitoring-prediksi.*') ? 'active' : '' }}">
+            <a href="<?php echo e(route('monitoring-prediksi.index')); ?>" class="nav-item <?php echo e(request()->routeIs('monitoring-prediksi.*') ? 'active' : ''); ?>">
                 <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"/>
                     <path d="M19.07 4.93A10 10 0 1 1 4.93 19.07"/>
@@ -120,12 +120,13 @@
             <div class="topbar-actions">
                 <div class="notif-wrapper">
     <button type="button" class="icon-btn notif-btn" id="notifBtn" title="Notifikasi">
-        @if (($topbarNotificationCount ?? 0) > 0)
+        <?php if(($topbarNotificationCount ?? 0) > 0): ?>
             <div class="notif-dot"></div>
             <span class="notif-count">
-                {{ ($topbarNotificationCount ?? 0) > 9 ? '9+' : $topbarNotificationCount }}
+                <?php echo e(($topbarNotificationCount ?? 0) > 9 ? '9+' : $topbarNotificationCount); ?>
+
             </span>
-        @endif
+        <?php endif; ?>
 
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
@@ -138,45 +139,45 @@
             <div>
                 <div class="notif-title">Notifikasi</div>
                 <div class="notif-sub">
-                    {{ $topbarNotificationCount ?? 0 }} aktivitas baru hari ini
+                    <?php echo e($topbarNotificationCount ?? 0); ?> aktivitas baru hari ini
                 </div>
             </div>
         </div>
 
         <div class="notif-list">
-            @forelse (($topbarNotifications ?? collect()) as $notif)
-                <a href="{{ $notif['url'] }}" class="notif-item">
-                    <div class="notif-item-icon {{ $notif['type'] }}">
-                        @if ($notif['type'] === 'prediction')
+            <?php $__empty_1 = true; $__currentLoopData = ($topbarNotifications ?? collect()); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notif): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <a href="<?php echo e($notif['url']); ?>" class="notif-item">
+                    <div class="notif-item-icon <?php echo e($notif['type']); ?>">
+                        <?php if($notif['type'] === 'prediction'): ?>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
                             </svg>
-                        @else
+                        <?php else: ?>
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
                                 <circle cx="12" cy="7" r="4"/>
                             </svg>
-                        @endif
+                        <?php endif; ?>
                     </div>
 
                     <div class="notif-item-body">
                         <div class="notif-item-top">
-                            <strong>{{ $notif['title'] }}</strong>
-                            <span>{{ $notif['time'] }}</span>
+                            <strong><?php echo e($notif['title']); ?></strong>
+                            <span><?php echo e($notif['time']); ?></span>
                         </div>
-                        <p>{{ $notif['message'] }}</p>
-                        <small>{{ $notif['meta'] }}</small>
+                        <p><?php echo e($notif['message']); ?></p>
+                        <small><?php echo e($notif['meta']); ?></small>
                     </div>
                 </a>
-            @empty
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                 <div class="notif-empty">
                     Belum ada notifikasi baru.
                 </div>
-            @endforelse
+            <?php endif; ?>
         </div>
 
         <div class="notif-foot">
-            <a href="{{ route('monitoring-prediksi.index') }}">Lihat monitoring prediksi</a>
+            <a href="<?php echo e(route('monitoring-prediksi.index')); ?>">Lihat monitoring prediksi</a>
         </div>
     </div>
 </div>
@@ -201,18 +202,20 @@
                             </div>
                             <div>
                                 <div class="dropdown-name">
-                                    {{ auth()->user()->username ?? auth()->user()->email ?? 'Admin Noctura' }}
+                                    <?php echo e(auth()->user()->username ?? auth()->user()->email ?? 'Admin Noctura'); ?>
+
                                 </div>
                                 <div class="dropdown-email">
-                                    {{ auth()->user()->email ?? '-' }}
+                                    <?php echo e(auth()->user()->email ?? '-'); ?>
+
                                 </div>
                             </div>
                         </div>
 
                         <div class="dropdown-divider"></div>
 
-                        <form action="{{ route('logout') }}" method="POST" id="logoutForm" onsubmit="handleLogoutSubmit(event)">
-                            @csrf
+                        <form action="<?php echo e(route('logout')); ?>" method="POST" id="logoutForm" onsubmit="handleLogoutSubmit(event)">
+                            <?php echo csrf_field(); ?>
                             <button type="submit" class="dropdown-item dropdown-logout" id="logoutBtn">
                                 <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
@@ -228,7 +231,7 @@
         </header>
 
         <main class="dashboard-body" id="mainContent">
-            @yield('content')
+            <?php echo $__env->yieldContent('content'); ?>
         </main>
     </div>
 
@@ -542,7 +545,8 @@
             }
         })();
     </script>
-    @stack('scripts')
+    <?php echo $__env->yieldPushContent('scripts'); ?>
 </body>
 
 </html>
+<?php /**PATH C:\xampp\htdocs\noctura\resources\views/layouts/dashboard.blade.php ENDPATH**/ ?>

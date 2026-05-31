@@ -16,8 +16,6 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
-Route::get('/pertanyaan', [PertanyaanController::class, 'index'])->name('pertanyaan')->middleware('auth');
-Route::get('/jawaban', [JawabanController::class, 'index'])->name('jawaban')->middleware('auth');
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
