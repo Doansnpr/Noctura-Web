@@ -13,7 +13,6 @@ use App\Http\Controllers\Api\PredictionHistoryController;
 use App\Http\Controllers\Api\SleepLogController; 
 use App\Http\Controllers\Api\InsightController;
 
-// ─── KODE TEMAN (JANGAN DIUBAH) ───────────────────────────────────────────────
 Route::get('/user', [AuthController::class, 'me']);
 
 Route::get('edukasi/published', [EdukasiController::class, 'published']);

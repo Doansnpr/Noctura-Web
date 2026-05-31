@@ -45,7 +45,6 @@ Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class,
     ->name('monitoring-prediksi.destroy');
 
 Route::get('/visualisasi', [VisualisasiController::class, 'index'])->middleware('auth')->name('visualisasi');
-Route::get('/api/chart-data', [VisualisasiController::class, 'getChartData'])->middleware('auth')->name('api.chart-data');
 
 // routes/web.php
 Route::get('/storage/{path}', function ($path) {
