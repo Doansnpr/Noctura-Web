@@ -37,6 +37,7 @@ class DashboardController extends Controller
             'healthy' => $healthy,
             'insomnia' => $insomnia,
             'sleep_apnea' => $sleepApnea,
+            'indikasi_gangguan' => $insomnia + $sleepApnea,
             'artikel_published' => $artikelPublished,
             'artikel_draft' => $artikelDraft,
         ];
@@ -72,7 +73,7 @@ class DashboardController extends Controller
         try {
             $results = \App\Models\Monitoring::raw(function ($collection) {
                 return $collection->find([], [
-                    'sort' => ['created_at' => -1]
+                    'sort' => ['created_at' => -1],
                 ]);
             });
 
@@ -109,7 +110,6 @@ class DashboardController extends Controller
             'input_data' => $this->decodeJsonField($item['input_data'] ?? []),
             'tanggal_prediksi' => $tanggal,
             'tanggal_tampil' => $this->formatDate($tanggal),
-            'severity' => $this->severityFromPrediction($predictionKey, $confidenceUtama),
         ];
     }
 
@@ -142,11 +142,10 @@ class DashboardController extends Controller
 
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->subMonths($i);
-
             $key = $date->format('Y-m');
 
             $months[$key] = [
-                'label' => $date->translatedFormat('M'),
+                'label' => $date->translatedFormat('M Y'),
                 'healthy' => 0,
                 'insomnia' => 0,
                 'sleep_apnea' => 0,
@@ -155,10 +154,16 @@ class DashboardController extends Controller
 
         foreach ($prediksi as $item) {
             $date = $this->toCarbon($item['tanggal_prediksi'] ?? null);
-            if (!$date) continue;
+
+            if (!$date) {
+                continue;
+            }
 
             $key = $date->format('Y-m');
-            if (!isset($months[$key])) continue;
+
+            if (!isset($months[$key])) {
+                continue;
+            }
 
             $predictionKey = $item['prediction_key'] ?? '-';
 
@@ -174,7 +179,7 @@ class DashboardController extends Controller
     {
         return [
             [
-                'label' => 'Healthy',
+                'label' => 'Tidur Sehat',
                 'key' => 'healthy',
                 'count' => $healthy,
                 'percent' => $total > 0 ? round(($healthy / $total) * 100, 1) : 0,
@@ -196,7 +201,9 @@ class DashboardController extends Controller
 
     private function safeCount(string $modelClass): int
     {
-        if (!class_exists($modelClass)) return 0;
+        if (!class_exists($modelClass)) {
+            return 0;
+        }
 
         try {
             return $modelClass::count();
@@ -207,7 +214,9 @@ class DashboardController extends Controller
 
     private function safeWhereCount(string $modelClass, string $field, $value): int
     {
-        if (!class_exists($modelClass)) return 0;
+        if (!class_exists($modelClass)) {
+            return 0;
+        }
 
         try {
             return $modelClass::where($field, $value)->count();
@@ -219,7 +228,6 @@ class DashboardController extends Controller
     private function normalizePredictionKey($prediction): string
     {
         $value = strtolower(trim((string) $prediction));
-
         $value = str_replace(['-', ' '], '_', $value);
 
         if (in_array($value, ['healthy', 'normal', 'sehat'])) {
@@ -247,22 +255,6 @@ class DashboardController extends Controller
         };
     }
 
-    private function severityFromPrediction(string $predictionKey, float $confidence): string
-    {
-        if ($predictionKey === 'healthy') {
-            return 'Rendah';
-        }
-
-        if ($confidence >= 80) {
-            return 'Tinggi';
-        }
-
-        if ($confidence >= 50) {
-            return 'Sedang';
-        }
-
-        return 'Rendah';
-    }
 
     private function labelKategoriEdukasi($kategori): string
     {
@@ -276,7 +268,9 @@ class DashboardController extends Controller
 
     private function decodeJsonField($value)
     {
-        if (is_array($value)) return $value;
+        if (is_array($value)) {
+            return $value;
+        }
 
         if (is_object($value)) {
             return json_decode(json_encode($value), true) ?: [];
@@ -330,7 +324,9 @@ class DashboardController extends Controller
 
     private function toArraySafe($value): array
     {
-        if (is_array($value)) return $value;
+        if (is_array($value)) {
+            return $value;
+        }
 
         if (is_object($value)) {
             return json_decode(json_encode($value), true) ?: [];
@@ -355,7 +351,9 @@ class DashboardController extends Controller
     private function toCarbon($date): ?Carbon
     {
         try {
-            if (!$date) return null;
+            if (!$date) {
+                return null;
+            }
 
             if ($date instanceof Carbon) {
                 return $date;
@@ -365,12 +363,16 @@ class DashboardController extends Controller
                 return Carbon::instance($date);
             }
 
-            if (is_array($date) && isset($date['$date'])) {
-                return Carbon::parse($date['$date']);
-            }
-
             if (is_object($date) && method_exists($date, 'toDateTime')) {
                 return Carbon::instance($date->toDateTime());
+            }
+
+            if (is_array($date) && isset($date['$date'])) {
+                if (is_array($date['$date']) && isset($date['$date']['$numberLong'])) {
+                    return Carbon::createFromTimestampMs((int) $date['$date']['$numberLong']);
+                }
+
+                return Carbon::parse($date['$date']);
             }
 
             return Carbon::parse($date);
