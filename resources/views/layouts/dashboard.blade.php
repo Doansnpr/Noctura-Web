@@ -68,20 +68,6 @@
                         </svg>
                         <span>Kelola Akun</span>
                     </a>
-                    <a href="{{ route('pertanyaan') }}" class="sub-nav-item" data-sub="question">
-                        <svg class="sub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
-                            <line x1="12" y1="17" x2="12.01" y2="17" />
-                        </svg>
-                        <span>Kelola Pertanyaan</span>
-                    </a>
-                    <a href="{{ route('jawaban') }}" class="sub-nav-item" data-sub="answer">
-                        <svg class="sub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                        </svg>
-                        <span>Kelola Jawaban</span>
-                    </a>
                     <a href="{{ route('edukasi.index') }}" class="sub-nav-item" data-sub="edu">
                         <svg class="sub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
