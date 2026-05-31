@@ -118,14 +118,69 @@
             <div class="topbar-divider"></div>
 
             <div class="topbar-actions">
-                <!-- Notification Button -->
-                <div class="icon-btn">
-                    <div class="notif-dot"></div>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                        <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                    </svg>
+                <div class="notif-wrapper">
+    <button type="button" class="icon-btn notif-btn" id="notifBtn" title="Notifikasi">
+        <?php if(($topbarNotificationCount ?? 0) > 0): ?>
+            <div class="notif-dot"></div>
+            <span class="notif-count">
+                <?php echo e(($topbarNotificationCount ?? 0) > 9 ? '9+' : $topbarNotificationCount); ?>
+
+            </span>
+        <?php endif; ?>
+
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+            <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+    </button>
+
+    <div class="notif-dropdown" id="notifDropdown">
+        <div class="notif-head">
+            <div>
+                <div class="notif-title">Notifikasi</div>
+                <div class="notif-sub">
+                    <?php echo e($topbarNotificationCount ?? 0); ?> aktivitas baru hari ini
                 </div>
+            </div>
+        </div>
+
+        <div class="notif-list">
+            <?php $__empty_1 = true; $__currentLoopData = ($topbarNotifications ?? collect()); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $notif): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
+                <a href="<?php echo e($notif['url']); ?>" class="notif-item">
+                    <div class="notif-item-icon <?php echo e($notif['type']); ?>">
+                        <?php if($notif['type'] === 'prediction'): ?>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                            </svg>
+                        <?php else: ?>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="notif-item-body">
+                        <div class="notif-item-top">
+                            <strong><?php echo e($notif['title']); ?></strong>
+                            <span><?php echo e($notif['time']); ?></span>
+                        </div>
+                        <p><?php echo e($notif['message']); ?></p>
+                        <small><?php echo e($notif['meta']); ?></small>
+                    </div>
+                </a>
+            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
+                <div class="notif-empty">
+                    Belum ada notifikasi baru.
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="notif-foot">
+            <a href="<?php echo e(route('monitoring-prediksi.index')); ?>">Lihat monitoring prediksi</a>
+        </div>
+    </div>
+</div>
 
                 <!-- Profile Button with Dropdown -->
                 <div class="icon-btn profile-btn" id="profileBtn" title="Profil">
@@ -146,27 +201,16 @@
                                 </svg>
                             </div>
                             <div>
-                                <div class="dropdown-name"><?php echo e(auth()->user()->name ?? 'Dr. Setiawan'); ?></div>
-                                <div class="dropdown-email"><?php echo e(auth()->user()->email ?? 'dr.setiawan@noctura.id'); ?></div>
+                                <div class="dropdown-name">
+                                    <?php echo e(auth()->user()->username ?? auth()->user()->email ?? 'Admin Noctura'); ?>
+
+                                </div>
+                                <div class="dropdown-email">
+                                    <?php echo e(auth()->user()->email ?? '-'); ?>
+
+                                </div>
                             </div>
                         </div>
-                        <div class="dropdown-divider"></div>
-
-                        <button type="button" class="dropdown-item" id="openProfileModal">
-                            <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                                <circle cx="12" cy="7" r="4"/>
-                            </svg>
-                            <span>Profil Saya</span>
-                        </button>
-
-                        <button type="button" class="dropdown-item" id="openSettingsModal">
-                            <svg class="dropdown-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <circle cx="12" cy="12" r="3"/>
-                                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-                            </svg>
-                            <span>Pengaturan</span>
-                        </button>
 
                         <div class="dropdown-divider"></div>
 
@@ -191,55 +235,6 @@
         </main>
     </div>
 
-    <!-- ========== PROFILE MODAL ========== -->
-    <div class="modal-overlay" id="profileModal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 class="modal-title">Profil Saya</h3>
-                <button class="modal-close" id="closeProfileModal" aria-label="Tutup modal">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
-                    </svg>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="profile-avatar-section">
-                    <div class="profile-avatar-large">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
-                        </svg>
-                    </div>
-                </div>
-                <div class="profile-view">
-                    <div class="profile-row">
-                        <label>Nama Lengkap</label>
-                        <div class="profile-value"><?php echo e(auth()->user()->name ?? '-'); ?></div>
-                    </div>
-                    <div class="profile-row">
-                        <label>Email</label>
-                        <div class="profile-value"><?php echo e(auth()->user()->email ?? '-'); ?></div>
-                    </div>
-                    <div class="profile-row">
-                        <label>Role</label>
-                        <div class="profile-value">Sleep Specialist</div>
-                    </div>
-                    <div class="profile-row">
-                        <label>Terdaftar Sejak</label>
-                        <div class="profile-value">
-                            <?php echo e(auth()->user()->created_at?->format('d F Y') ?? '-'); ?>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="closeProfileBtn">Tutup</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         (function() {
             'use strict';
@@ -254,6 +249,8 @@
             const subNavOriginal  = masterGroup?.querySelector('.sub-nav');
             const profileBtn      = document.getElementById('profileBtn');
             const profileDropdown = document.getElementById('profileDropdown');
+            const notifBtn        = document.getElementById('notifBtn');
+            const notifDropdown   = document.getElementById('notifDropdown');
             const profileModal    = document.getElementById('profileModal');
             const settingsModal   = document.getElementById('settingsModal');
             const openProfileBtn  = document.getElementById('openProfileModal');
@@ -304,19 +301,79 @@
                 if (masterGroup) masterGroup.classList.remove('open');
             }
 
-            // ── Dropdown ──
             function closeProfileDropdown() {
                 profileDropdown?.classList.remove('visible');
                 profileBtn?.classList.remove('active');
             }
 
-            function toggleProfileDropdown(e) {
-                if (e) { e.stopPropagation(); e.preventDefault(); }
-                if (!profileDropdown) return;
-                const isVisible = profileDropdown.classList.contains('visible');
+            function closeNotifDropdown() {
+                notifDropdown?.classList.remove('visible');
+                notifBtn?.classList.remove('active');
+            }
+
+            function toggleNotifDropdown(e) {
+                if (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
+
+                if (!notifDropdown) return;
+
+                const isVisible = notifDropdown.classList.contains('visible');
+
                 closeFlyout();
-                if (isVisible) { closeProfileDropdown(); }
-                else { closeProfileDropdown(); profileDropdown.classList.add('visible'); profileBtn?.classList.add('active'); }
+                closeProfileDropdown();
+
+                if (isVisible) {
+                    closeNotifDropdown();
+                } else {
+                    notifDropdown.classList.add('visible');
+                    notifBtn?.classList.add('active');
+                }
+            }
+
+            function toggleProfileDropdown(e) {
+                if (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
+
+                if (!profileDropdown) return;
+
+                const isVisible = profileDropdown.classList.contains('visible');
+
+                closeFlyout();
+                closeNotifDropdown();
+
+                if (isVisible) {
+                    closeProfileDropdown();
+                } else {
+                    closeProfileDropdown();
+                    profileDropdown.classList.add('visible');
+                    profileBtn?.classList.add('active');
+                }
+            }
+
+            function toggleNotifDropdown(e) {
+                if (e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
+
+                if (!notifDropdown) return;
+
+                const isVisible = notifDropdown.classList.contains('visible');
+
+                closeFlyout();
+                closeProfileDropdown();
+
+                if (isVisible) {
+                    closeNotifDropdown();
+                } else {
+                    closeNotifDropdown();
+                    notifDropdown.classList.add('visible');
+                    notifBtn?.classList.add('active');
+                }
             }
 
             // ── Modals ──
@@ -422,6 +479,14 @@
                 if (profileDropdown?.classList.contains('visible') && !profileDropdown.contains(e.target) && profileBtn && !profileBtn.contains(e.target)) closeProfileDropdown();
                 if (profileModal && e.target === profileModal) closeModal(profileModal);
                 if (settingsModal && e.target === settingsModal) closeModal(settingsModal);
+                if (
+                    notifDropdown?.classList.contains('visible') &&
+                    !notifDropdown.contains(e.target) &&
+                    notifBtn &&
+                    !notifBtn.contains(e.target)
+                ) {
+                    closeNotifDropdown();
+                }
             });
 
             window.addEventListener('resize', () => {
@@ -444,6 +509,7 @@
             }
 
             if (profileBtn) profileBtn.addEventListener('click', toggleProfileDropdown);
+            if (notifBtn) notifBtn.addEventListener('click', toggleNotifDropdown);
             navItems.forEach(item => item.addEventListener('click', function() { clearActive(); this.classList.add('active'); }));
             subItems.forEach(sub  => sub.addEventListener('click', function()  { clearActive(); this.classList.add('active'); }));
             window.addEventListener('popstate', setActiveFromUrl);
@@ -463,7 +529,12 @@
             if (profileModal) profileModal.addEventListener('click', e => { if (e.target === profileModal) closeModal(profileModal); });
             if (settingsModal) settingsModal.addEventListener('click', e => { if (e.target === settingsModal) closeModal(settingsModal); });
             document.addEventListener('keydown', e => {
-                if (e.key === 'Escape') { closeModal(profileModal); closeModal(settingsModal); closeProfileDropdown(); }
+                if (e.key === 'Escape') {
+                    closeModal(profileModal);
+                    closeModal(settingsModal);
+                    closeProfileDropdown();
+                    closeNotifDropdown();
+                }
             });
 
             if (!document.querySelector('#flash-styles')) {

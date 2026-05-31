@@ -248,9 +248,4 @@
 
 <?php $__env->stopSection(); ?>
 
-<script>
-setInterval(() => {
-    window.location.reload();
-}, 30000);
-</script>
 <?php echo $__env->make('layouts.dashboard', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?><?php /**PATH C:\xampp\htdocs\noctura\resources\views/dashboard/index.blade.php ENDPATH**/ ?>

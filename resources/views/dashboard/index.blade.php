@@ -247,9 +247,3 @@
 </div>
 
 @endsection
-
-<script>
-setInterval(() => {
-    window.location.reload();
-}, 30000);
-</script>
