@@ -467,7 +467,7 @@ footer { position:relative;z-index:2;border-top:1px solid rgba(255,255,255,0.07)
 
 <nav class="navbar" id="navbar">
   <a href="#" class="nav-brand">
-    <img src="{{ asset('assets/img/logo-noctura.png') }}" alt="Noctura Logo" class="nav-logo-img" style="height: 40px; width: auto;">
+    <img src="<?php echo e(asset('assets/img/logo-noctura.png')); ?>" alt="Noctura Logo" class="nav-logo-img" style="height: 40px; width: auto;">
   </a>
   
   <ul class="nav-links" id="navLinks">
@@ -475,7 +475,7 @@ footer { position:relative;z-index:2;border-top:1px solid rgba(255,255,255,0.07)
     <li><a href="#fitur">Fitur</a></li>
     <li><a href="#cara-kerja">Cara Kerja</a></li>
     <li><a href="#faq">FAQ</a></li>
-    <li><a href="{{ route('login') }}" class="nav-cta">Login</a></li>
+    <li><a href="<?php echo e(route('login')); ?>" class="nav-cta">Login</a></li>
   </ul>
   
   <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">
@@ -989,4 +989,4 @@ document.querySelectorAll('#navLinks a').forEach(a=>a.addEventListener('click',(
 }));
 </script>
 </body>
-</html>
+</html><?php /**PATH C:\xamppp\htdocs\Noctura-Web\resources\views/welcome.blade.php ENDPATH**/ ?>
