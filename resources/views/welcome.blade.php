@@ -98,18 +98,18 @@ a  { text-decoration:none;color:inherit; }
 .btn-ghost:hover { color:var(--accent);border-color:var(--accent-border);background:var(--accent-soft); }
 
 /* ── NAVBAR ── */
-.navbar { position:fixed;top:20px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);z-index:1000;background:rgba(240,245,255,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(74,142,245,0.18);border-radius:var(--r-xl);padding:0.72rem 1.5rem;display:flex;align-items:center;justify-content:space-between;transition:all 0.4s var(--ease-smooth);box-shadow:0 4px 20px rgba(74,142,245,0.10); }
-.navbar.scrolled { background:rgba(232,240,254,0.97);box-shadow:0 8px 36px rgba(74,142,245,0.18); }
+.navbar { position:fixed;top:20px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);z-index:1000;background:var(--navy) !important;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.12) !important;border-radius:var(--r-xl);padding:0.72rem 1.5rem;display:flex;align-items:center;justify-content:space-between;transition:all 0.4s var(--ease-smooth);box-shadow:0 4px 20px rgba(13,27,53,0.3) !important; }
+.navbar.scrolled { background:var(--navy-mid) !important;box-shadow:0 8px 36px rgba(13,27,53,0.4) !important; }
 .nav-brand { display:flex;align-items:center;gap:0.65rem; }
 .nav-logo-svg { width:28px;height:28px; }
-.nav-name { font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy); }
+.nav-name { font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--white) !important; }
 .nav-links { display:flex;align-items:center;gap:2rem;list-style:none; }
-.nav-links a { font-size:0.78rem;font-weight:500;color:var(--text-muted);transition:color 0.25s;cursor:none; }
-.nav-links a:hover { color:var(--navy); }
-.nav-cta { font-size:0.75rem!important;font-weight:700!important;color:var(--white)!important;background:var(--navy)!important;padding:0.46rem 1.2rem!important;border-radius:var(--r-pill)!important;border:none!important;box-shadow:0 3px 12px rgba(13,27,53,0.22);transition:all 0.3s var(--ease-spring)!important;letter-spacing:0.08em!important;text-transform:uppercase!important; }
-.nav-cta:hover { background:var(--navy-light)!important;color:var(--white)!important;transform:translateY(-1px);box-shadow:0 6px 20px rgba(13,27,53,0.28)!important; }
+.nav-links a { font-size:0.78rem;font-weight:500;color:var(--text-soft) !important;transition:color 0.25s;cursor:none; }
+.nav-links a:hover { color:var(--white) !important; }
+.nav-cta { font-size:0.75rem!important;font-weight:700!important;color:var(--navy)!important;background:var(--white)!important;padding:0.46rem 1.2rem!important;border-radius:var(--r-pill)!important;border:none!important;box-shadow:0 3px 12px rgba(255,255,255,0.2) !important;transition:all 0.3s var(--ease-spring)!important;letter-spacing:0.08em!important;text-transform:uppercase!important; }
+.nav-cta:hover { background:var(--surface)!important;color:var(--navy)!important;transform:translateY(-1px);box-shadow:0 6px 20px rgba(255,255,255,0.35)!important; }
 .nav-toggle { display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:none;padding:5px; }
-.nav-toggle span { display:block;width:20px;height:1.5px;background:var(--navy);border-radius:2px;transition:0.3s; }
+.nav-toggle span { display:block;width:20px;height:1.5px;background:var(--white) !important;border-radius:2px;transition:0.3s; }
 
 /* ── HERO ── */
 .hero { min-height:100svh;display:flex;align-items:center;padding:8rem 5% 5rem;position:relative;background:linear-gradient(160deg,#dce8ff 0%,#e8f0fe 50%,#f0f5ff 100%);overflow:hidden; }
@@ -467,13 +467,9 @@ footer { position:relative;z-index:2;border-top:1px solid rgba(255,255,255,0.07)
 
 <nav class="navbar" id="navbar">
   <a href="#" class="nav-brand">
-    <svg class="nav-logo-svg" viewBox="0 0 28 28" fill="none">
-      <defs><mask id="mn"><rect width="28" height="28" fill="white"/><circle cx="17.9" cy="14" r="7.9" fill="black"/></mask></defs>
-      <circle cx="14" cy="14" r="13" fill="rgba(13,27,53,0.06)" stroke="rgba(13,27,53,0.15)" stroke-width="1"/>
-      <circle cx="14" cy="14" r="10.6" fill="#0d1b35" mask="url(#mn)"/>
-    </svg>
-    <span class="nav-name">NOCTURA</span>
+    <img src="{{ asset('assets/img/logo-noctura.png') }}" alt="Noctura Logo" class="nav-logo-img" style="height: 40px; width: auto;">
   </a>
+  
   <ul class="nav-links" id="navLinks">
     <li><a href="#masalah">Masalah</a></li>
     <li><a href="#fitur">Fitur</a></li>
@@ -481,6 +477,7 @@ footer { position:relative;z-index:2;border-top:1px solid rgba(255,255,255,0.07)
     <li><a href="#faq">FAQ</a></li>
     <li><a href="{{ route('login') }}" class="nav-cta">Login</a></li>
   </ul>
+  
   <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
@@ -978,7 +975,7 @@ function toggleNav(){
   const links=document.getElementById('navLinks');
   const open=links.style.display==='flex';
   if(open){links.style.display='none';return;}
-  Object.assign(links.style,{ 
+  Object.assign(links.style,{
     display:'flex',flexDirection:'column',position:'absolute',
     top:'calc(100% + 10px)',left:'0',right:'0',
     background:'rgba(255,255,255,0.97)',backdropFilter:'blur(20px)',

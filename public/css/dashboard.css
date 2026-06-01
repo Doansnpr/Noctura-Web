@@ -70,53 +70,55 @@ body {
     overflow: hidden;
 }
 
-style>.sidebar-moon-icon {
-    width: 46px;
-    height: 46px;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
-    border-radius: 14px;
+.sidebar-brand .brand-logo {
     display: flex;
-    align-items: center;
     justify-content: center;
-    backdrop-filter: blur(8px);
-    box-shadow:
-        0 4px 16px rgba(0, 0, 0, 0.25),
-        inset 0 1px 0 rgba(255, 255, 255, 0.12);
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-    flex-shrink: 0;
+    align-items: center;
+    width: 100%;
 }
 
-.sidebar-brand:hover .sidebar-moon-icon {
-    transform: scale(1.05);
-    box-shadow:
-        0 6px 20px rgba(0, 0, 0, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.15);
+/* =========================================
+   PENGATURAN LOGO SIDEBAR
+
+/* --- STATE: SIDEBAR TERBUKA (NORMAL) --- */
+.brand-logo-full {
+    display: block;
+    /* Tampilkan logo full */
+    width: 180px;
+    /* Atur lebar logo full (sesuaikan selera) */
+    height: auto;
+    transition: all 0.3s ease;
 }
 
-.sidebar-moon-icon svg {
-    width: 25px;
-    height: 25px;
-    filter: drop-shadow(0 0 7px rgba(255, 255, 255, 0.35));
+.brand-logo-icon {
+    display: none;
+    /* Sembunyikan icon logo */
 }
 
-/* Override brand-icon default sizing so our wrapper controls it */
-.brand-icon {
-    width: auto !important;
-    height: auto !important;
+/* --- STATE: SIDEBAR DIKECILKAN (COLLAPSED) --- */
+/* (Kondisi saat body memiliki class 'sidebar-collapsed') */
+body.sidebar-collapsed .brand-logo-full {
+    display: none;
+    /* Sembunyikan logo full */
 }
 
-/* Brand name: Fraunces serif matching login */
-.brand-name {
-    font-family: 'Fraunces', serif !important;
-    letter-spacing: 0.13em !important;
-}
-
-/* Collapsed: shrink moon icon nicely */
-body.sidebar-collapsed .sidebar-moon-icon {
+body.sidebar-collapsed .brand-logo-icon {
+    display: block;
+    /* Tampilkan icon logo saja */
     width: 40px;
+    /* Ukuran icon saat sidebar kecil */
     height: 40px;
-    border-radius: 12px;
+    object-fit: contain;
+    /* Agar icon tidak gepeng */
+    margin: 0 auto;
+    /* Pastikan posisinya di tengah */
+    transition: all 0.3s ease;
+}
+
+/* Penyesuaian padding brand agar rapi saat collapsed */
+body.sidebar-collapsed .sidebar-brand {
+    padding: 20px 10px;
+    /* Kurangi padding agar icon tidak sesak */
 }
 /* ═══════════════════════════════════════
    SIDEBAR
@@ -160,40 +162,11 @@ body.sidebar-collapsed .sidebar-moon-icon {
 
 /* Brand */
 .sidebar-brand {
-    padding: 34px 24px 28px;
-    /* was 28px 20px 22px */
+    padding: 14px 18px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.09);
     position: relative;
 }
 
-.brand-logo {
-    display: flex;
-    align-items: center;
-    gap: 13px;
-    /* was 11px */
-}
-
-.brand-icon {
-    width: 46px;
-    /* was 38px */
-    height: 46px;
-    flex-shrink: 0;
-    position: relative;
-}
-
-.brand-icon svg {
-    width: 46px;
-    height: 46px;
-}
-
-.brand-name {
-    font-size: 19px;
-    /* was 17px */
-    font-weight: 700;
-    color: #ffffff;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-}
 
 .brand-tagline {
     font-size: 11px;

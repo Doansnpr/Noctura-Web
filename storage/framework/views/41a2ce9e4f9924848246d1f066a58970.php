@@ -5,27 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reset Kata Sandi - Noctura</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ asset('css/reset-password.css') }}">
+  <link rel="stylesheet" href="<?php echo e(asset('css/reset-password.css')); ?>">
 </head>
 <body>
 
-  {{-- ── GLOBAL BACKGROUND ── --}}
+  
   <div class="bg-gradient"></div>
 
-  {{-- ── CENTERED RESET PASSWORD WRAPPER ── --}}
+  
   <div class="login-wrapper">
     <div class="login-card form-wrap">
 
-      {{-- Bagian Kiri --}}
+      
       <div class="card-left">
         <canvas id="c"></canvas>
-        <img src="{{ asset('assets/img/logo-noctura.png') }}" alt="Noctura Logo" class="card-logo">
+        <img src="<?php echo e(asset('assets/img/logo-noctura.png')); ?>" alt="Noctura Logo" class="card-logo">
       </div>
 
-      {{-- Bagian Kanan --}}
+      
       <div class="card-right">
 
-        {{-- Header --}}
+        
         <div class="form-top">
           <div class="form-pretitle">Reset Kata Sandi</div>
           <h1 class="form-title">Kata Sandi<br><span>Baru</span></h1>
@@ -34,34 +34,36 @@
           </p>
         </div>
 
-        {{-- Alerts --}}
-        @if (session('error'))
+        
+        <?php if(session('error')): ?>
           <div class="alert-error">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            {{ session('error') }}
-          </div>
-        @endif
+            <?php echo e(session('error')); ?>
 
-        @if (session('success'))
+          </div>
+        <?php endif; ?>
+
+        <?php if(session('success')): ?>
           <div class="alert-success">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
-            {{ session('success') }}
-          </div>
-        @endif
+            <?php echo e(session('success')); ?>
 
-        {{-- Form --}}
-        <form action="{{ route('forgot-password.reset.post') }}" method="POST" novalidate autocomplete="off">
-          @csrf
+          </div>
+        <?php endif; ?>
+
+        
+        <form action="<?php echo e(route('forgot-password.reset.post')); ?>" method="POST" novalidate autocomplete="off">
+          <?php echo csrf_field(); ?>
 
           <div class="field-group">
 
-            {{-- New Password --}}
+            
             <div class="field">
               <label for="password">Kata Sandi Baru</label>
               <div class="input-wrap">
@@ -77,7 +79,7 @@
                   id="password"
                   name="password"
                   placeholder="Minimal 6 karakter"
-                  class="{{ $errors->has('password') ? 'is-error' : '' }}"
+                  class="<?php echo e($errors->has('password') ? 'is-error' : ''); ?>"
                   autocomplete="new-password"
                   oninput="checkStrength(this.value)"
                 >
@@ -104,12 +106,19 @@
                 <div class="pw-lbl" id="pwLbl"></div>
               </div>
 
-              @error('password')
-                <div class="field-error">{{ $message }}</div>
-              @enderror
+              <?php $__errorArgs = ['password'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                <div class="field-error"><?php echo e($message); ?></div>
+              <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
             </div>
 
-            {{-- Confirm Password --}}
+            
             <div class="field">
               <label for="password_confirmation">Konfirmasi Kata Sandi</label>
               <div class="input-wrap">
@@ -125,7 +134,7 @@
                   id="password_confirmation"
                   name="password_confirmation"
                   placeholder="Ulangi kata sandi baru"
-                  class="{{ $errors->has('password_confirmation') ? 'is-error' : '' }}"
+                  class="<?php echo e($errors->has('password_confirmation') ? 'is-error' : ''); ?>"
                   autocomplete="new-password"
                 >
 
@@ -141,9 +150,16 @@
                 </button>
               </div>
 
-              @error('password_confirmation')
-                <div class="field-error">{{ $message }}</div>
-              @enderror
+              <?php $__errorArgs = ['password_confirmation'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                <div class="field-error"><?php echo e($message); ?></div>
+              <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
             </div>
 
           </div>
@@ -278,4 +294,4 @@ function checkStrength(val){
 }
 </script>
 </body>
-</html>
+</html><?php /**PATH C:\xampp\htdocs\noctura\resources\views/auth/reset-password.blade.php ENDPATH**/ ?>
