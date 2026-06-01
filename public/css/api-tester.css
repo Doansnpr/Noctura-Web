@@ -1,0 +1,593 @@
+.api-page {
+    max-width: 1500px;
+    margin: 0 auto;
+}
+
+.page-title {
+    font-size: 32px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.page-title span {
+    color: #2563eb;
+}
+
+.page-subtitle {
+    color: #475569;
+    line-height: 1.7;
+    max-width: 850px;
+    margin-bottom: 22px;
+}
+
+.api-token-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, .05);
+}
+
+.token-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 5px;
+}
+
+.token-desc {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.token-actions {
+    display: flex;
+    gap: 10px;
+    min-width: 460px;
+}
+
+.token-actions input {
+    flex: 1;
+    height: 42px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 0 14px;
+    font-size: 13px;
+    outline: none;
+}
+
+.token-actions input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+}
+
+.token-actions button {
+    height: 42px;
+    border: none;
+    border-radius: 12px;
+    padding: 0 16px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #fff;
+    background: #ef4444;
+    cursor: pointer;
+}
+
+.api-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 22px;
+    align-items: start;
+}
+
+.api-sidebar {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 16px;
+    position: sticky;
+    top: 20px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, .05);
+}
+
+.api-sidebar-title {
+    font-size: 13px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 12px;
+}
+
+.api-side-link {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 12px;
+    color: #475569;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.api-side-link:hover {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.api-group {
+    margin-bottom: 24px;
+}
+
+.group-head {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 18px;
+    margin-bottom: 14px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, .05);
+}
+
+.group-head h2 {
+    margin: 0 0 6px;
+    font-size: 20px;
+    color: #0f172a;
+}
+
+.group-head p {
+    margin: 0;
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.api-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.api-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, .05);
+    overflow: hidden;
+}
+
+.api-card-head {
+    padding: 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.api-name {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    flex-wrap: wrap;
+    font-size: 16px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.method-badge {
+    font-size: 11px;
+    font-weight: 900;
+    color: #fff;
+    border-radius: 999px;
+    padding: 5px 9px;
+}
+
+.method-badge.get {
+    background: #0ea5e9;
+}
+
+.method-badge.post {
+    background: #22c55e;
+}
+
+.method-badge.put {
+    background: #f59e0b;
+}
+
+.method-badge.delete {
+    background: #ef4444;
+}
+
+.auth-badge {
+    font-size: 11px;
+    font-weight: 800;
+    color: #6d28d9;
+    background: #ede9fe;
+    border-radius: 999px;
+    padding: 5px 9px;
+}
+
+.public-badge {
+    font-size: 11px;
+    font-weight: 800;
+    color: #166534;
+    background: #dcfce7;
+    border-radius: 999px;
+    padding: 5px 9px;
+}
+
+.api-url {
+    font-family: Consolas, monospace;
+    font-size: 13px;
+    color: #334155;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 8px 10px;
+    display: inline-block;
+    margin-bottom: 8px;
+}
+
+.api-url span {
+    color: #94a3b8;
+}
+
+.api-desc {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.toggle-api-btn,
+.test-btn,
+.prefill-btn {
+    border: none;
+    border-radius: 12px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all .2s ease;
+}
+
+.toggle-api-btn {
+    align-self: flex-start;
+    padding: 10px 16px;
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.toggle-api-btn:hover {
+    background: #dbeafe;
+}
+
+.api-detail {
+    display: none;
+    padding: 0 18px 18px;
+}
+
+.api-detail.open {
+    display: block;
+}
+
+.endpoint-editor,
+.body-editor {
+    margin-bottom: 14px;
+}
+
+.endpoint-editor label,
+.body-editor label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 13px;
+    font-weight: 800;
+    color: #334155;
+}
+
+.endpoint-editor input,
+.body-editor textarea {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    padding: 12px 14px;
+    outline: none;
+    font-size: 13px;
+}
+
+.endpoint-editor input:focus,
+.body-editor textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .12);
+}
+
+.body-editor textarea {
+    font-family: Consolas, monospace;
+    resize: vertical;
+}
+
+.endpoint-editor small {
+    display: block;
+    margin-top: 6px;
+    color: #64748b;
+    font-size: 12px;
+}
+
+.api-actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.prefill-btn {
+    background: #f1f5f9;
+    color: #334155;
+    padding: 11px 16px;
+}
+
+.prefill-btn:hover {
+    background: #e2e8f0;
+}
+
+.prefill-btn.prefill-success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.test-btn {
+    background: #2563eb;
+    color: #fff;
+    padding: 11px 18px;
+}
+
+.test-btn:hover {
+    background: #1d4ed8;
+}
+
+.test-btn:disabled {
+    background: #93c5fd;
+    cursor: not-allowed;
+}
+
+.response-box {
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    overflow: hidden;
+}
+
+.response-head {
+    background: #f8fafc;
+    padding: 12px 14px;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 13px;
+    font-weight: 800;
+    color: #334155;
+}
+
+.response-status {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.response-status.success {
+    color: #16a34a;
+}
+
+.response-status.error {
+    color: #dc2626;
+}
+
+.response-status.warning {
+    color: #d97706;
+}
+
+.response-status.loading {
+    color: #2563eb;
+}
+
+.response-output {
+    margin: 0;
+    padding: 14px;
+    background: #0f172a;
+    color: #e2e8f0;
+    min-height: 120px;
+    max-height: 430px;
+    overflow: auto;
+    font-size: 12.5px;
+    line-height: 1.6;
+}
+
+@media (max-width: 992px) {
+    .api-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .api-sidebar {
+        position: static;
+    }
+
+    .api-token-card {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .token-actions {
+        min-width: 0;
+        width: 100%;
+    }
+}
+
+@media (max-width: 640px) {
+    .api-card-head {
+        flex-direction: column;
+    }
+
+    .token-actions {
+        flex-direction: column;
+    }
+
+    .token-actions button {
+        width: 100%;
+    }
+}
+
+/* ================= FIX HORIZONTAL OVERFLOW API TESTER ================= */
+
+.api-page {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.api-layout {
+    width: 100%;
+    max-width: 100%;
+    grid-template-columns: 240px minmax(0, 1fr);
+}
+
+.api-content {
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.api-group,
+.api-list,
+.api-card,
+.api-detail {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.api-card {
+    overflow: hidden;
+}
+
+.api-card-head {
+    min-width: 0;
+}
+
+.api-card-head>div {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.api-url {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.endpoint-editor input,
+.body-editor textarea {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.response-box {
+    max-width: 100%;
+    overflow: hidden;
+}
+
+.response-output {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.api-sidebar {
+    width: 240px;
+    min-width: 240px;
+}
+
+@media (max-width: 768px) {
+    .api-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .api-sidebar {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+
+/* ================= API TESTER LAYOUT FIX ================= */
+
+.api-page {
+    width: 100%;
+    max-width: 100%;
+    overflow: visible;
+}
+
+.api-layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 22px;
+    align-items: start;
+    width: 100%;
+    max-width: 100%;
+}
+
+.api-sidebar {
+    position: sticky;
+    top: 20px;
+    align-self: start;
+    width: 250px;
+    min-width: 250px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    z-index: 20;
+}
+
+.api-content {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.api-card,
+.api-card-head,
+.api-detail,
+.response-box {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.api-card-head>div {
+    min-width: 0;
+}
+
+.api-url {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.response-output {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+@media (max-width: 768px) {
+    .api-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .api-sidebar {
+        position: static;
+        width: 100%;
+        min-width: 0;
+        max-height: none;
+        overflow: visible;
+    }
+}
