@@ -18,10 +18,10 @@ Nama Tim: Sleep Well
 
 | Nama                          | NIM/Kelas     | Role                                         | GitHub             |
 | ----------------------------- | ------------- | -------------------------------------------- | ------------------ |
-| Rizky Wahyu Wangsa Syaelendra | E31240058 / A | Ketua, Frontend Mobile, Backend Web & Mobile | @Rizkywhyws        |
-| Doan Sri Washin Sianipar      | E31240180 / A | Frontend Web, Backend Web & Mobile           | @Doansnpr          |
-| Mahmudatul Elisah             | E31240350 / A | Frontend Web & Mobile, Backend Web & Mobile  | @elisacis          |
-| Julianda Marselyna            | E31240410 / A | Frontend Web & Mobile, Backend Web & Mobile  | @juliandaMarselyna |
+| Rizky Wahyu Wangsa Syaelendra | E31240058 / A | Ketua, Frontend Mobile, Backend Web & Mobile | [@Rizkywhyws](https://github.com/Rizkywhyws)      |
+| Doan Sri Washin Sianipar      | E31240180 / A | Frontend Web, Backend Web & Mobile           | [@Doansnpr](https://github.com/Doansnpr)       |
+| Mahmudatul Elisah             | E31240350 / A | Frontend Web & Mobile, Backend Web & Mobile  | [@elisacis](https://github.com/elisacis)          |
+| Julianda Marselyna            | E31240410 / A | Frontend Web & Mobile, Backend Web & Mobile  | [@juliandaMarselyna](https://github.com/juliandaMarselyna) |
 
 ## Fitur Utama
 
