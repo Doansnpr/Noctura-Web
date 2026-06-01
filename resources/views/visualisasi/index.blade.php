@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ asset('css/visualisasi.css') }}">
 
 <div class="visualisasi-container">
-    <div class="section-label">Visualisasi</div>
+    <div class="page-eyebrow">Visualisasi</div>
     <h1 class="page-title">Data <span>Prediksi Gangguan Tidur</span></h1>
     <p class="page-subtitle">
         Analisis komprehensif hasil prediksi, distribusi usia, gender, dan tren temporal.

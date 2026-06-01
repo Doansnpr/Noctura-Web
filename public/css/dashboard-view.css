@@ -28,13 +28,7 @@
 .dashboard-page {
     max-width: 1500px;
     margin: 0 auto;
-}
-
-.page-eyebrow {
-    font-size: 13px;
-    color: var(--text-muted);
-    font-weight: 700;
-    margin-bottom: 8px;
+    font-size: 15px;
 }
 
 .page-title {

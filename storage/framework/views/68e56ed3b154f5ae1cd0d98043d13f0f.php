@@ -19,19 +19,18 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-brand">
-            <div class="brand-logo">
-                <div class="brand-icon">
-                    <div class="sidebar-moon-icon">
-                        <svg width="26" height="26" viewBox="0 0 38 38" fill="none">
-                            <path d="M22 6C17.6 6.9 14.3 10.8 14.3 15.5C14.3 20.9 18.6 25.2 24 25.2C26.2 25.2 28.2 24.5 29.8 23.3C28.3 27.9 24 31.2 19 31.2C12.4 31.2 7 25.8 7 19.2C7 12.6 12.4 7.2 19 7.2C20 7.2 21 7.3 22 6Z" fill="white"/>
-                            <circle cx="27" cy="9" r="1.2" fill="white" opacity="0.7"/>
-                            <circle cx="31" cy="15" r="0.8" fill="white" opacity="0.5"/>
-                            <circle cx="25" cy="5" r="0.7" fill="white" opacity="0.5"/>
-                        </svg>
-                    </div>
-                </div>
-                <span class="brand-name">Noctura</span>
+            <div class="brand-logo text-center py-2">
+                <a href="<?php echo e(route('dashboard')); ?>" class="d-block">
+                    <img src="<?php echo e(asset('assets/img/logo-noctura.png')); ?>" 
+                        alt="Noctura Logo" 
+                        class="brand-logo-full">
+                    
+                    <img src="<?php echo e(asset('assets/img/icon-noctura.png')); ?>" 
+                        alt="Noctura Icon" 
+                        class="brand-logo-icon">
+                </a>
             </div>
+        </div>
         </div>
 
         <nav class="sidebar-nav">
@@ -68,7 +67,7 @@
                         </svg>
                         <span>Kelola Akun</span>
                     </a>
-                    <a href="<?php echo e(route('edukasi.index')); ?>" class="sub-nav-item" data-sub="edu">
+                    <a href="<?php echo e(url('/edukasi')); ?>" class="sub-nav-item" data-sub="edu">
                         <svg class="sub-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
                         </svg>

@@ -5,27 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Lupa Kata Sandi - Noctura</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ asset('css/forgot-password.css') }}">
+  <link rel="stylesheet" href="<?php echo e(asset('css/forgot-password.css')); ?>">
 </head>
 <body>
 
-  {{-- ── GLOBAL BACKGROUND ── --}}
+  
   <div class="bg-gradient"></div>
 
-  {{-- ── CENTERED FORGOT PASSWORD WRAPPER ── --}}
+  
   <div class="login-wrapper">
     <div class="login-card form-wrap">
 
-      {{-- Bagian Kiri (Navy + Logo + Bintang) --}}
+      
       <div class="card-left">
         <canvas id="c"></canvas>
-        <img src="{{ asset('assets/img/logo-noctura.png') }}" alt="Noctura Logo" class="card-logo">
+        <img src="<?php echo e(asset('assets/img/logo-noctura.png')); ?>" alt="Noctura Logo" class="card-logo">
       </div>
 
-      {{-- Bagian Kanan (Putih + Form) --}}
+      
       <div class="card-right">
 
-        {{-- Title --}}
+        
         <div class="form-top">
           <div class="form-pretitle">Pemulihan Akun</div>
           <h1 class="form-title">Lupa<br><span>Kata Sandi?</span></h1>
@@ -34,30 +34,32 @@
           </p>
         </div>
 
-        {{-- Alerts --}}
-        @if (session('error'))
+        
+        <?php if(session('error')): ?>
           <div class="alert-error">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            {{ session('error') }}
-          </div>
-        @endif
+            <?php echo e(session('error')); ?>
 
-        @if (session('success'))
+          </div>
+        <?php endif; ?>
+
+        <?php if(session('success')): ?>
           <div class="alert-success">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
-            {{ session('success') }}
-          </div>
-        @endif
+            <?php echo e(session('success')); ?>
 
-        {{-- Form --}}
-        <form action="{{ route('forgot-password.send') }}" method="POST" novalidate autocomplete="off">
-          @csrf
+          </div>
+        <?php endif; ?>
+
+        
+        <form action="<?php echo e(route('forgot-password.send')); ?>" method="POST" novalidate autocomplete="off">
+          <?php echo csrf_field(); ?>
 
           <div class="field-group">
             <div class="field">
@@ -75,16 +77,23 @@
                   type="email"
                   id="email"
                   name="email"
-                  value="{{ old('email') }}"
+                  value="<?php echo e(old('email')); ?>"
                   placeholder="nama@email.com"
-                  class="{{ $errors->has('email') ? 'is-error' : '' }}"
+                  class="<?php echo e($errors->has('email') ? 'is-error' : ''); ?>"
                   autocomplete="new-password"
                 >
               </div>
 
-              @error('email')
-                <div class="field-error">{{ $message }}</div>
-              @enderror
+              <?php $__errorArgs = ['email'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                <div class="field-error"><?php echo e($message); ?></div>
+              <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
             </div>
           </div>
 
@@ -99,7 +108,7 @@
 
         <div class="form-note">
           Ingat kata sandi?
-          <a href="{{ route('login') }}">Masuk di sini</a>
+          <a href="<?php echo e(route('login')); ?>">Masuk di sini</a>
         </div>
 
       </div>
@@ -163,4 +172,4 @@
 })();
 </script>
 </body>
-</html>
+</html><?php /**PATH C:\xampp\htdocs\noctura\resources\views/auth/forgot-password.blade.php ENDPATH**/ ?>
