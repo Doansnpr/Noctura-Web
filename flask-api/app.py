@@ -6,23 +6,24 @@ import numpy as np
 app = Flask(__name__)
 CORS(app)
 
-# Load model & encoders
-model     = joblib.load('model/noctura_xgboost.pkl')
-le_target = joblib.load('model/noctura_le_target.pkl')
-le_gender = joblib.load('model/noctura_le_gender.pkl')
-le_occ    = joblib.load('model/noctura_le_occupation.pkl')
-le_bmi    = joblib.load('model/noctura_le_bmi.pkl')
+# Load model saja
+model = joblib.load('model/noctura_xgboost.pkl')
 
+# Hardcode mapping — urutan HARUS sama persis dengan saat training
+GENDER_MAP     = {'Female': 0, 'Male': 1}
+OCCUPATION_MAP = {
+    'Accountant': 0, 'Doctor': 1, 'Engineer': 2,
+    'Lawyer': 3, 'Manager': 4, 'Nurse': 5,
+    'Sales Representative': 6, 'Salesperson': 7,
+    'Scientist': 8, 'Software Engineer': 9, 'Teacher': 10,
+}
+BMI_MAP = {
+    'Normal': 0, 'Normal Weight': 1,
+    'Obese': 2, 'Overweight': 3,
+}
 LABEL_MAP = {0: 'Healthy', 1: 'Insomnia', 2: 'Sleep Apnea'}
 
 print('✅ Noctura XGBoost Model loaded!')
-print(f'   Gender classes    : {le_gender.classes_.tolist()}')
-print(f'   Occupation classes: {le_occ.classes_.tolist()}')
-print(f'   BMI classes       : {le_bmi.classes_.tolist()}')
-
-# ============================================================
-# ROUTES
-# ============================================================
 
 @app.route('/', methods=['GET'])
 def index():
@@ -40,9 +41,9 @@ def health():
 @app.route('/options', methods=['GET'])
 def options():
     return jsonify({
-        'genders'       : le_gender.classes_.tolist(),
-        'occupations'   : le_occ.classes_.tolist(),
-        'bmi_categories': le_bmi.classes_.tolist(),
+        'genders'       : list(GENDER_MAP.keys()),
+        'occupations'   : list(OCCUPATION_MAP.keys()),
+        'bmi_categories': list(BMI_MAP.keys()),
     })
 
 @app.route('/predict', methods=['POST'])
@@ -69,39 +70,36 @@ def predict():
                 'message': f'Field tidak ditemukan: {missing}'
             }), 400
 
-        try:
-            gender_enc = int(le_gender.transform([str(data['gender'])])[0])
-        except ValueError:
+        gender = str(data['gender'])
+        if gender not in GENDER_MAP:
             return jsonify({
                 'status' : 'error',
-                'message': f"Gender '{data['gender']}' tidak dikenali. Pilihan: {le_gender.classes_.tolist()}"
+                'message': f"Gender '{gender}' tidak dikenali. Pilihan: {list(GENDER_MAP.keys())}"
             }), 400
 
-        try:
-            occ_enc = int(le_occ.transform([str(data['occupation'])])[0])
-        except ValueError:
+        occ = str(data['occupation'])
+        if occ not in OCCUPATION_MAP:
             return jsonify({
                 'status' : 'error',
-                'message': f"Occupation '{data['occupation']}' tidak dikenali. Pilihan: {le_occ.classes_.tolist()}"
+                'message': f"Occupation '{occ}' tidak dikenali. Pilihan: {list(OCCUPATION_MAP.keys())}"
             }), 400
 
-        try:
-            bmi_enc = int(le_bmi.transform([str(data['bmi_category'])])[0])
-        except ValueError:
+        bmi = str(data['bmi_category'])
+        if bmi not in BMI_MAP:
             return jsonify({
                 'status' : 'error',
-                'message': f"BMI Category '{data['bmi_category']}' tidak dikenali. Pilihan: {le_bmi.classes_.tolist()}"
+                'message': f"BMI Category '{bmi}' tidak dikenali. Pilihan: {list(BMI_MAP.keys())}"
             }), 400
 
         features = np.array([[
-            gender_enc,
+            GENDER_MAP[gender],
             int(data['age']),
-            occ_enc,
+            OCCUPATION_MAP[occ],
             float(data['sleep_duration']),
             int(data['quality_of_sleep']),
             int(data['physical_activity_level']),
             int(data['stress_level']),
-            bmi_enc,
+            BMI_MAP[bmi],
             int(data['heart_rate']),
             int(data['daily_steps']),
             int(data['systolic']),
@@ -128,5 +126,4 @@ def predict():
 
 
 if __name__ == '__main__':
-    # ✅ FIX: port 5000 agar tidak bentrok dengan Laravel (port 8000)
     app.run(debug=True, host='0.0.0.0', port=5000)

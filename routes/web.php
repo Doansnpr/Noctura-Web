@@ -16,10 +16,6 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('auth');
-Route::get('/pertanyaan', [PertanyaanController::class, 'index'])->name('pertanyaan')->middleware('auth');
-Route::get('/jawaban', [JawabanController::class, 'index'])->name('jawaban')->middleware('auth');
-
-Route::get('/visualisasi', [VisualisasiController::class, 'index'])->name('visualisasi')->middleware('auth');
 
 Route::get('/login', [LoginController::class, 'index'])->name('login');
 Route::post('/login', [LoginController::class, 'login'])->name('login.post');
@@ -50,3 +46,17 @@ Route::delete('/monitoring-prediksi/{id}', [MonitoringPrediksiController::class,
 
 Route::get('/visualisasi', [VisualisasiController::class, 'index'])->middleware('auth')->name('visualisasi');
 Route::get('/api/chart-data', [VisualisasiController::class, 'getChartData'])->middleware('auth')->name('api.chart-data');
+
+// routes/web.php
+Route::get('/storage/{path}', function ($path) {
+    $fullPath = storage_path('app/public/' . $path);
+    
+    if (!file_exists($fullPath)) {
+        abort(404);
+    }
+    
+    return response()->file($fullPath, [
+        'Access-Control-Allow-Origin' => '*',
+        'Cache-Control' => 'public, max-age=86400',
+    ]);
+})->where('path', '.*');

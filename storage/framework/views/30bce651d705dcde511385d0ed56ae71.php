@@ -978,7 +978,7 @@ function toggleNav(){
   const links=document.getElementById('navLinks');
   const open=links.style.display==='flex';
   if(open){links.style.display='none';return;}
-  Object.assign(links.style,{
+  Object.assign(links.style,{ 
     display:'flex',flexDirection:'column',position:'absolute',
     top:'calc(100% + 10px)',left:'0',right:'0',
     background:'rgba(255,255,255,0.97)',backdropFilter:'blur(20px)',

@@ -251,7 +251,7 @@
             <div class="card-title">Prediksi Terbaru</div>
             <div class="card-sub">10 prediksi terakhir dari aplikasi mobile</div>
         </div>
-        <a href="<?php echo e(route('monitoring')); ?>" class="card-badge" style="text-decoration:none;cursor:pointer;">Lihat Semua →</a>
+        <a href="<?php echo e(route('monitoring-prediksi.index')); ?>" class="card-badge" style="text-decoration:none;cursor:pointer;">Lihat Semua →</a>
     </div>
     <div class="table-wrap">
         <table class="pred-table">
