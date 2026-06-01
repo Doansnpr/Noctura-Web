@@ -14,7 +14,6 @@
     use App\Http\Controllers\Api\InsightController;
     use App\Http\Controllers\Api\ForgotPasswordMobileController;
 
-
     // ─── KODE TEMAN (JANGAN DIUBAH) ───────────────────────────────────────────────
     Route::get('/user', [AuthController::class, 'me']);
 
