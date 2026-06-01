@@ -5,27 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Verifikasi OTP - Noctura</title>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Fraunces:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ asset('css/verify-otp.css') }}">
+  <link rel="stylesheet" href="<?php echo e(asset('css/verify-otp.css')); ?>">
 </head>
 <body>
 
-  {{-- ── GLOBAL BACKGROUND ── --}}
+  
   <div class="bg-gradient"></div>
 
-  {{-- ── CENTERED OTP WRAPPER ── --}}
+  
   <div class="login-wrapper">
     <div class="login-card form-wrap">
 
-      {{-- Bagian Kiri --}}
+      
       <div class="card-left">
         <canvas id="c"></canvas>
-        <img src="{{ asset('assets/img/logo-noctura.png') }}" alt="Noctura Logo" class="card-logo">
+        <img src="<?php echo e(asset('assets/img/logo-noctura.png')); ?>" alt="Noctura Logo" class="card-logo">
       </div>
 
-      {{-- Bagian Kanan --}}
+      
       <div class="card-right">
 
-        {{-- Header --}}
+        
         <div class="form-top">
           <div class="form-pretitle">Kode OTP Terkirim</div>
           <h1 class="form-title">Verifikasi<br><span>Kode OTP</span></h1>
@@ -34,62 +34,72 @@
             Masukkan kode 6 digit yang telah dikirim ke email terdaftar.
           </p>
 
-          @if (session('reset_email'))
+          <?php if(session('reset_email')): ?>
             <div class="email-badge">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                 <polyline points="22,6 12,13 2,6"/>
               </svg>
-              {{ session('reset_email') }}
+              <?php echo e(session('reset_email')); ?>
+
             </div>
-          @endif
+          <?php endif; ?>
         </div>
 
-        {{-- Alerts --}}
-        @if (session('error'))
+        
+        <?php if(session('error')): ?>
           <div class="alert-error">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="10"/>
               <line x1="12" y1="8" x2="12" y2="12"/>
               <line x1="12" y1="16" x2="12.01" y2="16"/>
             </svg>
-            {{ session('error') }}
-          </div>
-        @endif
+            <?php echo e(session('error')); ?>
 
-        @if (session('success'))
+          </div>
+        <?php endif; ?>
+
+        <?php if(session('success')): ?>
           <div class="alert-success">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <polyline points="20 6 9 17 4 12"/>
             </svg>
-            {{ session('success') }}
-          </div>
-        @endif
+            <?php echo e(session('success')); ?>
 
-        {{-- Form --}}
-        <form action="{{ route('forgot-password.verify.post') }}" method="POST" novalidate autocomplete="off">
-          @csrf
+          </div>
+        <?php endif; ?>
+
+        
+        <form action="<?php echo e(route('forgot-password.verify.post')); ?>" method="POST" novalidate autocomplete="off">
+          <?php echo csrf_field(); ?>
 
           <div class="otp-label">Masukkan Kode OTP</div>
 
           <div class="otp-wrap">
-            <input class="otp-input {{ $errors->has('otp') ? 'is-error' : '' }}" type="text" maxlength="1" inputmode="numeric" data-index="0" placeholder="·">
-            <input class="otp-input {{ $errors->has('otp') ? 'is-error' : '' }}" type="text" maxlength="1" inputmode="numeric" data-index="1" placeholder="·">
-            <input class="otp-input {{ $errors->has('otp') ? 'is-error' : '' }}" type="text" maxlength="1" inputmode="numeric" data-index="2" placeholder="·">
-            <input class="otp-input {{ $errors->has('otp') ? 'is-error' : '' }}" type="text" maxlength="1" inputmode="numeric" data-index="3" placeholder="·">
-            <input class="otp-input {{ $errors->has('otp') ? 'is-error' : '' }}" type="text" maxlength="1" inputmode="numeric" data-index="4" placeholder="·">
-            <input class="otp-input {{ $errors->has('otp') ? 'is-error' : '' }}" type="text" maxlength="1" inputmode="numeric" data-index="5" placeholder="·">
+            <input class="otp-input <?php echo e($errors->has('otp') ? 'is-error' : ''); ?>" type="text" maxlength="1" inputmode="numeric" data-index="0" placeholder="·">
+            <input class="otp-input <?php echo e($errors->has('otp') ? 'is-error' : ''); ?>" type="text" maxlength="1" inputmode="numeric" data-index="1" placeholder="·">
+            <input class="otp-input <?php echo e($errors->has('otp') ? 'is-error' : ''); ?>" type="text" maxlength="1" inputmode="numeric" data-index="2" placeholder="·">
+            <input class="otp-input <?php echo e($errors->has('otp') ? 'is-error' : ''); ?>" type="text" maxlength="1" inputmode="numeric" data-index="3" placeholder="·">
+            <input class="otp-input <?php echo e($errors->has('otp') ? 'is-error' : ''); ?>" type="text" maxlength="1" inputmode="numeric" data-index="4" placeholder="·">
+            <input class="otp-input <?php echo e($errors->has('otp') ? 'is-error' : ''); ?>" type="text" maxlength="1" inputmode="numeric" data-index="5" placeholder="·">
           </div>
 
           <input type="hidden" name="otp" id="otp-combined">
 
-          @error('otp')
-            <div class="field-error">{{ $message }}</div>
-          @enderror
+          <?php $__errorArgs = ['otp'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+            <div class="field-error"><?php echo e($message); ?></div>
+          <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
 
           <div class="resend-row">
             Tidak menerima kode?
-            <a href="{{ route('forgot-password') }}">Kirim ulang</a>
+            <a href="<?php echo e(route('forgot-password')); ?>">Kirim ulang</a>
           </div>
 
           <button class="btn-submit" type="submit">
@@ -102,7 +112,7 @@
         </form>
 
         <div class="form-note">
-          <a href="{{ route('forgot-password') }}">Kembali ke lupa kata sandi</a>
+          <a href="<?php echo e(route('forgot-password')); ?>">Kembali ke lupa kata sandi</a>
         </div>
 
       </div>
@@ -215,4 +225,4 @@ inputs.forEach((input, i) => {
 });
 </script>
 </body>
-</html>
+</html><?php /**PATH C:\xampp\htdocs\noctura\resources\views/auth/verify-otp.blade.php ENDPATH**/ ?>
