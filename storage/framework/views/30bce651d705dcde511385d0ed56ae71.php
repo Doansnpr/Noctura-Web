@@ -5,1765 +5,959 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>NOCTURA – Sleep Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,700&family=Sora:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-/* ────────────────────────────────────────
-   Google Fonts Import (Playfair Display + Inter)
-   Letakkan di <head> HTML atau di sini dengan @import
-──────────────────────────────────────── */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
-/* ── VARIABLES & RESET ── */
 :root {
-  --navy: #050d2e;
-  --navy-mid: #0c1a50;
-  --navy-soft: #152380;
-  --blue: #3a5ce8;
-  --blue-light: #6b87f0;
-  --blue-pale: #dde6ff;
-  --white: #ffffff;
-  --off: #f4f6ff;
-  --text-900: #050d2e;
-  --text-700: #2a3560;
-  --text-500: #6270a0;
-  --text-400: #8898c8;
-  --green: #22c55e;
-  --amber: #f59e0b;
-  --danger: #ef4444;
-
-  --radius-sm: 10px;
-  --radius-md: 18px;
-  --radius-lg: 28px;
-  --radius-xl: 40px;
-
-  --shadow-sm: 0 4px 16px rgba(5, 13, 46, 0.04);
-  --shadow-md: 0 12px 40px rgba(5, 13, 46, 0.08);
-  --shadow-lg: 0 24px 80px rgba(5, 13, 46, 0.12);
-  --transition: 0.35s cubic-bezier(0.25, 0.8, 0.25, 1.2);
-  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  /* ── Login-synced palette ── */
+  --navy:         #0d1b35;
+  --navy-mid:     #152345;
+  --navy-light:   #1e3264;
+  --navy-xlight:  #243a73;
+  --accent:       #4a8ef5;
+  --accent-glow:  rgba(74,142,245,0.25);
+  --accent-soft:  rgba(74,142,245,0.10);
+  --accent-mid:   rgba(74,142,245,0.18);
+  --accent-border:rgba(74,142,245,0.28);
+  --white:        #ffffff;
+  --off-white:    #f4f8ff;
+  --surface:      #eef5ff;
+  --surface-2:    #ddeaff;
+  --border:       rgba(74,142,245,0.14);
+  --border-mid:   rgba(74,142,245,0.22);
+  --text-body:    #334155;
+  --text-muted:   #6480a8;
+  --text-soft:    #98b4d4;
+  --font-display: 'Fraunces', serif;
+  --font-body:    'Sora', sans-serif;
+  --ease-spring:  cubic-bezier(0.34,1.56,0.64,1);
+  --ease-out:     cubic-bezier(0.19,1,0.22,1);
+  --ease-smooth:  cubic-bezier(0.25,0.46,0.45,0.94);
+  --r-sm: 10px; --r-md: 16px; --r-lg: 22px; --r-xl: 32px; --r-pill: 999px;
 }
 
-html {
-  scroll-behavior: smooth;
-  font-size: 16px;
-}
-
+html { scroll-behavior:smooth; font-size:15px; }
 body {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-  color: var(--text-900);
-  background: var(--white);
+  font-family: var(--font-body);
+  background: #f0f5ff;
+  color: var(--navy);
   line-height: 1.7;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-weight: 400;
+  cursor: none;
 }
+
+/* ── CURSOR ── */
+.cursor { position:fixed;width:10px;height:10px;background:var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);box-shadow:0 0 8px var(--accent-glow); }
+.cursor-ring { position:fixed;width:30px;height:30px;border:1.5px solid rgba(74,142,245,0.4);border-radius:50%;pointer-events:none;z-index:9998;transition:transform 0.35s var(--ease-smooth),width 0.3s var(--ease-spring),height 0.3s var(--ease-spring);transform:translate(-50%,-50%); }
+.cursor-ring.hovered { width:52px;height:52px;border-color:rgba(74,142,245,0.65); }
+@media(max-width:768px){.cursor,.cursor-ring{display:none}body{cursor:auto}}
+
+/* ── BACKGROUND DOTS ── */
+.bg-dots {
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(rgba(74,142,245,0.07) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+
+/* ── LAYOUT ── */
+.container { width:100%;padding:0 5%;position:relative;z-index:2; }
 
 /* ── TYPOGRAPHY ── */
-h1, h2, h3, h4,
-.nav-name, .stat-num, .step-num,
-.metric-val, .footer-col h5,
-.phone-brand, .section-tag {
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-  letter-spacing: 0em;
-  font-weight: 700;
+h1,h2,h3,h4 { font-family:var(--font-display);line-height:1.12; color:var(--navy); }
+h1 { font-size:clamp(2.2rem,5.5vw,3.8rem);font-weight:700;letter-spacing:-0.01em; }
+h2 { font-size:clamp(1.7rem,3.8vw,2.8rem);font-weight:700;letter-spacing:-0.01em; }
+h3 { font-size:1.05rem;font-weight:600; }
+h4 { font-size:0.92rem;font-weight:600; }
+p  { color:var(--text-muted);font-size:0.875rem;line-height:1.8;font-weight:400; }
+a  { text-decoration:none;color:inherit; }
+
+.gradient-text {
+  background:linear-gradient(135deg, var(--navy-light) 0%, var(--accent) 60%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  font-style:italic;
 }
 
-h1, h2, h3, h4 {
-  line-height: 1.2;
-}
+/* ── TAG ── */
+.tag { display:inline-flex;align-items:center;gap:0.5rem;font-family:var(--font-body);font-size:0.65rem;font-weight:600;letter-spacing:0.22em;text-transform:uppercase;color:var(--navy-light);background:linear-gradient(135deg,rgba(74,142,245,0.12),rgba(30,50,100,0.08));border:1.5px solid rgba(74,142,245,0.3);padding:0.3rem 0.9rem;border-radius:var(--r-pill);margin-bottom:1.2rem;box-shadow:0 2px 10px rgba(74,142,245,0.1); }
+.tag-dot { width:5px;height:5px;border-radius:50%;background:var(--accent);animation:blink 2s ease infinite; }
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.3}}
 
-h1 { font-size: clamp(2.4rem, 6vw, 3.8rem); }
-h2 { font-size: clamp(1.8rem, 4vw, 2.8rem); }
-h3 { font-size: 1.35rem; }
-h4 { font-size: 1.05rem; }
+/* ── CARD ── */
+.card { background:var(--white);border:1px solid var(--border);border-radius:var(--r-lg);transition:all 0.35s var(--ease-smooth);box-shadow:0 2px 12px rgba(74,142,245,0.07); }
+.card:hover { border-color:var(--accent-border);box-shadow:0 8px 32px rgba(74,142,245,0.12);transform:translateY(-4px); }
 
-p {
-  color: var(--text-500);
-  font-size: 1rem;
-  line-height: 1.8;
-  font-weight: 400;
-}
+/* ── BUTTONS ── */
+.btn-primary { display:inline-flex;align-items:center;gap:0.6rem;padding:0.8rem 1.8rem;border-radius:var(--r-pill);font-family:var(--font-body);font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--white);background:var(--navy);border:none;box-shadow:0 4px 20px rgba(13,27,53,0.22);transition:all 0.3s var(--ease-spring);cursor:none;position:relative;overflow:hidden; }
+.btn-primary::before { content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.07),transparent);transition:left 0.5s; }
+.btn-primary:hover { background:var(--navy-light);transform:translateY(-2px);box-shadow:0 8px 28px rgba(13,27,53,0.28); }
+.btn-primary:hover::before { left:100%; }
 
-em { font-style: italic; color: var(--blue); }
-strong { font-weight: 600; color: var(--text-700); }
-a { text-decoration: none; color: inherit; transition: color var(--transition); }
+.btn-ghost { display:inline-flex;align-items:center;gap:0.6rem;padding:0.8rem 1.8rem;border-radius:var(--r-pill);font-family:var(--font-body);font-size:0.78rem;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;color:var(--navy);border:1.5px solid var(--border-mid);background:transparent;transition:all 0.3s var(--ease-smooth);cursor:none; }
+.btn-ghost:hover { color:var(--accent);border-color:var(--accent-border);background:var(--accent-soft); }
 
-.max-w { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+/* ── NAVBAR ── */
+.navbar { position:fixed;top:20px;left:50%;transform:translateX(-50%);width:calc(100% - 48px);z-index:1000;background:rgba(240,245,255,0.88);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(74,142,245,0.18);border-radius:var(--r-xl);padding:0.72rem 1.5rem;display:flex;align-items:center;justify-content:space-between;transition:all 0.4s var(--ease-smooth);box-shadow:0 4px 20px rgba(74,142,245,0.10); }
+.navbar.scrolled { background:rgba(232,240,254,0.97);box-shadow:0 8px 36px rgba(74,142,245,0.18); }
+.nav-brand { display:flex;align-items:center;gap:0.65rem; }
+.nav-logo-svg { width:28px;height:28px; }
+.nav-name { font-family:var(--font-display);font-size:1rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--navy); }
+.nav-links { display:flex;align-items:center;gap:2rem;list-style:none; }
+.nav-links a { font-size:0.78rem;font-weight:500;color:var(--text-muted);transition:color 0.25s;cursor:none; }
+.nav-links a:hover { color:var(--navy); }
+.nav-cta { font-size:0.75rem!important;font-weight:700!important;color:var(--white)!important;background:var(--navy)!important;padding:0.46rem 1.2rem!important;border-radius:var(--r-pill)!important;border:none!important;box-shadow:0 3px 12px rgba(13,27,53,0.22);transition:all 0.3s var(--ease-spring)!important;letter-spacing:0.08em!important;text-transform:uppercase!important; }
+.nav-cta:hover { background:var(--navy-light)!important;color:var(--white)!important;transform:translateY(-1px);box-shadow:0 6px 20px rgba(13,27,53,0.28)!important; }
+.nav-toggle { display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:none;padding:5px; }
+.nav-toggle span { display:block;width:20px;height:1.5px;background:var(--navy);border-radius:2px;transition:0.3s; }
 
-.section-tag {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--blue);
-  background: rgba(58, 92, 232, 0.06);
-  padding: 0.4rem 1rem;
-  border-radius: 50px;
-  border: 1px solid rgba(58, 92, 232, 0.15);
-  margin-bottom: 1.2rem;
-  backdrop-filter: blur(4px);
-}
+/* ── HERO ── */
+.hero { min-height:100svh;display:flex;align-items:center;padding:8rem 5% 5rem;position:relative;background:linear-gradient(160deg,#dce8ff 0%,#e8f0fe 50%,#f0f5ff 100%);overflow:hidden; }
 
-.section-title { color: var(--text-900); margin-bottom: 1.2rem; }
-.section-sub {
-  max-width: 560px;
-  font-size: 1rem;
-  line-height: 1.85;
-  color: var(--text-500);
-  font-weight: 400;
-}
+/* Decorative blobs */
+.hero-blob-1 { position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(74,142,245,0.16) 0%,transparent 65%);top:-200px;right:-100px;pointer-events:none;z-index:0; }
+.hero-blob-3 { position:absolute;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,rgba(74,142,245,0.13) 0%,transparent 70%);top:10%;left:5%;pointer-events:none;z-index:0; }
+.hero-blob-2 { position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(74,142,245,0.10) 0%,transparent 70%);bottom:-100px;left:-80px;pointer-events:none;z-index:0; }
 
-/* ── REVEAL ANIMATIONS ── */
-.reveal {
-  opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.8s var(--ease-out-expo), transform 0.8s var(--ease-out-expo);
-}
-.reveal.visible {
-  opacity: 1;
-  transform: none;
-}
-.reveal-delay-1 { transition-delay: 0.1s; }
-.reveal-delay-2 { transition-delay: 0.2s; }
-.reveal-delay-3 { transition-delay: 0.3s; }
-.reveal-delay-4 { transition-delay: 0.4s; }
+.hero-inner { width:100%;display:grid;grid-template-columns:1.05fr 0.95fr;gap:4%;align-items:center;position:relative;z-index:1; }
 
-/* ────────────────────────────────────────
-   NAVBAR
-──────────────────────────────────────── */
-.navbar {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 1000;
-  padding: 0.9rem 5%;
+.hero-eyebrow { display:flex;align-items:center;gap:0.8rem;margin-bottom:1.6rem;opacity:0;animation:fadeUp 0.8s 0.1s var(--ease-out) forwards; }
+.eyebrow-badge { font-family:var(--font-body);font-size:0.65rem;font-weight:600;letter-spacing:0.18em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-border);padding:0.28rem 0.82rem;border-radius:var(--r-pill); }
+.eyebrow-line { flex:1;height:1px;background:linear-gradient(90deg,var(--accent-border),transparent); }
+
+.hero-title { opacity:0;animation:fadeUp 0.9s 0.2s var(--ease-out) forwards;margin-bottom:1.4rem; }
+.hero-sub { opacity:0;animation:fadeUp 0.9s 0.3s var(--ease-out) forwards;max-width:440px;margin-bottom:2.2rem;font-size:0.9rem; }
+.hero-actions { display:flex;gap:0.9rem;flex-wrap:wrap;opacity:0;animation:fadeUp 0.9s 0.4s var(--ease-out) forwards; }
+.hero-trust { margin-top:2.2rem;display:flex;align-items:center;gap:0.9rem;opacity:0;animation:fadeUp 0.9s 0.5s var(--ease-out) forwards; }
+.trust-avatars { display:flex; }
+.trust-avatar { width:28px;height:28px;border-radius:50%;border:2px solid var(--white);margin-left:-7px;background:linear-gradient(135deg,var(--navy-light),var(--accent));display:flex;align-items:center;justify-content:center;font-size:0.55rem;font-weight:700;color:var(--white); }
+.trust-avatar:first-child { margin-left:0; }
+.trust-text { font-size:0.77rem;color:var(--text-muted);font-weight:400; }
+.trust-text strong { color:var(--navy);font-weight:600; }
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* ── PHONE MOCKUP (Perfect Real Phone Aspect Ratio - 275px x 480px) ── */
+.hero-visual { position:relative;opacity:0;animation:fadeUp 1s 0.5s var(--ease-out) forwards; width: 275px; margin: 0 auto; }
+.phone-shadow { position:absolute;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,rgba(74,142,245,0.22),transparent 70%);bottom:-25px;left:50%;transform:translateX(-50%);filter:blur(22px);z-index:0; }
+.phone-frame {
+  width:275px;
+  height:480px; /* Slender, compact, strictly smartphone layout */
+  margin:0 auto;
+  position:relative;
+  z-index:1;
+  background:#f4f8ff;
+  border:10px solid #091124;
+  border-radius:38px;
+  box-shadow:0 24px 64px rgba(13,27,53,0.22), 0 0 30px rgba(74,142,245,0.1);
+  overflow:hidden;
+  animation:phone-float 5s ease-in-out infinite;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: background var(--transition), box-shadow var(--transition), padding var(--transition);
-}
-
-.navbar.scrolled {
-  background: rgba(255, 255, 255, 0.96);
-  box-shadow: 0 2px 24px rgba(5, 13, 46, 0.06), 0 0 0 1px rgba(58, 92, 232, 0.05);
-  padding: 0.65rem 5%;
-}
-
-.nav-brand {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-  z-index: 2;
-}
-
-.nav-logo {
-  width: 36px;
-  height: 36px;
-  flex-shrink: 0;
-}
-
-.nav-name {
-  font-size: 1.3rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--navy);
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 2.2rem;
-  list-style: none;
-}
-
-.nav-links a {
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--text-700);
-  position: relative;
-  padding: 0.2rem 0;
-  transition: color var(--transition);
-}
-
-.nav-links a::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: var(--blue);
-  border-radius: 2px;
-  transition: width var(--transition);
-}
-
-.nav-links a:hover {
-  color: var(--blue);
-}
-
-.nav-links a:hover::after {
-  width: 100%;
-}
-
-.nav-cta {
-  background: var(--navy) !important;
-  color: var(--white) !important;
-  padding: 0.5rem 1.3rem !important;
-  border-radius: 50px !important;
-  font-size: 0.84rem !important;
-  font-weight: 600 !important;
-  transition: all var(--transition) !important;
-  border: 1px solid transparent;
-  letter-spacing: 0.02em;
-}
-.nav-cta::after { display: none !important; }
-.nav-cta:hover {
-  background: var(--blue) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(58, 92, 232, 0.35);
-}
-
-/* Hamburger */
-.nav-toggle {
-  display: none;
   flex-direction: column;
-  gap: 5px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 6px;
-  z-index: 3;
 }
-.nav-toggle span {
-  display: block;
-  width: 24px;
-  height: 2.5px;
-  background: var(--navy);
-  border-radius: 3px;
-  transition: var(--transition);
+@keyframes phone-float{0%,100%{transform:translateY(0) rotate(-0.3deg)}50%{transform:translateY(-10px) rotate(0.3deg)}}
+
+/* Internal App Core Components */
+.phone-top-bar { display:flex;justify-content:space-between;align-items:center;padding:0.6rem 1.1rem 0.35rem;font-size:0.52rem;color:var(--navy);font-weight:600;background:rgba(244,248,255,0.92);backdrop-filter:blur(10px);z-index:120; flex-shrink:0; position:relative; }
+.phone-island { position:absolute;top:0.45rem;left:50%;transform:translateX(-50%);width:68px;height:13px;background:#091124;border-radius:20px;display:flex;align-items:center; }
+.phone-cam { width:4px;height:4px;border-radius:50%;background:#1c2b4d; margin-left: auto; margin-right: 8px; }
+
+/* Phone Inner Custom Scroll Container */
+.phone-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  padding: 0.4rem 0.75rem 5.5rem; /* Large safety offset protecting layouts from docked navs */
+}
+.phone-scroll-container::-webkit-scrollbar { display:none; }
+
+.phone-content { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 0.75rem;
 }
 
-/* ────────────────────────────────────────
-   HERO
-──────────────────────────────────────── */
-.hero {
-  min-height: 100svh;
-  background: var(--navy);
-  position: relative;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  padding: 7rem 5% 5rem;
-}
+/* Header User Profile Row */
+.ph-header { display:flex;align-items:center;justify-content:space-between;padding:0.1rem 0; }
+.ph-user { display:flex;align-items:center;gap:0.45rem; }
+.ph-avatar { width:30px;height:30px;border-radius:50%;background:#e2ecf9;display:flex;align-items:center;justify-content:center;position:relative; border:1px solid rgba(74,142,245,0.15); }
+.ph-avatar-dot { position:absolute;bottom:0px;right:0px;width:6px;height:6px;border-radius:50%;background:#22c55e;border:1.2px solid #f4f8ff; }
+.ph-avatar-icon { font-size:0.85rem; }
+.ph-name { font-family:var(--font-body);font-size:0.76rem;font-weight:700;color:var(--navy);line-height:1.2; }
+.ph-greet { font-size:0.55rem;color:var(--text-muted);font-weight:400; }
+.ph-actions-row { display:flex;gap:0.35rem;align-items:center; }
+.ph-btn-circle { width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.58rem; background:var(--white); border:1px solid rgba(74,142,245,0.1); color:var(--navy); position:relative; }
+.ph-btn-circle.active { background:#3b82f6; color:var(--white); box-shadow:0 2px 6px rgba(59,130,246,0.25); }
+.ph-badge-dot { position:absolute;top:1px;right:1px;width:4px;height:4px;background:#ef4444;border-radius:50%; }
 
-.hero::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 75% 55% at 70% 35%, rgba(58,92,232,0.25) 0%, transparent 70%),
-              radial-gradient(ellipse 50% 50% at 10% 80%, rgba(21,35,128,0.45) 0%, transparent 70%);
-  pointer-events: none;
-}
+/* Card 1: Tidur Semalam */
+.ph-sleep-card { background:var(--white);border-radius:18px;padding:0.85rem;box-shadow:0 4px 16px rgba(13,27,53,0.02); border:1px solid rgba(74,142,245,0.08); }
+.ph-sleep-header { display:flex;justify-content:space-between;align-items:center;margin-bottom:0.45rem; }
+.ph-sleep-label { display:flex;align-items:center;gap:0.3rem;font-size:0.52rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-muted); }
+.ph-badge-exc { background:#f3e8ff;color:#6d28d9;font-size:0.48rem;font-weight:700;padding:0.15rem 0.45rem;border-radius:var(--r-pill);display:flex;align-items:center;gap:0.2rem; }
+.ph-sleep-dur { display:flex;align-items:baseline;color:var(--navy);margin-bottom:0.05rem; }
+.ph-sleep-dur .num { font-family:var(--font-body);font-size:1.6rem;font-weight:700; }
+.ph-sleep-dur .unit { font-size:0.72rem;font-weight:600;color:var(--navy);margin-right:0.2rem; margin-left:0.05rem; }
+.ph-sleep-time { font-size:0.52rem;color:var(--text-soft);font-weight:500;margin-bottom:0.6rem; }
+.ph-sleep-bar { display:flex;height:5px;border-radius:4px;overflow:hidden;margin-bottom:0.45rem;gap:3px; }
+.ph-bar-1 { flex:1.5;background:#c084fc; }
+.ph-bar-2 { flex:2.5;background:#818cf8; }
+.ph-bar-3 { flex:4;background:#93c5fd; }
+.ph-bar-4 { flex:0.8;background:#e9d5ff; }
+.ph-sleep-legend { display:flex;gap:0.5rem;flex-wrap:wrap;font-size:0.48rem;color:var(--text-muted);font-weight:500; }
+.ph-leg { display:flex;align-items:center;gap:0.18rem; }
+.ph-leg-dot { width:4px;height:4px;border-radius:50%; }
+.ph-skor-row { display:flex;align-items:center;justify-content:space-between;margin-top:0.7rem;padding-top:0.65rem;border-top:1px solid #f1f5f9; }
+.ph-skor-label { font-size:0.52rem;color:var(--text-muted);font-weight:600; }
+.ph-skor-val { font-family:var(--font-body);font-size:1.15rem;font-weight:700;color:#4f46e5;line-height:1; }
+.ph-skor-bars { display:flex;align-items:flex-end;gap:2px;height:18px; }
+.ph-skor-bar { width:3.5px;border-radius:2px;background:#e2e8f0; }
+.ph-skor-bar.on { background:#6366f1; }
+.ph-skor-bar.active-bar { background:#4f46e5; }
 
-.hero-stars {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  overflow: hidden;
-}
+/* Card 2: Target Malam Ini */
+.ph-target-card { background:#e0edff; border-radius:14px; padding:0.7rem 0.8rem; display:flex; align-items:center; gap:0.6rem; border:1px solid rgba(74,142,245,0.1); }
+.ph-target-icon { width:26px;height:26px;border-radius:8px;background:#2563eb;display:flex;align-items:center;justify-content:center;color:var(--white);font-size:0.75rem;flex-shrink:0; }
+.ph-target-info { flex:1; min-width:0; }
+.ph-target-lbl { font-size:0.48rem; font-weight:700; color:#1e40af; letter-spacing:0.03em; margin-bottom:0.05rem; }
+.ph-target-vals { display:flex; align-items:center; gap:0.3rem; font-size:0.62rem; font-weight:700; color:var(--navy); }
+.ph-target-badge { background:var(--white); color:#2563eb; font-size:0.46rem; font-weight:700; padding:0.05rem 0.25rem; border-radius:4px; }
+.ph-target-right { text-align:right; font-size:0.5rem; color:#2563eb; font-weight:600; flex-shrink:0; }
 
-.star {
-  position: absolute;
-  background: rgba(255,255,255,0.7);
-  border-radius: 50%;
-  animation: twinkle var(--dur, 3s) var(--delay, 0s) infinite alternate;
-}
+/* Card 3: Mulai Prediksi */
+.ph-prediksi-blue { background:linear-gradient(135deg,#0b42b3 0%,#1e64f0 100%);border-radius:16px;padding:0.85rem;display:flex;align-items:center;justify-content:space-between; box-shadow:0 4px 14px rgba(11,66,179,0.12); }
+.ph-prediksi-title-large { font-family:var(--font-body);font-size:0.8rem;font-weight:700;color:var(--white);margin-bottom:0.15rem; }
+.ph-prediksi-sub-white { font-size:0.55rem;color:rgba(255,255,255,0.85); }
+.ph-prediksi-btn-icon { width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;font-size:0.8rem;color:var(--white); }
 
-@keyframes twinkle {
-  0% { opacity: 0.15; transform: scale(0.7); }
-  100% { opacity: 1; transform: scale(1.15); }
-}
+/* Grid Cards 4 & 5 (Log Tidur & Edukasi) */
+.ph-menu-grid { display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; }
+.ph-menu-card { border-radius:16px; padding:0.8rem; position:relative; overflow:hidden; display:flex; flex-direction:column; justify-content:space-between; height:88px; border-bottom: 2.5px solid transparent; }
+.ph-menu-card.purple { background:#f5f0ff; border-color:#c084fc; }
+.ph-menu-card.green { background:#f0fdf4; border-color:#4ade80; }
+.ph-menu-icon-wrap { width:24px; height:24px; border-radius:50%; background:var(--white); display:flex; align-items:center; justify-content:center; font-size:0.68rem; margin-bottom:0.8rem; box-shadow:0 1px 3px rgba(0,0,0,0.03); z-index:2; }
+.ph-menu-card h4 { font-family:var(--font-body); font-size:0.68rem; font-weight:700; color:var(--navy); margin-bottom:0.05rem; z-index:2; }
+.ph-menu-card span { font-size:0.5rem; font-weight:600; z-index:2; }
+.ph-menu-card.purple span { color:#7c3aed; }
+.ph-menu-card.green span { color:#16a34a; }
+.ph-card-circle-decor { position:absolute; right:-10px; top:-10px; width:44px; height:44px; border-radius:50%; background:rgba(255,255,255,0.4); z-index:1; }
 
-.hero-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4%;
-  align-items: center;
-}
+/* Card 6: Insight Hari Ini */
+.ph-insight-card { background:#edf4fe; border-radius:14px; padding:0.75rem 0.85rem; border:1px solid rgba(74,142,245,0.1); }
+.ph-insight-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:0.35rem; }
+.ph-insight-lbl { display:flex; align-items:center; gap:0.25rem; font-size:0.48rem; font-weight:700; color:#1e40af; letter-spacing:0.03em; }
+.ph-insight-badge { background:var(--white); color:#16a34a; font-size:0.46rem; font-weight:700; padding:0.1rem 0.4rem; border-radius:var(--r-pill); display:flex; align-items:center; gap:0.12rem; }
+.ph-insight-badge::before { content:''; width:3px; height:3px; background:#16a34a; border-radius:50%; }
+.ph-insight-desc { font-size:0.55rem; color:#1e3a8a; font-weight:500; line-height:1.4; }
 
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(221,230,255,0.9);
-  background: rgba(58,92,232,0.25);
-  padding: 0.4rem 1.1rem;
-  border-radius: 50px;
-  border: 1px solid rgba(58,92,232,0.4);
-  margin-bottom: 1.6rem;
-  animation: fadein 0.8s ease forwards;
-  backdrop-filter: blur(6px);
-}
+/* Floating Action Button - FIXED OUTER ROOT LAYER */
+.ph-fab { position:absolute; bottom:4.2rem; right:0.75rem; width:34px; height:34px; background:#5046e5; border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--white); font-size:0.85rem; box-shadow:0 4px 10px rgba(80,70,229,0.3); z-index:115; }
 
-.badge-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--blue-light);
-  box-shadow: 0 0 0 3px rgba(107,135,240,0.4);
-  animation: pulse-dot 2s ease infinite;
-}
+/* Premium Fixed Floating App Dock */
+.ph-dock-container { position:absolute; bottom:0.55rem; left:0.55rem; right:0.55rem; z-index:110; }
+.ph-bottom-dock { display:flex; justify-content:space-around; align-items:center; padding:0.35rem 0.2rem; background:rgba(255,255,255,0.96); backdrop-filter:blur(12px); border:1px solid rgba(74,142,245,0.12); border-radius:20px; box-shadow:0 6px 20px rgba(13,27,53,0.06); }
+.ph-dock-item { display:flex; flex-direction:column; align-items:center; gap:0.08rem; font-size:0.44rem; color:var(--text-soft); font-weight:600; text-decoration:none; width:38px; }
+.ph-dock-item.active { color:#0f295a; }
+.ph-dock-icon-box { width:25px; height:25px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.72rem; }
+.ph-dock-item.active .ph-dock-icon-box { background:#0f295a; color:var(--white); box-shadow:0 2px 6px rgba(15,41,90,0.2); }
 
-@keyframes pulse-dot {
-  0%, 100% { box-shadow: 0 0 0 3px rgba(107,135,240,0.4); }
-  50% { box-shadow: 0 0 0 6px rgba(107,135,240,0); }
+/* ── DECORATIVE FLOAT PILLS (Perfected Compact Placement) ── */
+.float-pill { 
+  position:absolute;
+  display:inline-flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:0.4rem;
+  background:#eef4ff;
+  border:1px solid rgba(74,142,245,0.3);
+  border-radius:var(--r-pill);
+  padding:0.4rem 0.75rem;
+  font-size:0.62rem;
+  font-family:var(--font-body);
+  font-weight:600;
+  color:var(--navy);
+  white-space:nowrap !important;
+  box-shadow:0 8px 20px rgba(13,27,53,0.08);
+  z-index:5; 
 }
+.float-pill-1 { top:15%; left:-20%; animation:float-y 4s ease-in-out infinite alternate; }
+.float-pill-2 { bottom:18%; right:-18%; animation:float-y 5s 1s ease-in-out infinite alternate; }
+.pill-icon { width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.58rem; flex-shrink:0; }
+.pill-icon-green { background:rgba(34,197,94,0.15); }
+.pill-icon-blue  { background:var(--accent-soft); }
+@keyframes float-y{0%{transform:translateY(0)}100%{transform:translateY(-8px)}}
 
-@keyframes fadein {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: none; }
-}
+/* ── MARQUEE ── */
+.marquee-section { position:relative;z-index:2;padding:1.3rem 0;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:linear-gradient(135deg,#ddeaff,#eef5ff); }
+.marquee-track { display:flex;animation:marquee 26s linear infinite;width:max-content; }
+.marquee-item { display:flex;align-items:center;gap:0.9rem;padding:0 2.8rem;white-space:nowrap; }
+.marquee-num { font-family:var(--font-display);font-size:1.2rem;font-weight:700;background:linear-gradient(135deg,var(--navy-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+.marquee-txt { font-size:0.78rem;color:var(--text-muted);font-weight:400; }
+.marquee-sep { width:3px;height:3px;border-radius:50%;background:var(--border-mid); }
+@keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-.hero-title {
-  color: var(--white);
-  margin-bottom: 1.5rem;
-  animation: fadein 0.9s 0.1s ease both;
-  font-weight: 700;
-  letter-spacing: 0;
-}
+/* ── SECTIONS ── */
+.section-light { padding:7rem 5%;position:relative;z-index:2;background:linear-gradient(180deg,#f0f5ff 0%,#e8f0fe 100%); }
+.section-alt   { padding:7rem 5%;position:relative;z-index:2;background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border); }
+.section-header { margin-bottom:3rem; }
 
-.hero-sub {
-  color: rgba(221,230,255,0.75);
-  font-size: 1rem;
-  max-width: 460px;
-  animation: fadein 0.9s 0.2s ease both;
-  font-weight: 400;
-}
+/* ── BENTO ── */
+.bento-grid { display:grid;grid-template-columns:repeat(12,1fr);gap:1rem; }
+.bento-card { background:linear-gradient(145deg,#f5f9ff,#ffffff);border:1px solid rgba(74,142,245,0.22);border-radius:var(--r-lg);padding:1.8rem;transition:all 0.35s var(--ease-smooth);overflow:hidden;position:relative;box-shadow:0 2px 12px rgba(74,142,245,0.07); }
+.bento-card:hover { border-color:var(--accent-border);box-shadow:0 8px 28px rgba(74,142,245,0.18);transform:translateY(-3px);background:#f0f7ff; }
+.bento-a{grid-column:1/6;grid-row:1/2}
+.bento-b{grid-column:6/9;grid-row:1/2}
+.bento-c{grid-column:9/13;grid-row:1/2}
+.bento-d{grid-column:1/5;grid-row:2/3}
+.bento-e{grid-column:5/13;grid-row:2/3}
 
-.hero-actions {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-top: 2.2rem;
-  animation: fadein 0.9s 0.3s ease both;
-}
+.bento-card::before { content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:var(--r-lg) var(--r-lg) 0 0;background:linear-gradient(90deg,var(--accent-soft),transparent);opacity:0;transition:opacity 0.35s; }
+.bento-card:hover::before { opacity:1; }
 
-.btn-primary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7rem;
-  background: var(--blue);
-  color: var(--white);
-  padding: 0.9rem 2rem;
-  border-radius: 50px;
-  font-size: 0.92rem;
-  font-weight: 600;
-  transition: all var(--transition);
-  box-shadow: 0 8px 28px rgba(58,92,232,0.4);
-  border: 1px solid transparent;
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-}
-.btn-primary:hover {
-  background: var(--blue-light);
-  transform: translateY(-3px);
-  box-shadow: 0 14px 38px rgba(58,92,232,0.5);
-}
+.bento-icon { width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:1.1rem;font-size:1.1rem; }
+.icon-blue  { background:var(--accent-soft);border:1px solid var(--accent-border); }
+.icon-navy  { background:rgba(13,27,53,0.06);border:1px solid rgba(13,27,53,0.1); }
+.icon-light { background:var(--surface);border:1px solid var(--border); }
 
-.btn-outline {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.7rem;
-  border: 1px solid rgba(221,230,255,0.35);
-  color: rgba(221,230,255,0.9);
-  padding: 0.9rem 2rem;
-  border-radius: 50px;
-  font-size: 0.92rem;
-  font-weight: 500;
-  transition: all var(--transition);
-  background: transparent;
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-}
-.btn-outline:hover {
-  border-color: rgba(221,230,255,0.8);
-  color: var(--white);
-  background: rgba(255,255,255,0.08);
-  transform: translateY(-2px);
-}
+.bento-card h3 { margin-bottom:0.5rem;font-size:0.95rem; }
+.bento-card p  { font-size:0.82rem; }
 
-/* Phone mockup */
-.hero-visual {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  animation: fadein 1s 0.4s ease both;
-}
+.bento-chart { margin-top:1.3rem;display:flex;flex-direction:column;gap:0.72rem; }
+.bento-bar-row { display:flex;align-items:center;gap:0.75rem; }
+.bento-bar-lbl { width:76px;font-size:0.68rem;color:var(--text-muted);flex-shrink:0; }
+.bento-bar-track { flex:1;height:6px;background:var(--surface-2,#eef2fa);border-radius:3px;overflow:hidden; }
+.bento-bar-fill { height:100%;border-radius:3px;width:0;transition:width 1.6s var(--ease-out); }
+.bento-bar-fill.animated { width:var(--w); }
+.fill-1 { background:linear-gradient(90deg,var(--navy-light),var(--accent)); }
+.fill-2 { background:linear-gradient(90deg,var(--navy-xlight),#6fa8ff); }
+.fill-3 { background:linear-gradient(90deg,rgba(74,142,245,0.5),rgba(74,142,245,0.8)); }
+.fill-4 { background:linear-gradient(90deg,rgba(74,142,245,0.3),rgba(74,142,245,0.55)); }
+.bento-bar-pct { font-size:0.68rem;color:var(--navy);font-family:var(--font-display);font-weight:600;width:28px; }
 
-.app-preview {
-  position: relative;
-  width: 100%;
-  max-width: 360px;
-}
+.big-stat { font-family:var(--font-display);font-size:3.2rem;font-weight:700;line-height:1;margin-bottom:0.45rem;background:linear-gradient(135deg,var(--navy-light),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+.bento-note { margin-top:1.1rem;padding:0.85rem;background:linear-gradient(135deg,rgba(74,142,245,0.10),rgba(30,50,100,0.06));border:1.5px solid rgba(74,142,245,0.25);border-radius:var(--r-sm);font-size:0.78rem;color:var(--navy);line-height:1.6;box-shadow:inset 0 1px 0 rgba(74,142,245,0.1); }
 
-.float-card {
-  position: absolute;
-  z-index: 10;
-  background: rgba(255,255,255,0.95);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.6);
-  border-radius: var(--radius-md);
-  padding: 0.7rem 1.2rem;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--text-700);
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  box-shadow: var(--shadow-md);
-}
-.float-card-1 { top: 10%; left: -12%; animation: float-y 4.5s ease infinite alternate; }
-.float-card-2 { bottom: 18%; right: -10%; animation: float-y 5.5s 1s ease infinite alternate; }
-.float-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
+/* ── SOLUTION ── */
+.solution-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;margin-top:3rem; }
+.sol-card { background:linear-gradient(145deg,#eef4ff,#ffffff);border:1px solid rgba(74,142,245,0.25);border-radius:var(--r-lg);padding:2rem;position:relative;overflow:hidden;transition:all 0.35s var(--ease-smooth);box-shadow:0 2px 12px rgba(74,142,245,0.09); }
+.sol-card::after { content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--navy-light),var(--accent),#6fa8ff);opacity:0;transition:opacity 0.35s; }
+.sol-card:hover { border-color:var(--accent);box-shadow:0 8px 32px rgba(74,142,245,0.20);transform:translateY(-5px);background:#f0f7ff; }
+.sol-card:hover::after { opacity:1; }
+.sol-num { font-family:var(--font-display);font-size:3rem;font-weight:700;line-height:1;opacity:0.05;position:absolute;top:1rem;right:1.3rem;color:var(--navy); }
+.sol-card h3 { margin-bottom:0.5rem; } .sol-card p { font-size:0.82rem; }
 
-@keyframes float-y {
-  0% { transform: translateY(0); }
-  100% { transform: translateY(-12px); }
-}
+/* ── FEATURES ── */
+.tab-row { display:flex;align-items:center;gap:0.4rem;margin:2.5rem 0 2.2rem;background:#c7dcff;border:1px solid rgba(74,142,245,0.2);border-radius:var(--r-pill);padding:4px;width:fit-content; }
+.tab-btn { padding:0.5rem 1.3rem;border-radius:var(--r-pill);border:none;font-family:var(--font-body);font-size:0.76rem;font-weight:600;color:var(--text-muted);background:transparent;cursor:none;transition:all 0.3s var(--ease-smooth); }
+.tab-btn.active { background:var(--white);color:var(--navy);border:1px solid var(--border);box-shadow:0 2px 8px rgba(13,27,53,0.08); }
+.feat-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:1rem; }
+.feat-card { background:linear-gradient(135deg,#f0f6ff,#ffffff);border:1px solid rgba(74,142,245,0.22);border-radius:var(--r-lg);padding:1.6rem;display:flex;gap:1.1rem;align-items:flex-start;transition:all 0.35s var(--ease-smooth);box-shadow:0 2px 10px rgba(74,142,245,0.08); }
+.feat-card:hover { border-color:var(--accent);box-shadow:0 8px 24px rgba(74,142,245,0.18);transform:translateX(4px);background:#f0f7ff; }
+.feat-icon { width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem; }
+.feat-card h4 { margin-bottom:0.3rem; } .feat-card p { font-size:0.8rem; }
 
-.phone-shell {
-  width: 230px;
-  margin: 0 auto;
-  background: linear-gradient(150deg, #0f1d6b, #071048);
-  border-radius: 38px;
-  border: 2px solid rgba(221,230,255,0.18);
-  box-shadow: 0 40px 90px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.06) inset;
-  overflow: hidden;
-  position: relative;
-}
+/* ── STEPS ── */
+.steps-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:3rem;position:relative; }
+.step-card { background:linear-gradient(145deg,#eef4ff,#f8fbff);border:1px solid rgba(74,142,245,0.25);border-radius:var(--r-lg);padding:1.8rem 1.4rem;text-align:center;position:relative;transition:all 0.35s var(--ease-smooth);box-shadow:0 2px 10px rgba(74,142,245,0.08); }
+.step-card:hover { border-color:var(--accent);box-shadow:0 8px 24px rgba(74,142,245,0.18);transform:translateY(-5px);background:#f0f7ff; }
+.step-connector { position:absolute;top:28px;right:-10%;width:20%;height:1px;background:linear-gradient(90deg,var(--accent-border),transparent);z-index:0;pointer-events:none; }
+.step-num-badge { width:50px;height:50px;border-radius:50%;border:2px solid var(--accent);background:linear-gradient(135deg,rgba(74,142,245,0.15),rgba(30,50,100,0.1));display:flex;align-items:center;justify-content:center;margin:0 auto 1.2rem;font-family:var(--font-display);font-size:1.1rem;font-weight:700;color:var(--accent);box-shadow:0 4px 14px rgba(74,142,245,0.2); }
+.step-card h4 { margin-bottom:0.45rem; } .step-card p { font-size:0.8rem; }
 
-.phone-notch {
-  width: 85px;
-  height: 24px;
-  background: var(--navy);
-  border-radius: 0 0 18px 18px;
-  margin: 0 auto;
-  position: relative;
-  z-index: 2;
-}
+/* ── WHY ── */
+.why-inner { display:grid;grid-template-columns:1fr 1fr;gap:6%;align-items:center; }
+.why-list { display:flex;flex-direction:column;gap:1.2rem;margin-top:2rem; }
+.why-item { display:flex;gap:0.9rem;align-items:flex-start;padding:0.9rem 1rem;background:linear-gradient(90deg,rgba(74,142,245,0.10),rgba(74,142,245,0.03));border-radius:var(--r-md);border-left:3px solid rgba(74,142,245,0.55); }
+.why-check { width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,rgba(74,142,245,0.2),rgba(30,50,100,0.12));border:1.5px solid var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:0.1rem;font-size:0.68rem;color:var(--accent);box-shadow:0 2px 10px rgba(74,142,245,0.18); }
+.why-item h4 { margin-bottom:0.22rem; } .why-item p { font-size:0.8rem; }
+.metrics-grid { display:grid;grid-template-columns:1fr 1fr;gap:0.9rem; }
+.metric-card { background:linear-gradient(135deg,#dce8ff,#eef4ff);border:1px solid rgba(74,142,245,0.18);border-radius:var(--r-lg);padding:1.6rem 1.3rem;transition:all 0.35s var(--ease-smooth);box-shadow:0 2px 12px rgba(74,142,245,0.09); }
+.metric-card:hover { border-color:var(--accent);box-shadow:0 8px 24px rgba(74,142,245,0.18);transform:translateY(-3px);background:#f0f7ff; }
+.metric-emoji { font-size:1.6rem;display:block;margin-bottom:0.7rem; }
+.metric-val { font-family:var(--font-display);font-size:1.45rem;font-weight:700;color:var(--navy);line-height:1.1;margin-bottom:0.35rem; }
+.metric-desc { font-size:0.75rem;color:var(--text-muted);line-height:1.5; }
 
-.phone-screen-header {
-  background: linear-gradient(160deg, var(--navy-soft), var(--navy));
-  padding: 1rem 1.2rem 0.8rem;
-  text-align: center;
-}
+/* ── TESTIMONIALS ── */
+.testi-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:3rem;text-align:left; }
+.testi-card { background:linear-gradient(145deg,#f0f5ff,#ffffff);border:1px solid rgba(74,142,245,0.22);border-radius:var(--r-lg);padding:1.8rem;transition:all 0.35s var(--ease-smooth);box-shadow:0 2px 12px rgba(74,142,245,0.08); }
+.testi-card:hover { border-color:var(--accent);box-shadow:0 8px 24px rgba(74,142,245,0.15);transform:translateY(-4px);background:#f0f7ff; }
+.testi-quote { font-size:1.8rem;line-height:1;color:var(--accent);margin-bottom:0.9rem;font-family:Georgia,serif; }
+.testi-text { font-size:0.83rem;color:var(--text-body);line-height:1.8;margin-bottom:1.3rem;font-style:italic; }
+.testi-author { display:flex;align-items:center;gap:0.75rem; }
+.testi-avatar { width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--navy-light),var(--navy-xlight));display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:0.85rem;font-weight:700;color:var(--white);flex-shrink:0; }
+.testi-name { font-family:var(--font-display);font-size:0.84rem;font-weight:700;margin-bottom:0.08rem;color:var(--navy); }
+.testi-role { font-size:0.7rem;color:var(--text-muted); }
+.testi-stars { color:var(--accent);font-size:0.75rem;letter-spacing:0.08em;margin-bottom:0.35rem; }
 
-.phone-moon-wrap svg {
-  width: 44px;
-  height: 44px;
-  margin: 0 auto 0.4rem;
-  display: block;
-}
+/* ── FAQ ── */
+.faq-wrap { max-width:780px;margin:0 auto; }
+.faq-grid { margin-top:3rem;display:flex;flex-direction:column;gap:0.7rem; }
+.faq-item { background:linear-gradient(90deg,#f0f5ff,#ffffff);border:1px solid rgba(74,142,245,0.22);border-radius:var(--r-md);overflow:hidden;transition:border-color 0.3s;box-shadow:0 1px 8px rgba(74,142,245,0.08); }
+.faq-item.open { border-color:var(--accent);box-shadow:0 4px 20px rgba(74,142,245,0.15);background:#f6faff; }
+.faq-q { width:100%;background:none;border:none;cursor:none;padding:1.1rem 1.4rem;display:flex;justify-content:space-between;align-items:center;gap:1rem;font-family:var(--font-body);font-size:0.87rem;font-weight:600;color:var(--text-body);text-align:left;transition:color 0.25s; }
+.faq-q:hover { color:var(--navy); }
+.faq-item.open .faq-q { color:var(--navy); }
+.faq-chevron { width:24px;height:24px;border-radius:50%;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform 0.35s var(--ease-smooth),background 0.25s; }
+.faq-item.open .faq-chevron { transform:rotate(180deg);background:var(--accent);border-color:var(--accent);color:white; }
+.faq-a { max-height:0;overflow:hidden;transition:max-height 0.45s var(--ease-out); }
+.faq-a p { padding:0 1.4rem 1.1rem;font-size:0.83rem;margin:0; }
+.faq-item.open .faq-a { max-height:240px; }
 
-.phone-brand {
-  color: var(--white);
-  font-size: 0.92rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-}
-.phone-brand-sub {
-  color: rgba(221,230,255,0.6);
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
-  margin-top: 0.15rem;
-  font-weight: 400;
-  text-transform: uppercase;
-}
+/* ── CTA ── */
+.cta-wrap { max-width:860px;margin:0 auto; }
+.cta-card { background:linear-gradient(135deg,var(--navy) 0%,var(--navy-light) 100%);border-radius:40px;padding:4.5rem 3.5rem;text-align:center;position:relative;overflow:hidden; }
+.cta-card::before { content:'';position:absolute;inset:0;border-radius:40px;background:radial-gradient(ellipse 60% 55% at 50% 0%,rgba(74,142,245,0.18),transparent 65%);pointer-events:none; }
+.cta-card h2 { margin-bottom:1.1rem;color:var(--white); }
+.cta-card .gradient-text { background:linear-gradient(135deg,#fff 0%,rgba(74,142,245,0.9) 60%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text; }
+.cta-card p { max-width:460px;margin:0 auto 2.5rem;color:rgba(255,255,255,0.55); }
+.store-btns { display:flex;gap:0.9rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.8rem; }
+.store-btn { display:flex;align-items:center;gap:0.75rem;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.18);border-radius:var(--r-md);padding:0.8rem 1.5rem;color:var(--white);transition:all 0.3s var(--ease-spring);cursor:none; }
+.store-btn:hover { background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.35);transform:translateY(-3px); }
+.store-btn-txt small { display:block;font-size:0.58rem;color:rgba(255,255,255,0.42);margin-bottom:0.08rem; }
+.store-btn-txt strong { font-family:var(--font-display);font-size:0.9rem;font-weight:700; }
+.cta-disclaimer { font-size:0.72rem;color:rgba(255,255,255,0.3);line-height:1.6; }
 
-.phone-wave {
-  height: 26px;
-  background: linear-gradient(160deg, var(--navy-soft), var(--navy));
-  clip-path: ellipse(100% 100% at 50% 0%);
-  margin-top: -1px;
-}
+/* ── FOOTER ── */
+footer { position:relative;z-index:2;border-top:1px solid rgba(255,255,255,0.07);padding:4.5rem 5% 2.2rem;background:var(--navy); }
+.footer-grid { display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:2.5rem;padding-bottom:2.5rem;border-bottom:1px solid rgba(255,255,255,0.07); }
+.footer-brand p { font-size:0.8rem;max-width:240px;margin-top:0.9rem;color:rgba(255,255,255,0.4); }
+.footer-socials { display:flex;gap:0.6rem;margin-top:1.3rem; }
+.social-btn { width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.35);transition:all 0.3s;cursor:none; }
+.social-btn:hover { background:rgba(74,142,245,0.18);border-color:rgba(74,142,245,0.35);color:var(--accent);transform:translateY(-2px); }
+.footer-col h5 { font-family:var(--font-body);font-size:0.78rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.1rem;color:var(--white); }
+.footer-col ul { list-style:none;display:flex;flex-direction:column;gap:0.55rem; }
+.footer-col ul a { font-size:0.78rem;color:rgba(255,255,255,0.35);transition:color 0.25s;cursor:none; }
+.footer-col ul a:hover { color:rgba(255,255,255,0.7); }
+.footer-bottom { display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.9rem;font-size:0.72rem;color:rgba(255,255,255,0.28);margin-top:1.8rem; }
+.footer-bottom a { color:rgba(255,255,255,0.28);transition:color 0.25s; }
+.footer-bottom a:hover { color:var(--accent); }
+.footer-name-white { color:var(--white); }
 
-.phone-body {
-  background: #f4f6ff;
-  padding: 1rem 1.2rem 1.5rem;
-}
+/* ── REVEAL ── */
+.reveal { opacity:0;transform:translateY(22px);transition:opacity 0.75s var(--ease-out),transform 0.75s var(--ease-out); }
+.reveal.visible { opacity:1;transform:translateY(0); }
+.reveal-delay-1{transition-delay:0.08s}.reveal-delay-2{transition-delay:0.16s}.reveal-delay-3{transition-delay:0.24s}.reveal-delay-4{transition-delay:0.32s}
 
-.phone-greeting {
-  font-size: 0.72rem;
-  font-weight: 500;
-  color: var(--text-700);
-  margin-bottom: 0.9rem;
-}
-
-.phone-sleep-score {
-  background: var(--white);
-  border-radius: var(--radius-sm);
-  padding: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 0.8rem;
-}
-
-.score-ring { width: 44px; height: 44px; flex-shrink: 0; }
-.score-label { font-size: 0.62rem; color: var(--text-500); margin-bottom: 0.15rem; font-weight: 500; }
-.score-val { font-size: 0.8rem; font-weight: 700; color: var(--text-700); }
-
-.phone-mini-chart {
-  background: var(--white);
-  border-radius: var(--radius-sm);
-  padding: 0.8rem;
-  box-shadow: var(--shadow-sm);
-  margin-bottom: 0.8rem;
-}
-
-.mini-chart-title { font-size: 0.6rem; color: var(--text-500); margin-bottom: 0.5rem; font-weight: 500; }
-.mini-bars { display: flex; gap: 5px; align-items: flex-end; height: 38px; }
-.mini-bar { flex: 1; background: #dde6ff; border-radius: 3px 3px 0 0; transition: height 0.4s ease; }
-.mini-bar.active { background: var(--blue); }
-
-.phone-tags { display: flex; gap: 0.45rem; flex-wrap: wrap; margin-top: 0.4rem; }
-.phone-tag {
-  font-size: 0.57rem;
-  padding: 0.25rem 0.6rem;
-  border-radius: 50px;
-  background: rgba(58,92,232,0.1);
-  color: var(--blue);
-  font-weight: 500;
-}
-
-/* ────────────────────────────────────────
-   STATS BAR
-──────────────────────────────────────── */
-.stats-bar {
-  background: var(--off);
-  border-top: 1px solid rgba(58,92,232,0.08);
-  border-bottom: 1px solid rgba(58,92,232,0.08);
-  padding: 3rem 5%;
-}
-.stats-inner {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.stat { text-align: center; }
-.stat-num {
-  font-size: 2.1rem;
-  font-weight: 700;
-  color: var(--navy);
-  line-height: 1;
-  margin-bottom: 0.4rem;
-  letter-spacing: 0;
-}
-.accent { color: var(--blue); }
-.stat-label {
-  font-size: 0.84rem;
-  color: var(--text-500);
-  line-height: 1.5;
-  font-weight: 400;
-}
-
-/* ────────────────────────────────────────
-   SECTION SHARED
-──────────────────────────────────────── */
-section { padding: 7rem 5%; }
-
-/* ────────────────────────────────────────
-   PAIN POINTS
-──────────────────────────────────────── */
-.pain { background: var(--white); }
-.pain-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 5%;
-  align-items: start;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.pain-cards { display: flex; flex-direction: column; gap: 1.1rem; margin-top: 2.2rem; }
-.pain-card {
-  background: var(--off);
-  border: 1px solid rgba(58,92,232,0.08);
-  border-radius: var(--radius-md);
-  padding: 1.3rem 1.5rem;
-  display: flex;
-  gap: 1.2rem;
-  align-items: flex-start;
-  transition: all var(--transition);
-}
-.pain-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateX(6px);
-  border-color: rgba(58,92,232,0.15);
-}
-.pain-icon {
-  width: 44px; height: 44px;
-  border-radius: 14px;
-  background: rgba(58,92,232,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.pain-card h4 {
-  font-size: 0.97rem;
-  font-weight: 600;
-  margin-bottom: 0.3rem;
-  color: var(--text-900);
-}
-.pain-card p { font-size: 0.88rem; margin: 0; }
-
-.data-card {
-  background: var(--navy);
-  border-radius: var(--radius-lg);
-  padding: 2.4rem;
-  box-shadow: var(--shadow-lg);
-  position: relative;
-  overflow: hidden;
-}
-.data-card::before {
-  content: '';
-  position: absolute;
-  top: -40%; right: -20%;
-  width: 320px; height: 320px;
-  border-radius: 50%;
-  background: radial-gradient(rgba(58,92,232,0.35), transparent 70%);
-  pointer-events: none;
-}
-.data-title {
-  color: rgba(255,255,255,0.75);
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 1.8rem;
-}
-.bar-chart { display: flex; flex-direction: column; gap: 1.2rem; }
-.bar-row { display: flex; align-items: center; gap: 0.9rem; }
-.bar-lbl { width: 95px; font-size: 0.82rem; color: rgba(221,230,255,0.85); flex-shrink: 0; font-weight: 400; }
-.bar-track { flex: 1; height: 8px; background: rgba(255,255,255,0.08); border-radius: 4px; overflow: hidden; }
-.bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--blue), var(--blue-light));
-  border-radius: 4px;
-  width: 0;
-  transition: width 1.4s var(--ease-out-expo);
-}
-.bar-fill.animated { width: var(--w); }
-.bar-pct { font-size: 0.82rem; color: var(--blue-light); font-weight: 700; width: 32px; text-align: right; }
-.data-note {
-  margin-top: 1.8rem;
-  padding: 1.1rem;
-  background: rgba(58,92,232,0.18);
-  border-radius: var(--radius-sm);
-  border-left: 4px solid var(--blue-light);
-  font-size: 0.84rem;
-  color: rgba(221,230,255,0.8);
-  line-height: 1.7;
-  font-weight: 400;
-}
-
-/* ────────────────────────────────────────
-   SOLUTION
-──────────────────────────────────────── */
-.solution {
-  background: linear-gradient(160deg, var(--navy) 0%, var(--navy-mid) 100%);
-  position: relative;
-  overflow: hidden;
-}
-.solution::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 65% 65% at 100% 50%, rgba(58,92,232,0.18) 0%, transparent 70%);
-  pointer-events: none;
-}
-.solution .section-tag { color: var(--blue-light); background: rgba(107,135,240,0.18); border-color: rgba(107,135,240,0.25); }
-.solution .section-title { color: var(--white); text-align: center; }
-.solution .section-sub { color: rgba(221,230,255,0.65); text-align: center; margin: 0 auto 3.5rem; }
-.solution-cards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.8rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.sol-card {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(221,230,255,0.1);
-  border-radius: var(--radius-lg);
-  padding: 2.2rem;
-  transition: all var(--transition);
-}
-.sol-card:hover {
-  background: rgba(255,255,255,0.1);
-  transform: translateY(-6px);
-  border-color: rgba(107,135,240,0.3);
-}
-.sol-icon {
-  width: 52px; height: 52px;
-  border-radius: 16px;
-  background: rgba(58,92,232,0.3);
-  border: 1px solid rgba(58,92,232,0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.4rem;
-}
-.sol-card h3 {
-  color: var(--white);
-  font-size: 1.05rem;
-  font-weight: 700;
-  margin-bottom: 0.7rem;
-}
-.sol-card p { color: rgba(221,230,255,0.65); font-size: 0.88rem; margin: 0; font-weight: 400; }
-
-/* ────────────────────────────────────────
-   SHOWCASE
-──────────────────────────────────────── */
-.showcase { background: var(--off); padding: 7rem 5%; }
-.showcase-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6%;
-  align-items: center;
-}
-.screens-wrap { position: relative; height: 440px; }
-.screen-card {
-  position: absolute;
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
-  border: 1px solid rgba(58,92,232,0.1);
-  padding: 1.2rem 1.4rem;
-  font-size: 0.72rem;
-  transition: all var(--transition);
-}
-.screen-card-1 { width: 210px; top: 0; left: 5%; z-index: 3; animation: float-y 5.5s ease infinite alternate; }
-.screen-card-2 { width: 200px; top: 42%; left: 32%; z-index: 2; animation: float-y 6.5s 1.5s ease infinite alternate; }
-.screen-card-3 { width: 210px; bottom: 0; left: 12%; z-index: 1; animation: float-y 5s 0.5s ease infinite alternate; }
-.sc-header { display: flex; align-items: center; gap: 0.7rem; margin-bottom: 1rem; }
-.sc-icon-wrap {
-  width: 26px; height: 26px;
-  border-radius: 8px;
-  background: var(--navy);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.sc-title { font-weight: 700; color: var(--text-700); font-size: 0.75rem; }
-.sc-sub { color: var(--text-400); font-size: 0.62rem; margin-top: 0.1rem; font-weight: 400; }
-.sc-score-ring-wrap { display: flex; justify-content: center; margin-bottom: 0.9rem; }
-.sc-bars { display: flex; flex-direction: column; gap: 0.6rem; }
-.sc-bar-row { display: flex; align-items: center; gap: 0.5rem; }
-.sc-bar-lbl { width: 75px; font-size: 0.62rem; color: var(--text-500); font-weight: 400; }
-.sc-bar-track { flex: 1; height: 5px; background: var(--off); border-radius: 3px; overflow: hidden; }
-.sc-bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--blue), var(--blue-light));
-  border-radius: 3px;
-  transition: width 1.4s ease;
-}
-.sc-article { display: flex; flex-direction: column; gap: 0.7rem; }
-.sc-article-item { display: flex; gap: 0.7rem; align-items: flex-start; }
-.sc-article-thumb { width: 36px; height: 36px; border-radius: 10px; background: #dde6ff; flex-shrink: 0; }
-.sc-article-t { font-size: 0.62rem; font-weight: 700; color: var(--text-700); line-height: 1.4; }
-.sc-article-s { font-size: 0.57rem; color: var(--text-400); margin-top: 0.2rem; font-weight: 400; }
-
-.why-item { display: flex; gap: 1.2rem; align-items: flex-start; }
-.why-bullet {
-  width: 32px; height: 32px;
-  border-radius: 50%;
-  background: rgba(58,92,232,0.08);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-top: 0.2rem;
-}
-.why-item h4 {
-  font-size: 0.97rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
-  color: var(--text-900);
-}
-.why-item p { font-size: 0.88rem; margin: 0; font-weight: 400; }
-
-/* ────────────────────────────────────────
-   FEATURES
-──────────────────────────────────────── */
-.features { background: var(--white); }
-.features-header {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto 3.5rem;
-}
-.tab-switcher {
-  display: inline-flex;
-  background: var(--off);
-  border-radius: 60px;
-  padding: 5px;
-  border: 1px solid rgba(58,92,232,0.1);
-}
-.tab-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.6rem 1.5rem;
-  border-radius: 60px;
-  font-size: 0.88rem;
-  color: var(--text-500);
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 500;
-  transition: all var(--transition);
-}
-.tab-btn.active {
-  background: var(--white);
-  color: var(--navy);
-  font-weight: 700;
-  box-shadow: var(--shadow-sm);
-}
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.8rem;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-.feat-card {
-  background: var(--off);
-  border: 1px solid rgba(58,92,232,0.06);
-  border-radius: var(--radius-lg);
-  padding: 1.8rem;
-  display: flex;
-  gap: 1.3rem;
-  align-items: flex-start;
-  transition: all var(--transition);
-}
-.feat-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-4px);
-  background: var(--white);
-  border-color: rgba(58,92,232,0.12);
-}
-.feat-icon {
-  width: 48px; height: 48px;
-  border-radius: 14px;
-  background: rgba(58,92,232,0.08);
-  border: 1px solid rgba(58,92,232,0.1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.feat-content h4 {
-  font-size: 0.97rem;
-  font-weight: 600;
-  margin-bottom: 0.4rem;
-  color: var(--text-900);
-}
-.feat-content p { font-size: 0.88rem; margin: 0; line-height: 1.75; font-weight: 400; }
-
-/* ────────────────────────────────────────
-   HOW IT WORKS
-──────────────────────────────────────── */
-.how {
-  background: var(--navy);
-  position: relative;
-  overflow: hidden;
-}
-.how::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 70% 50% at 20% 50%, rgba(21,35,128,0.7) 0%, transparent 70%);
-  pointer-events: none;
-}
-.how .max-w { text-align: center; }
-.how .section-tag { color: var(--blue-light); background: rgba(107,135,240,0.18); border-color: rgba(107,135,240,0.25); }
-.how .section-title { color: var(--white); margin-bottom: 1rem; }
-.how .section-sub { color: rgba(221,230,255,0.65); margin: 0 auto 4rem; }
-
-.steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  position: relative;
-}
-.steps::before {
-  content: '';
-  position: absolute;
-  top: 30px;
-  left: calc(12.5% + 16px);
-  width: calc(75% - 32px);
-  height: 1px;
-  background: linear-gradient(90deg, rgba(58,92,232,0.5), rgba(107,135,240,0.7), rgba(58,92,232,0.5));
-  z-index: 0;
-}
-.step {
-  background: rgba(255,255,255,0.06);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(221,230,255,0.12);
-  border-radius: var(--radius-lg);
-  padding: 2.2rem 1.5rem;
-  text-align: center;
-  position: relative;
-  z-index: 1;
-  transition: all var(--transition);
-}
-.step:hover {
-  background: rgba(255,255,255,0.12);
-  transform: translateY(-6px);
-}
-.step-num {
-  width: 58px; height: 58px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--navy-soft), var(--blue));
-  border: 2px solid rgba(107,135,240,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--white);
-  margin: 0 auto 1.4rem;
-  position: relative;
-  z-index: 1;
-  box-shadow: 0 0 0 8px rgba(58,92,232,0.18);
-}
-.step h4 {
-  color: var(--white);
-  font-size: 0.97rem;
-  font-weight: 600;
-  margin-bottom: 0.6rem;
-}
-.step p { color: rgba(221,230,255,0.65); font-size: 0.86rem; margin: 0; font-weight: 400; }
-
-/* ────────────────────────────────────────
-   WHY NOCTURA
-──────────────────────────────────────── */
-.why { background: var(--off); }
-.why-inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6%;
-  max-width: 1200px;
-  margin: 0 auto;
-  align-items: center;
-}
-.why-list { display: flex; flex-direction: column; gap: 1.4rem; margin-top: 2.2rem; }
-.why-visual { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
-.metric-card {
-  background: var(--white);
-  border: 1px solid rgba(58,92,232,0.08);
-  border-radius: var(--radius-lg);
-  padding: 1.6rem 1.3rem;
-  transition: all var(--transition);
-}
-.metric-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-4px);
-}
-.metric-emoji { font-size: 1.8rem; margin-bottom: 0.7rem; display: block; line-height: 1; }
-.metric-val {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--navy);
-  letter-spacing: 0;
-  display: block;
-  line-height: 1.2;
-  margin-bottom: 0.4rem;
-}
-.metric-val span {
-  display: block;
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 0.78rem;
-  font-weight: 400;
-  color: var(--text-500);
-  margin-top: 0.4rem;
-  line-height: 1.5;
-}
-
-/* ────────────────────────────────────────
-   TESTIMONIALS
-──────────────────────────────────────── */
-.testimonials { background: var(--white); }
-.testimonials .max-w { text-align: center; }
-.testi-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.8rem;
-  max-width: 1200px;
-  margin: 3.5rem auto 0;
-}
-.testi-card {
-  background: var(--off);
-  border: 1px solid rgba(58,92,232,0.08);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
-  text-align: left;
-  transition: all var(--transition);
-}
-.testi-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-5px);
-  border-color: rgba(58,92,232,0.15);
-}
-.testi-stars { color: var(--amber); font-size: 1rem; letter-spacing: 0.1em; margin-bottom: 1rem; }
-.testi-text {
-  font-size: 0.9rem;
-  line-height: 1.8;
-  margin-bottom: 1.5rem;
-  color: var(--text-700);
-  font-style: italic;
-  font-weight: 400;
-}
-.testi-author { display: flex; align-items: center; gap: 0.8rem; }
-.testi-avatar {
-  width: 42px; height: 42px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--navy-soft), var(--blue));
-  color: var(--white);
-  font-size: 0.88rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-.testi-name { font-weight: 700; font-size: 0.88rem; color: var(--text-700); }
-.testi-role { font-size: 0.76rem; color: var(--text-400); margin-top: 0.15rem; font-weight: 400; }
-
-/* ────────────────────────────────────────
-   FAQ
-──────────────────────────────────────── */
-.faq { background: var(--off); }
-.faq-inner {
-  display: grid;
-  grid-template-columns: 1fr 1.6fr;
-  gap: 5%;
-  max-width: 1200px;
-  margin: 0 auto;
-  align-items: start;
-}
-.faq-list { display: flex; flex-direction: column; gap: 0.6rem; }
-.faq-item {
-  background: var(--white);
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(58,92,232,0.08);
-  overflow: hidden;
-  transition: box-shadow var(--transition);
-}
-.faq-item:hover { box-shadow: var(--shadow-sm); }
-.faq-q {
-  width: 100%;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 1.2rem 1.5rem;
-  text-align: left;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 1rem;
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--text-700);
-  transition: color var(--transition);
-}
-.faq-q:hover { color: var(--blue); }
-.faq-chevron {
-  width: 24px; height: 24px;
-  border-radius: 50%;
-  background: var(--off);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: transform 0.3s ease;
-}
-.faq-chevron svg { width: 12px; height: 12px; }
-.faq-a { max-height: 0; overflow: hidden; transition: max-height 0.45s var(--ease-out-expo); }
-.faq-a p { padding: 0 1.5rem 1.2rem; font-size: 0.88rem; color: var(--text-500); margin: 0; font-weight: 400; }
-.faq-item.open .faq-chevron { transform: rotate(180deg); }
-.faq-item.open .faq-a { max-height: 240px; }
-
-/* ────────────────────────────────────────
-   CTA
-──────────────────────────────────────── */
-.cta-section {
-  background: linear-gradient(145deg, var(--navy-mid), var(--navy));
-  padding: 8rem 5%;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.cta-section::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(58,92,232,0.25) 0%, transparent 70%);
-  pointer-events: none;
-}
-.cta-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
-.cta-section .section-tag { color: var(--blue-light); background: rgba(107,135,240,0.18); border-color: rgba(107,135,240,0.25); }
-.cta-section .section-title { color: var(--white); margin-bottom: 1.2rem; }
-.cta-section .section-sub { color: rgba(221,230,255,0.7); margin: 0 auto 2.8rem; max-width: 440px; }
-.store-btns { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; margin-bottom: 2.2rem; }
-.store-btn {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255,255,255,0.2);
-  border-radius: var(--radius-md);
-  padding: 0.9rem 1.8rem;
-  color: var(--white);
-  transition: all var(--transition);
-}
-.store-btn:hover {
-  background: rgba(255,255,255,0.2);
-  transform: translateY(-3px);
-  border-color: rgba(255,255,255,0.45);
-}
-.store-btn-text small {
-  display: block;
-  font-size: 0.7rem;
-  color: rgba(255,255,255,0.65);
-  margin-bottom: 0.1rem;
-  font-weight: 400;
-}
-.store-btn-text strong {
-  display: block;
-  font-size: 0.98rem;
-  font-weight: 700;
-}
-.cta-disclaimer {
-  font-size: 0.78rem;
-  color: rgba(221,230,255,0.45);
-  line-height: 1.7;
-  max-width: 420px;
-  margin: 0 auto;
-  font-weight: 400;
-}
-
-/* ────────────────────────────────────────
-   FOOTER
-──────────────────────────────────────── */
-footer {
-  background: var(--navy);
-  color: rgba(221,230,255,0.75);
-  padding: 5.5rem 5% 2.5rem;
-}
-.footer-inner {
-  display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr;
-  gap: 3.5rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding-bottom: 3.5rem;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-.footer-brand p {
-  font-size: 0.88rem;
-  line-height: 1.8;
-  color: rgba(221,230,255,0.55);
-  max-width: 280px;
-  margin-top: 1.2rem;
-  font-weight: 400;
-}
-.footer-socials { display: flex; gap: 0.8rem; margin-top: 1.8rem; }
-.social-btn {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.08);
-  border: 1px solid rgba(255,255,255,0.12);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: rgba(221,230,255,0.65);
-  transition: all var(--transition);
-}
-.social-btn:hover {
-  background: var(--blue);
-  color: var(--white);
-  border-color: var(--blue);
-  transform: translateY(-2px);
-}
-.footer-col h5 {
-  font-size: 0.97rem;
-  font-weight: 700;
-  color: var(--white);
-  letter-spacing: 0;
-  margin-bottom: 1.3rem;
-}
-.footer-col ul { list-style: none; }
-.footer-col ul li { margin-bottom: 0.75rem; }
-.footer-col ul a {
-  font-size: 0.86rem;
-  color: rgba(221,230,255,0.55);
-  transition: color var(--transition);
-  font-weight: 400;
-}
-.footer-col ul a:hover { color: var(--blue-light); }
-.footer-bottom {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1rem;
-  max-width: 1200px;
-  margin: 2.5rem auto 0;
-  font-size: 0.8rem;
-  color: rgba(221,230,255,0.4);
-  font-weight: 400;
-}
-.footer-bottom a { color: rgba(221,230,255,0.55); transition: color var(--transition); }
-.footer-bottom a:hover { color: var(--blue-light); }
-
-/* ────────────────────────────────────────
-   RESPONSIVE
-──────────────────────────────────────── */
-@media (max-width: 1024px) {
-  .hero-inner { grid-template-columns: 1fr; text-align: center; }
-  .hero-sub, .hero-actions { margin-left: auto; margin-right: auto; }
-  .hero-actions { justify-content: center; }
-  .hero-visual { justify-content: center; margin-top: 3.5rem; }
-  .stats-inner { grid-template-columns: repeat(2, 1fr); }
-  .pain-grid { grid-template-columns: 1fr; }
-  .solution-cards { grid-template-columns: 1fr; }
-  .showcase-inner { grid-template-columns: 1fr; }
-  .screens-wrap { order: 2; height: 300px; }
-  .features-header { grid-template-columns: 1fr; }
-  .features-grid { grid-template-columns: 1fr; }
-  .steps { grid-template-columns: repeat(2, 1fr); }
-  .steps::before { display: none; }
-  .why-inner { grid-template-columns: 1fr; }
-  .testi-grid { grid-template-columns: 1fr; }
-  .faq-inner { grid-template-columns: 1fr; }
-  .footer-inner { grid-template-columns: 1fr 1fr; gap: 2.5rem; }
-}
-
-@media (max-width: 640px) {
-  .stats-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
-  .steps { grid-template-columns: 1fr; }
-  .why-visual { grid-template-columns: 1fr 1fr; }
-  .store-btns { flex-direction: column; align-items: center; }
-  .footer-inner { grid-template-columns: 1fr; }
-  .nav-links { display: none; }
-  .nav-toggle { display: flex; }
+/* ── RESPONSIVE ── */
+@media(max-width:1024px){
+  .hero-inner{grid-template-columns:1fr;text-align:center}
+  .hero-sub{margin:0 auto 2.2rem}.hero-actions{justify-content:center}.hero-trust{justify-content:center}.hero-visual{margin-top:3rem}
+  .float-pill-1{left:-4%}.float-pill-2{right:-4%}
+  .bento-a{grid-column:1/7}.bento-b{grid-column:7/10}.bento-c{grid-column:10/13}.bento-d{grid-column:1/6}.bento-e{grid-column:6/13}
+  .solution-grid,.feat-grid{grid-template-columns:1fr}
+  .steps-grid{grid-template-columns:repeat(2,1fr)}.why-inner{grid-template-columns:1fr}
+  .testi-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:768px){
+  h1{font-size:2.1rem}
+  .bento-a,.bento-b,.bento-c,.bento-d,.bento-e{grid-column:1/13}
+  .metrics-grid{grid-template-columns:1fr 1fr}.nav-links{display:none}.nav-toggle{display:flex}
+}
+@media(max-width:480px){
+  .cta-card{padding:2.8rem 1.4rem}.steps-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
-<!-- ══════════ NAVBAR ══════════ -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="bg-dots"></div>
+
 <nav class="navbar" id="navbar">
   <a href="#" class="nav-brand">
-    <svg class="nav-logo" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs><mask id="m-nav"><rect width="36" height="36" fill="white"/><circle cx="23.06" cy="18" r="10.12" fill="black"/></mask></defs>
-      <circle cx="18" cy="18" r="17" fill="#050d2e" stroke="#dde6ff" stroke-width="1.2"/>
-      <circle cx="18" cy="18" r="13.68" fill="white" mask="url(#m-nav)"/>
+    <svg class="nav-logo-svg" viewBox="0 0 28 28" fill="none">
+      <defs><mask id="mn"><rect width="28" height="28" fill="white"/><circle cx="17.9" cy="14" r="7.9" fill="black"/></mask></defs>
+      <circle cx="14" cy="14" r="13" fill="rgba(13,27,53,0.06)" stroke="rgba(13,27,53,0.15)" stroke-width="1"/>
+      <circle cx="14" cy="14" r="10.6" fill="#0d1b35" mask="url(#mn)"/>
     </svg>
     <span class="nav-name">NOCTURA</span>
   </a>
   <ul class="nav-links" id="navLinks">
+    <li><a href="#masalah">Masalah</a></li>
     <li><a href="#fitur">Fitur</a></li>
     <li><a href="#cara-kerja">Cara Kerja</a></li>
-    <li><a href="#kenapa">Keunggulan</a></li>
     <li><a href="#faq">FAQ</a></li>
-    <li><a href="#login" class="nav-cta">Login</a></li>
+    <li><a href="<?php echo e(route('login')); ?>" class="nav-cta">Login</a></li>
   </ul>
-  <button class="nav-toggle" onclick="toggleNav()" aria-label="Buka menu">
+  <button class="nav-toggle" onclick="toggleNav()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
 </nav>
 
-<!-- ══════════ HERO ══════════ -->
 <section class="hero" id="home">
-  <div class="hero-stars" id="heroStars"></div>
-  <div class="hero-inner">
-    <div class="hero-content">
-      <div class="hero-badge"><span class="badge-dot"></span>Sleep Intelligence Platform</div>
-      <h1 class="hero-title">Kenali Risiko<br><em>Gangguan Tidur</em><br>Lebih Dini</h1>
-      <p class="hero-sub">Aplikasi mobile berbasis data untuk memprediksi potensi insomnia, sleep apnea, dan gangguan tidur lainnya — mudah, cepat, dan gratis langsung dari smartphone Anda.</p>
+  <div class="hero-blob-1"></div>
+  <div class="hero-blob-2"></div>
+  <div class="hero-blob-3"></div>
+  <div class="hero-inner container">
+    <div>
+      <div class="hero-eyebrow">
+        <div class="eyebrow-badge">Sleep Intelligence Platform</div>
+        <div class="eyebrow-line"></div>
+      </div>
+      <h1 class="hero-title">Kenali Risiko<br><span class="gradient-text">Gangguan Tidur</span><br>Lebih Awal.</h1>
+      <p class="hero-sub">Deteksi dini insomnia, sleep apnea, dan gangguan tidur lainnya — langsung dari smartphone-mu. Gratis. Akurat. Berbasis riset medis.</p>
       <div class="hero-actions">
         <a href="#download" class="btn-primary">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2C4.7 2 2 4.7 2 8s2.7 6 6 6 6-2.7 6-6-2.7-6-6-6zm0 10.5c-2.5 0-4.5-2-4.5-4.5S5.5 3.5 8 3.5c.8 0 1.5.2 2.2.6C8.7 4.5 7.5 6.1 7.5 8s1.2 3.5 2.7 3.9c-.7.4-1.4.6-2.2.6z" fill="white"/></svg>
-          Cek Resiko Tidur Anda
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1L1 6h3v5h4V6h3L6 1z" fill="white"/></svg>
+          Cek Risiko Tidurmu
         </a>
-        <a href="#cara-kerja" class="btn-outline">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 3l5 4-5 4V3z" fill="currentColor"/></svg>
-          Lihat Cara Kerja
+        <a href="#cara-kerja" class="btn-ghost">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><path d="M4.5 4.5l3 1.5-3 1.5V4.5z" fill="currentColor"/></svg>
+          Cara Kerja
         </a>
       </div>
+      <div class="hero-trust">
+        <div class="trust-avatars">
+          <div class="trust-avatar">R</div><div class="trust-avatar">B</div>
+          <div class="trust-avatar">D</div><div class="trust-avatar">A</div>
+          <div class="trust-avatar">+</div>
+        </div>
+        <p class="trust-text"><strong>1.000+ pengguna</strong> sudah cek kualitas tidurnya</p>
+      </div>
     </div>
+
     <div class="hero-visual">
-      <div class="app-preview">
-        <div class="float-card float-card-1"><span class="float-dot" style="background:#22c55e"></span>Prediksi Selesai ✓</div>
-        <div class="float-card float-card-2"><span class="float-dot" style="background:#3a5ce8"></span>Skor Tidur: 78/100</div>
-        <div class="phone-shell">
-          <div class="phone-notch"></div>
-          <div class="phone-screen-header">
-            <div class="phone-moon-wrap">
-              <svg viewBox="0 0 54 54" fill="none">
-                <defs><mask id="m-phone"><rect width="54" height="54" fill="white"/><circle cx="34.59" cy="27" r="15.18" fill="black"/></mask></defs>
-                <circle cx="27" cy="27" r="25.5" fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.18)" stroke-width="1.5"/>
-                <circle cx="27" cy="27" r="20.52" fill="white" mask="url(#m-phone)"/>
-              </svg>
-            </div>
-            <div class="phone-brand">NOCTURA</div>
-            <div class="phone-brand-sub">Sleep Intelligence</div>
+      <!-- Floating Layer Badges -->
+      <div class="float-pill float-pill-1">
+        <div class="pill-icon pill-icon-green">✓</div>Prediksi Selesai
+      </div>
+      <div class="float-pill float-pill-2">
+        <div class="pill-icon pill-icon-blue">🌙</div>Skor Tidur: 78/100
+      </div>
+      <div class="phone-shadow"></div>
+      
+      <!-- ── SLENDER SMARTPHONE FRAME ── -->
+      <div class="phone-frame">
+        <!-- Sticky Phone Status Bar -->
+        <div class="phone-top-bar">
+          <span>19.29</span>
+          <div class="phone-island"><div class="phone-cam"></div></div>
+          <div style="display:flex;gap:4px;align-items:center;">
+            <span style="font-size:0.52rem;">📶</span><span style="font-size:0.52rem;">🔋</span><span>29%</span>
           </div>
-          <div class="phone-wave"></div>
-          <div class="phone-body">
-            <div class="phone-greeting">Selamat pagi, Budi 👋</div>
-            <div class="phone-sleep-score">
-              <svg class="score-ring" viewBox="0 0 42 42" fill="none">
-                <circle cx="21" cy="21" r="17" stroke="#dde6ff" stroke-width="3.5"/>
-                <circle cx="21" cy="21" r="17" stroke="url(#sg)" stroke-width="3.5" stroke-dasharray="81 26" stroke-dashoffset="27" stroke-linecap="round"/>
-                <defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#152591"/><stop offset="100%" stop-color="#3a5ce8"/></linearGradient></defs>
-                <text x="21" y="25" text-anchor="middle" font-size="10" font-weight="700" fill="#050d2e">78</text>
-              </svg>
-              <div><div class="score-label">Skor Tidur</div><div class="score-val">Cukup Baik</div></div>
-            </div>
-            <div class="phone-mini-chart">
-              <div class="mini-chart-title">Tren 7 Hari Terakhir</div>
-              <div class="mini-bars">
-                <div class="mini-bar" style="height:55%"></div>
-                <div class="mini-bar" style="height:70%"></div>
-                <div class="mini-bar" style="height:50%"></div>
-                <div class="mini-bar active" style="height:85%"></div>
-                <div class="mini-bar" style="height:65%"></div>
-                <div class="mini-bar active" style="height:90%"></div>
-                <div class="mini-bar active" style="height:78%"></div>
+        </div>
+
+        <!-- Scrollable content area -->
+        <div class="phone-scroll-container">
+          <div class="phone-content">
+            <!-- Top Profile Row -->
+            <div class="ph-header">
+              <div class="ph-user">
+                <div class="ph-avatar">
+                  <span class="ph-avatar-icon">👤</span>
+                  <div class="ph-avatar-dot"></div>
+                </div>
+                <div>
+                  <div class="ph-name">elisa</div>
+                  <div class="ph-greet">Selamat malam</div>
+                </div>
+              </div>
+              <div class="ph-actions-row">
+                <div class="ph-btn-circle">🌙</div>
+                <div class="ph-btn-circle active">🕒</div>
+                <div class="ph-btn-circle">🔔<div class="ph-badge-dot"></div></div>
               </div>
             </div>
-            <div class="phone-tags">
-              <span class="phone-tag">Insomnia</span>
-              <span class="phone-tag">Risiko Rendah</span>
-              <span class="phone-tag">Update Minggu</span>
+
+            <!-- Card 1: Tidur Semalam -->
+            <div class="ph-sleep-card">
+              <div class="ph-sleep-header">
+                <div class="ph-sleep-label">🌙 TIDUR SEMALAM</div>
+                <div class="ph-badge-exc"><span style="width:5px;height:5px;border-radius:50%;background:#6d28d9;display:inline-block;"></span> Excellent</div>
+              </div>
+              <div class="ph-sleep-dur">
+                <span class="num">8</span><span class="unit">j</span><span class="num">0</span><span class="unit">m</span>
+              </div>
+              <div class="ph-sleep-time">22:00 - 06:00</div>
+              <div class="ph-sleep-bar">
+                <div class="ph-bar-1"></div>
+                <div class="ph-bar-2"></div>
+                <div class="ph-bar-3"></div>
+                <div class="ph-bar-4"></div>
+              </div>
+              <div class="ph-sleep-legend">
+                <div class="ph-leg"><div class="ph-leg-dot" style="background:#c084fc"></div>Ringan</div>
+                <div class="ph-leg"><div class="ph-leg-dot" style="background:#818cf8"></div>Dalam</div>
+                <div class="ph-leg"><div class="ph-leg-dot" style="background:#93c5fd"></div>REM</div>
+              </div>
+              <div class="ph-skor-row">
+                <div>
+                  <div class="ph-skor-label">Kualitas Skor</div>
+                  <div class="ph-skor-val">96%</div>
+                </div>
+                <div class="ph-skor-bars">
+                  <div class="ph-skor-bar" style="height:10px"></div>
+                  <div class="ph-skor-bar" style="height:13px"></div>
+                  <div class="ph-skor-bar" style="height:16px"></div>
+                  <div class="ph-skor-bar on" style="height:19px"></div>
+                  <div class="ph-skor-bar active-bar" style="height:22px"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: Target Malam Ini -->
+            <div class="ph-target-card">
+              <div class="ph-target-icon">🏳</div>
+              <div class="ph-target-info">
+                <div class="ph-target-lbl">TARGET MALAM INI</div>
+                <div class="ph-target-vals">
+                  <span>22:30 → 06:30</span>
+                  <span class="ph-target-badge">8j</span>
+                </div>
+              </div>
+              <div class="ph-target-right">🕒 3j lagi</div>
+            </div>
+
+            <!-- Card 3: Mulai Prediksi -->
+            <div class="ph-prediksi-blue">
+              <div>
+                <div class="ph-prediksi-title-large">Mulai Prediksi</div>
+                <div class="ph-prediksi-sub-white">Analisis risiko tidur Anda</div>
+              </div>
+              <div class="ph-prediksi-btn-icon">🧠</div>
+            </div>
+
+            <!-- Menu Grid: Log Tidur & Edukasi -->
+            <div class="ph-menu-grid">
+              <div class="ph-menu-card purple">
+                <div class="ph-card-circle-decor"></div>
+                <div class="ph-menu-icon-wrap" style="color:#7c3aed;">✏️</div>
+                <div>
+                  <h4>Log Tidur</h4>
+                  <span>› Catat manual</span>
+                </div>
+              </div>
+              <div class="ph-menu-card green">
+                <div class="ph-card-circle-decor"></div>
+                <div class="ph-menu-icon-wrap" style="color:#16a34a;">📖</div>
+                <div>
+                  <h4>Edukasi</h4>
+                  <span>› Info sehat</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 6: Insight Hari Ini -->
+            <div class="ph-insight-card">
+              <div class="ph-insight-header">
+                <div class="ph-insight-lbl">💡 INSIGHT</div>
+                <div class="ph-insight-badge">Sleep Apnea</div>
+              </div>
+              <div class="ph-insight-desc">
+                Terdeteksi kemungkinan Sleep Apnea — gangguan pernapasan berulang saat tidur.
+              </div>
             </div>
           </div>
         </div>
+
+        <!-- Fixed Chat Bubble Above Scroll Layer -->
+        <div class="ph-fab">💬</div>
+
+        <!-- Fixed App Bottom Dock Nav -->
+        <div class="ph-dock-container">
+          <div class="ph-bottom-dock">
+            <a href="#" class="ph-dock-item active">
+              <div class="ph-dock-icon-box">🏠</div>
+              <span>Home</span>
+            </a>
+            <a href="#" class="ph-dock-item">
+              <div class="ph-dock-icon-box">🎯</div>
+              <span>Prediksi</span>
+            </a>
+            <a href="#" class="ph-dock-item">
+              <div class="ph-dock-icon-box">📊</div>
+              <span>Visual</span>
+            </a>
+            <a href="#" class="ph-dock-item">
+              <div class="ph-dock-icon-box">📚</div>
+              <span>Edukasi</span>
+            </a>
+            <a href="#" class="ph-dock-item">
+              <div class="ph-dock-icon-box">👤</div>
+              <span>Profil</span>
+            </a>
+          </div>
+        </div>
+
       </div>
+      <!-- ── END OF PHONE MOCKUP ── -->
+      
     </div>
   </div>
 </section>
 
-<!-- ══════════ STATS BAR ══════════ -->
-<div class="stats-bar">
-  <div class="stats-inner">
-    <div class="stat reveal"><div class="stat-num"><span class="accent">10%</span></div><div class="stat-label">Dewasa Indonesia alami insomnia</div></div>
-    <div class="stat reveal reveal-delay-1"><div class="stat-num"><span class="accent">5–10</span></div><div class="stat-label">Menit untuk isi kuesioner</div></div>
-    <div class="stat reveal reveal-delay-2"><div class="stat-num"><span class="accent">4</span></div><div class="stat-label">Jenis gangguan tidur terdeteksi</div></div>
-    <div class="stat reveal reveal-delay-3"><div class="stat-num"><span class="accent">100%</span></div><div class="stat-label">Gratis diunduh &amp; digunakan</div></div>
+<div class="marquee-section">
+  <div class="marquee-track">
+    <div class="marquee-item"><span class="marquee-num">10%</span><span class="marquee-txt">Dewasa Indonesia alami insomnia</span><span class="marquee-sep"></span></div>
+    <div class="marquee-item"><span class="marquee-num">5 Menit</span><span class="marquee-txt">Waktu isi kuesioner</span><span class="marquee-sep"></span></div>
+    <div class="marquee-item"><span class="marquee-num">4 Jenis</span><span class="marquee-txt">Gangguan tidur terdeteksi</span><span class="marquee-sep"></span></div>
+    <div class="marquee-item"><span class="marquee-num">100% Gratis</span><span class="marquee-txt">Untuk semua fitur dasar</span><span class="marquee-sep"></span></div>
+    <div class="marquee-item"><span class="marquee-num">PSQI</span><span class="marquee-txt">Standar skrining medis tervalidasi</span><span class="marquee-sep"></span></div>
+    <div class="marquee-item"><span class="marquee-num">24/7</span><span class="marquee-txt">Akses kapan dan di mana saja</span><span class="marquee-sep"></span></div>
+    <div class="marquee-item"><span class="marquee-num">10%</span><span class="marquee-txt">Dewasa Indonesia alami insomnia</span><span class="marquee-sep"></span></div>
+    <div class="marquee-item"><span class="marquee-num">5 Menit</span><span class="marquee-txt">Waktu isi kuesioner</span><span class="marquee-sep"></span></div>
+    <div class="marquee-item"><span class="marquee-num">4 Jenis</span><span class="marquee-txt">Gangguan tidur terdeteksi</span><span class="marquee-sep"></span></div>
+    <div class="marquee-item"><span class="marquee-num">100% Gratis</span><span class="marquee-txt">Untuk semua fitur dasar</span><span class="marquee-sep"></span></div>
+    <div class="marquee-item"><span class="marquee-num">PSQI</span><span class="marquee-txt">Standar skrining medis tervalidasi</span><span class="marquee-sep"></span></div>
+    <div class="marquee-item"><span class="marquee-num">24/7</span><span class="marquee-txt">Akses kapan dan di mana saja</span><span class="marquee-sep"></span></div>
   </div>
 </div>
 
-<!-- ══════════ PAIN POINTS ══════════ -->
-<section class="pain" id="masalah">
-  <div class="max-w">
-    <div class="pain-grid">
-      <div>
-        <span class="section-tag reveal">Mengapa Ini Penting</span>
-        <h2 class="section-title reveal">Gangguan Tidur<br>Lebih Serius dari<br>yang Anda Kira</h2>
-        <p class="section-sub reveal">Jutaan orang meremehkan kualitas tidur mereka — padahal dampaknya jauh lebih luas dari sekadar rasa lelah di pagi hari.</p>
-        <div class="pain-cards">
-          <div class="pain-card reveal">
-            <div class="pain-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C5.6 2 2 5.6 2 10s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 3c1.1 0 2 .9 2 2s-.9 2-2 2-2-.9-2-2 .9-2 2-2zm0 9c-2 0-3.7-1-4.7-2.5.1-1.5 3.2-2.4 4.7-2.4s4.6.9 4.7 2.4c-1 1.5-2.7 2.5-4.7 2.5z" fill="#3a5ce8"/></svg></div>
-            <div><h4>Risiko Penyakit Serius</h4><p>Kurang tidur berkualitas meningkatkan risiko penyakit jantung, diabetes tipe 2, dan gangguan mental hingga 3× lipat.</p></div>
-          </div>
-          <div class="pain-card reveal reveal-delay-1">
-            <div class="pain-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><ellipse cx="10" cy="8" rx="6" ry="6" stroke="#3a5ce8" stroke-width="1.5"/><path d="M10 14v4M7 18h6" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-            <div><h4>Penurunan Produktivitas</h4><p>Gangguan tidur menyebabkan penurunan fokus, memori, dan kemampuan pengambilan keputusan yang signifikan.</p></div>
-          </div>
-          <div class="pain-card reveal reveal-delay-2">
-            <div class="pain-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="4" width="14" height="12" rx="2" stroke="#3a5ce8" stroke-width="1.5"/><path d="M7 8h6M7 11h4" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-            <div><h4>Akses Pemeriksaan Terbatas</h4><p>Biaya sleep study mahal dan fasilitas terbatas — kebanyakan orang tidak pernah mendapat pemeriksaan yang tepat.</p></div>
-          </div>
+<section class="section-alt" id="masalah">
+  <div class="container">
+    <div class="section-header">
+      <span class="tag reveal"><span class="tag-dot"></span>Mengapa Ini Penting</span>
+      <h2 class="reveal">Gangguan Tidur Lebih Serius<br>dari yang <span class="gradient-text">Kamu Kira.</span></h2>
+    </div>
+    <div class="bento-grid reveal">
+      <div class="bento-card bento-a">
+        <div class="bento-icon icon-blue">📊</div>
+        <h3>Prevalensi di Indonesia</h3>
+        <p>Data menunjukkan gangguan tidur adalah masalah kesehatan publik yang diabaikan.</p>
+        <div class="bento-chart" id="bentoChart">
+          <div class="bento-bar-row"><div class="bento-bar-lbl">Insomnia</div><div class="bento-bar-track"><div class="bento-bar-fill fill-1" style="--w:67%"></div></div><div class="bento-bar-pct">67%</div></div>
+          <div class="bento-bar-row"><div class="bento-bar-lbl">Sleep Apnea</div><div class="bento-bar-track"><div class="bento-bar-fill fill-2" style="--w:45%"></div></div><div class="bento-bar-pct">45%</div></div>
+          <div class="bento-bar-row"><div class="bento-bar-lbl">Hypersomnia</div><div class="bento-bar-track"><div class="bento-bar-fill fill-3" style="--w:28%"></div></div><div class="bento-bar-pct">28%</div></div>
+          <div class="bento-bar-row"><div class="bento-bar-lbl">Parasomnia</div><div class="bento-bar-track"><div class="bento-bar-fill fill-4" style="--w:18%"></div></div><div class="bento-bar-pct">18%</div></div>
         </div>
       </div>
-      <div class="reveal">
-        <div class="data-card">
-          <div class="data-title">Prevalensi Gangguan Tidur di Indonesia</div>
-          <div class="bar-chart">
-            <div class="bar-row"><div class="bar-lbl">Insomnia</div><div class="bar-track"><div class="bar-fill" style="--w:67%"></div></div><div class="bar-pct">67%</div></div>
-            <div class="bar-row"><div class="bar-lbl">Sleep Apnea</div><div class="bar-track"><div class="bar-fill" style="--w:45%"></div></div><div class="bar-pct">45%</div></div>
-            <div class="bar-row"><div class="bar-lbl">Hypersomnia</div><div class="bar-track"><div class="bar-fill" style="--w:28%"></div></div><div class="bar-pct">28%</div></div>
-            <div class="bar-row"><div class="bar-lbl">Parasomnia</div><div class="bar-track"><div class="bar-fill" style="--w:18%"></div></div><div class="bar-pct">18%</div></div>
-          </div>
-          <div class="data-note">💡 <strong>Tahukah Anda?</strong> Hanya ~30% penderita gangguan tidur yang mencari bantuan profesional akibat keterbatasan akses dan biaya.</div>
-        </div>
+      <div class="bento-card bento-b">
+        <div class="bento-icon icon-navy">❤️</div>
+        <div class="big-stat">3×</div>
+        <h3>Risiko Penyakit</h3>
+        <p>Kurang tidur meningkatkan risiko penyakit jantung & diabetes tipe 2 hingga 3 kali lipat.</p>
       </div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ SOLUTION ══════════ -->
-<section class="solution" id="solusi">
-  <div class="max-w" style="text-align:center">
-    <span class="section-tag reveal">Solusi Kami</span>
-    <h2 class="section-title reveal">NOCTURA Hadir sebagai<br>Asisten Tidur Pribadi Anda</h2>
-    <p class="section-sub reveal">Memanfaatkan teknologi prediksi berbasis data medis untuk membantu Anda memahami kualitas tidur dan mendeteksi potensi gangguan sejak awal.</p>
-  </div>
-  <div class="solution-cards max-w" style="margin-top:2.5rem">
-    <div class="sol-card reveal">
-      <div class="sol-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><rect x="5" y="2" width="14" height="20" rx="3" stroke="#6b87f0" stroke-width="1.5"/><circle cx="12" cy="17" r="1" fill="#6b87f0"/></svg></div>
-      <h3>Mudah Digunakan</h3>
-      <p>Tidak perlu perangkat khusus. Cukup smartphone Anda, kuesioner singkat, dan hasilnya langsung tersaji dalam hitungan detik.</p>
-    </div>
-    <div class="sol-card reveal reveal-delay-1">
-      <div class="sol-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18" stroke="#6b87f0" stroke-width="1.5" stroke-linecap="round"/></svg></div>
-      <h3>Berbasis Riset Medis</h3>
-      <p>Kuesioner disusun berdasarkan standar skrining klinis tervalidasi, termasuk Pittsburgh Sleep Quality Index (PSQI).</p>
-    </div>
-    <div class="sol-card reveal reveal-delay-2">
-      <div class="sol-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="#6b87f0" stroke-width="1.5" stroke-linejoin="round"/></svg></div>
-      <h3>Privasi Terjaga</h3>
-      <p>Data kesehatan Anda terenkripsi dan aman. Kami menjaga kerahasiaan sesuai regulasi perlindungan data pribadi Indonesia.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ SHOWCASE ══════════ -->
-<section class="showcase" id="tampilan">
-  <div class="showcase-inner">
-    <div class="screens-wrap reveal">
-      <div class="screen-card screen-card-1">
-        <div class="sc-header">
-          <div class="sc-icon-wrap"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><defs><mask id="m-sc1"><rect width="14" height="14" fill="white"/><circle cx="8.97" cy="7" r="3.94" fill="black"/></mask></defs><circle cx="7" cy="7" r="6.5" fill="#050d2e"/><circle cx="7" cy="7" r="5.32" fill="white" mask="url(#m-sc1)"/></svg></div>
-          <div><div class="sc-title">Dashboard Tidur</div><div class="sc-sub">Minggu ini</div></div>
-        </div>
-        <div class="sc-score-ring-wrap">
-          <svg width="84" height="84" viewBox="0 0 84 84" fill="none">
-            <circle cx="42" cy="42" r="34" stroke="#eef2ff" stroke-width="6"/>
-            <circle cx="42" cy="42" r="34" stroke="url(#dg)" stroke-width="6" stroke-dasharray="163 50" stroke-dashoffset="54" stroke-linecap="round"/>
-            <defs><linearGradient id="dg" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#152591"/><stop offset="100%" stop-color="#3a5ce8"/></linearGradient></defs>
-            <text x="42" y="40" text-anchor="middle" font-size="20" font-weight="700" fill="#050d2e">78</text>
-            <text x="42" y="54" text-anchor="middle" font-size="8" fill="#6270a0">skor tidur</text>
-          </svg>
-        </div>
-        <div class="sc-bars">
-          <div class="sc-bar-row"><div class="sc-bar-lbl">Insomnia</div><div class="sc-bar-track"><div class="sc-bar-fill" style="width:25%"></div></div></div>
-          <div class="sc-bar-row"><div class="sc-bar-lbl">Sleep Apnea</div><div class="sc-bar-track"><div class="sc-bar-fill" style="width:15%"></div></div></div>
-          <div class="sc-bar-row"><div class="sc-bar-lbl">Hypersomnia</div><div class="sc-bar-track"><div class="sc-bar-fill" style="width:10%"></div></div></div>
-        </div>
+      <div class="bento-card bento-c">
+        <div class="bento-icon icon-light">⚡</div>
+        <div class="big-stat">70%</div>
+        <h3>Tidak Sadar</h3>
+        <p>Penderita tidak menyadari bahwa mereka mengalami gangguan tidur yang serius.</p>
       </div>
-      <div class="screen-card screen-card-2">
-        <div class="sc-header">
-          <div class="sc-icon-wrap"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><defs><mask id="m-sc2"><rect width="14" height="14" fill="white"/><circle cx="8.97" cy="7" r="3.94" fill="black"/></mask></defs><circle cx="7" cy="7" r="6.5" fill="#050d2e"/><circle cx="7" cy="7" r="5.32" fill="white" mask="url(#m-sc2)"/></svg></div>
-          <div><div class="sc-title">Riwayat Prediksi</div><div class="sc-sub">3 hasil terakhir</div></div>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:.5rem;">
-          <div style="background:#f4f6ff;border-radius:8px;padding:.5rem .65rem;display:flex;justify-content:space-between;align-items:center;">
-            <div style="font-size:.6rem;font-weight:500;color:#2a3560;">15 Jan 2025</div>
-            <div style="font-size:.55rem;background:#dcfce7;color:#16a34a;padding:.18rem .55rem;border-radius:20px;font-weight:500;">Risiko Rendah</div>
-          </div>
-          <div style="background:#f4f6ff;border-radius:8px;padding:.5rem .65rem;display:flex;justify-content:space-between;align-items:center;">
-            <div style="font-size:.6rem;font-weight:500;color:#2a3560;">1 Jan 2025</div>
-            <div style="font-size:.55rem;background:#fef9c3;color:#92400e;padding:.18rem .55rem;border-radius:20px;font-weight:500;">Risiko Sedang</div>
-          </div>
-          <div style="background:#f4f6ff;border-radius:8px;padding:.5rem .65rem;display:flex;justify-content:space-between;align-items:center;">
-            <div style="font-size:.6rem;font-weight:500;color:#2a3560;">15 Des 2024</div>
-            <div style="font-size:.55rem;background:#dcfce7;color:#16a34a;padding:.18rem .55rem;border-radius:20px;font-weight:500;">Risiko Rendah</div>
-          </div>
-        </div>
+      <div class="bento-card bento-d">
+        <div class="bento-icon icon-blue">🧠</div>
+        <h3>Produktivitas Turun</h3>
+        <p>Gangguan tidur menyebabkan penurunan fokus, memori, dan kemampuan pengambilan keputusan yang signifikan.</p>
       </div>
-      <div class="screen-card screen-card-3">
-        <div class="sc-header">
-          <div class="sc-icon-wrap"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6.5" fill="#050d2e"/><path d="M9 4.5C7.5 4.5 5 5.5 5 7C5 8.5 7.5 9.5 9 9.5C7 9.5 3.5 8.5 3.5 7C3.5 5.5 7 4.5 9 4.5Z" fill="white"/></svg></div>
-          <div><div class="sc-title">Edukasi Tidur</div><div class="sc-sub">Artikel pilihan</div></div>
-        </div>
-        <div class="sc-article">
-          <div class="sc-article-item">
-            <div class="sc-article-thumb"></div>
-            <div><div class="sc-article-t">Tips Sleep Hygiene untuk Tidur Lebih Nyenyak</div><div class="sc-article-s">3 min baca</div></div>
-          </div>
-          <div class="sc-article-item">
-            <div class="sc-article-thumb" style="background:#c7d2fe;"></div>
-            <div><div class="sc-article-t">Mengenal Sleep Apnea: Gejala &amp; Penanganan</div><div class="sc-article-s">5 min baca</div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <div>
-      <span class="section-tag reveal">Tampilan Aplikasi</span>
-      <h2 class="section-title reveal">Dirancang untuk<br>Kemudahan Anda</h2>
-      <p class="section-sub reveal">Antarmuka yang bersih dan intuitif memudahkan Anda memantau kesehatan tidur setiap hari — tanpa perlu keahlian teknis apapun.</p>
-      <div style="margin-top:2rem;display:flex;flex-direction:column;gap:1rem;">
-        <div class="why-item reveal reveal-delay-1">
-          <div class="why-bullet"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="#3a5ce8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div><h4>Dashboard interaktif</h4><p>Visualisasi tren tidur Anda dalam grafik yang mudah dibaca.</p></div>
-        </div>
-        <div class="why-item reveal reveal-delay-2">
-          <div class="why-bullet"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="#3a5ce8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div><h4>Riwayat prediksi lengkap</h4><p>Pantau perkembangan dari waktu ke waktu secara detail.</p></div>
-        </div>
-        <div class="why-item reveal reveal-delay-3">
-          <div class="why-bullet"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="#3a5ce8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-          <div><h4>Konten edukasi kuratif</h4><p>Artikel dan tips praktis tentang kesehatan tidur setiap minggu.</p></div>
-        </div>
+      <div class="bento-card bento-e">
+        <div class="bento-icon icon-navy">🔒</div>
+        <h3>Akses Pemeriksaan Terbatas</h3>
+        <p>Biaya sleep study yang mahal dan fasilitas yang terbatas membuat kebanyakan orang tidak pernah mendapat pemeriksaan yang tepat.</p>
+        <div class="bento-note">💡 Hanya <strong>~30% penderita</strong> gangguan tidur yang mencari bantuan profesional akibat keterbatasan akses dan biaya di Indonesia.</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════ FEATURES ══════════ -->
-<section class="features" id="fitur">
-  <div class="max-w">
-    <div class="features-header">
-      <div>
-        <span class="section-tag reveal">Fitur Lengkap</span>
-        <h2 class="section-title reveal">Semua yang Anda<br>Butuhkan untuk<br>Tidur Lebih Baik</h2>
+<section class="section-light" id="solusi">
+  <div class="container">
+    <span class="tag reveal"><span class="tag-dot"></span>Solusi Kami</span>
+    <h2 class="reveal">NOCTURA: Asisten Tidur <span class="gradient-text">Pribadi Kamu.</span></h2>
+    <div class="solution-grid">
+      <div class="sol-card card reveal">
+        <div class="sol-num">01</div>
+        <div class="bento-icon icon-blue" style="margin-bottom:1rem;">📱</div>
+        <h3>Mudah Digunakan</h3>
+        <p style="margin-top:0.45rem;">Tidak perlu perangkat khusus. Cukup smartphone-mu, kuesioner singkat, dan hasilnya langsung tersaji dalam hitungan detik.</p>
       </div>
-      <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:1rem;">
-        <p class="section-sub reveal" style="max-width:360px;">Tersedia dua ekosistem terintegrasi — aplikasi mobile untuk pengguna, dan dashboard web untuk tenaga kesehatan.</p>
-        <div class="reveal"><div class="tab-switcher"><button class="tab-btn active" onclick="switchTab('mobile',this)">📱 Mobile App</button><button class="tab-btn" onclick="switchTab('web',this)">💻 Web Admin</button></div></div>
+      <div class="sol-card card reveal reveal-delay-1">
+        <div class="sol-num">02</div>
+        <div class="bento-icon icon-navy" style="margin-bottom:1rem;">🔬</div>
+        <h3>Berbasis Riset Medis</h3>
+        <p style="margin-top:0.45rem;">Kuesioner disusun berdasarkan standar skrining klinis tervalidasi Pittsburgh Sleep Quality Index (PSQI).</p>
       </div>
-    </div>
-    <div class="features-grid" id="featMobile">
-      <div class="feat-card reveal"><div class="feat-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="11" r="8" stroke="#3a5ce8" stroke-width="1.5"/><path d="M11 7v4l3 2" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="feat-content"><h4>Prediksi Gangguan Tidur</h4><p>Isi kuesioner singkat berbasis medis dan dapatkan hasil prediksi risiko gangguan tidur Anda saat ini secara instan.</p></div></div>
-      <div class="feat-card reveal reveal-delay-1"><div class="feat-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 5h16M3 9h16M3 13h10" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="feat-content"><h4>Riwayat Prediksi</h4><p>Pantau perkembangan hasil prediksi dari waktu ke waktu untuk memahami tren kualitas tidur Anda.</p></div></div>
-      <div class="feat-card reveal reveal-delay-2"><div class="feat-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 17l5-6 4 4 4-8 4 5" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="feat-content"><h4>Visualisasi Data Tidur</h4><p>Lihat tren kualitas tidur Anda dalam bentuk grafik interaktif yang mudah dipahami dan informatif.</p></div></div>
-      <div class="feat-card reveal reveal-delay-3"><div class="feat-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 19V8l7-5 7 5v11H4z" stroke="#3a5ce8" stroke-width="1.5" stroke-linejoin="round"/><path d="M9 19v-6h4v6" stroke="#3a5ce8" stroke-width="1.5" stroke-linejoin="round"/></svg></div><div class="feat-content"><h4>Konten Edukasi</h4><p>Baca artikel, tips, dan informasi seputar kesehatan tidur untuk meningkatkan kebiasaan tidur yang lebih baik.</p></div></div>
-    </div>
-    <div class="features-grid" id="featWeb" style="display:none;">
-      <div class="feat-card reveal"><div class="feat-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="3" y="3" width="16" height="16" rx="2" stroke="#3a5ce8" stroke-width="1.5"/><path d="M3 8h16M8 3v5" stroke="#3a5ce8" stroke-width="1.5"/></svg></div><div class="feat-content"><h4>Manajemen Data Master</h4><p>Kelola data pengguna, pertanyaan kuesioner, opsi jawaban, dan konten edukasi dari satu dashboard terpusat.</p></div></div>
-      <div class="feat-card reveal reveal-delay-1"><div class="feat-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 17l5-6 4 4 4-8 4 5" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="feat-content"><h4>Dashboard &amp; Monitoring</h4><p>Pantau hasil prediksi dan tren kesehatan tidur masyarakat secara agregat dan anonim secara real-time.</p></div></div>
-      <div class="feat-card reveal reveal-delay-2"><div class="feat-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><circle cx="11" cy="8" r="3" stroke="#3a5ce8" stroke-width="1.5"/><path d="M4 19c0-4 3.1-7 7-7s7 3 7 7" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="feat-content"><h4>Manajemen Pengguna</h4><p>Kelola akun pengguna, pantau aktivitas, dan pastikan keamanan data seluruh pengguna platform.</p></div></div>
-      <div class="feat-card reveal reveal-delay-3"><div class="feat-icon"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M4 14l4-4 4 4 4-6" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 19H4a1 1 0 01-1-1V4" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div><div class="feat-content"><h4>Laporan &amp; Ekspor Data</h4><p>Unduh laporan komprehensif untuk keperluan penelitian atau evaluasi layanan kesehatan tidur.</p></div></div>
+      <div class="sol-card card reveal reveal-delay-2">
+        <div class="sol-num">03</div>
+        <div class="bento-icon icon-light" style="margin-bottom:1rem;">🛡️</div>
+        <h3>Privasi Terjaga</h3>
+        <p style="margin-top:0.45rem;">Data kesehatanmu terenkripsi dan aman. Dikelola sesuai regulasi perlindungan data pribadi Indonesia.</p>
+      </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════ HOW IT WORKS ══════════ -->
-<section class="how" id="cara-kerja">
-  <div class="max-w">
-    <span class="section-tag reveal">Cara Kerja</span>
-    <h2 class="section-title reveal">Mulai dalam 4 Langkah Mudah</h2>
-    <p class="section-sub reveal">Tidak perlu keahlian medis. Siapa pun dapat menggunakan NOCTURA dengan mudah dan mendapat hasil yang bermakna.</p>
-    <div class="steps">
-      <div class="step reveal"><div class="step-num">1</div><h4>Unduh Aplikasi</h4><p>Download NOCTURA secara gratis di Google Play Store atau Apple App Store.</p></div>
-      <div class="step reveal reveal-delay-1"><div class="step-num">2</div><h4>Jawab Kuesioner</h4><p>Isi pertanyaan singkat (5–10 menit) seputar kebiasaan dan kualitas tidur Anda.</p></div>
-      <div class="step reveal reveal-delay-2"><div class="step-num">3</div><h4>Dapatkan Hasil</h4><p>Terima hasil prediksi risiko gangguan tidur beserta penjelasan dan rekomendasi awal.</p></div>
-      <div class="step reveal reveal-delay-3"><div class="step-num">4</div><h4>Pantau &amp; Tingkatkan</h4><p>Lacak perkembangan dan baca konten edukasi untuk pola tidur yang lebih sehat.</p></div>
+<section class="section-alt" id="fitur">
+  <div class="container">
+    <span class="tag reveal"><span class="tag-dot"></span>Fitur Lengkap</span>
+    <h2 class="reveal">Semua yang Kamu Butuhkan<br>untuk <span class="gradient-text">Tidur Lebih Baik.</span></h2>
+    <div class="tab-row reveal">
+      <button class="tab-btn active" onclick="switchTab('mobile',this)">📱 Mobile App</button>
+      <button class="tab-btn" onclick="switchTab('web',this)">💻 Web Admin</button>
+    </div>
+    <div class="feat-grid" id="featMobile">
+      <div class="feat-card card reveal"><div class="feat-icon icon-blue">🎯</div><div><h4>Prediksi Gangguan Tidur</h4><p style="margin-top:0.28rem;">Isi kuesioner singkat berbasis medis dan dapatkan hasil prediksi risiko gangguan tidur secara instan.</p></div></div>
+      <div class="feat-card card reveal reveal-delay-1"><div class="feat-icon icon-navy">📈</div><div><h4>Riwayat & Tren Prediksi</h4><p style="margin-top:0.28rem;">Pantau perkembangan hasil prediksi dari waktu ke waktu dan pahami pola tidurmu.</p></div></div>
+      <div class="feat-card card reveal reveal-delay-2"><div class="feat-icon icon-light">📊</div><div><h4>Visualisasi Data Tidur</h4><p style="margin-top:0.28rem;">Grafik interaktif yang mudah dipahami untuk memantau kualitas tidurmu setiap harinya.</p></div></div>
+      <div class="feat-card card reveal reveal-delay-3"><div class="feat-icon icon-blue">📚</div><div><h4>Konten Edukasi Kuratif</h4><p style="margin-top:0.28rem;">Artikel, tips, dan informasi seputar kesehatan tidur untuk kebiasaan yang lebih baik.</p></div></div>
+    </div>
+    <div class="feat-grid" id="featWeb" style="display:none">
+      <div class="feat-card card"><div class="feat-icon icon-blue">🗂️</div><div><h4>Manajemen Data Master</h4><p style="margin-top:0.28rem;">Kelola data pengguna, kuesioner, opsi jawaban, dan konten edukasi dari dashboard terpusat.</p></div></div>
+      <div class="feat-card card"><div class="feat-icon icon-navy">📡</div><div><h4>Dashboard & Monitoring</h4><p style="margin-top:0.28rem;">Pantau hasil prediksi dan tren kesehatan tidur masyarakat secara agregat real-time.</p></div></div>
+      <div class="feat-card card"><div class="feat-icon icon-light">👥</div><div><h4>Manajemen Pengguna</h4><p style="margin-top:0.28rem;">Kelola akun pengguna, pantau aktivitas, dan pastikan keamanan data seluruh platform.</p></div></div>
+      <div class="feat-card card"><div class="feat-icon icon-blue">📥</div><div><h4>Laporan & Ekspor Data</h4><p style="margin-top:0.28rem;">Unduh laporan komprehensif untuk keperluan penelitian atau evaluasi layanan.</p></div></div>
     </div>
   </div>
 </section>
 
-<!-- ══════════ WHY NOCTURA ══════════ -->
-<section class="why" id="kenapa">
-  <div class="max-w">
+<section class="section-light" id="cara-kerja">
+  <div class="container">
+    <span class="tag reveal"><span class="tag-dot"></span>Cara Kerja</span>
+    <h2 class="reveal">Mulai dalam <span class="gradient-text">4 Langkah</span> Mudah.</h2>
+    <div class="steps-grid">
+      <div class="step-card reveal"><div class="step-num-badge">1</div><h4>Unduh Aplikasi</h4><p>Download NOCTURA gratis di Google Play atau App Store.</p><div class="step-connector"></div></div>
+      <div class="step-card reveal reveal-delay-1"><div class="step-num-badge">2</div><h4>Jawab Kuesioner</h4><p>Isi pertanyaan singkat (5–10 menit) seputar kebiasaan tidurmu.</p><div class="step-connector"></div></div>
+      <div class="step-card reveal reveal-delay-2"><div class="step-num-badge">3</div><h4>Dapatkan Hasil</h4><p>Terima prediksi risiko gangguan tidur beserta rekomendasi awal.</p><div class="step-connector"></div></div>
+      <div class="step-card reveal reveal-delay-3"><div class="step-num-badge">4</div><h4>Pantau & Tingkatkan</h4><p>Lacak perkembangan dan baca konten edukasi untuk tidur lebih sehat.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-alt" id="kenapa">
+  <div class="container">
     <div class="why-inner">
       <div>
-        <span class="section-tag reveal">Keunggulan Kami</span>
-        <h2 class="section-title reveal">Mengapa Memilih NOCTURA?</h2>
-        <p class="section-sub reveal">Bukan sekadar pelacak tidur biasa — NOCTURA adalah sistem deteksi dini yang dirancang untuk memberikan dampak nyata.</p>
+        <span class="tag reveal"><span class="tag-dot"></span>Keunggulan Kami</span>
+        <h2 class="reveal">Mengapa <span class="gradient-text">NOCTURA?</span></h2>
         <div class="why-list">
-          <div class="why-item reveal"><div class="why-bullet"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8l4 4 6-7" stroke="#3a5ce8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><h4>Akurat &amp; Terpercaya</h4><p>Algoritma prediksi dikembangkan berdasarkan standar skrining medis tervalidasi secara klinis.</p></div></div>
-          <div class="why-item reveal reveal-delay-1"><div class="why-bullet"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v3M8 11v3M2 8h3M11 8h3" stroke="#3a5ce8" stroke-width="1.8" stroke-linecap="round"/></svg></div><div><h4>Cepat &amp; Tanpa Ribet</h4><p>Hasil prediksi instan tanpa perlu membuat janji dokter atau menunggu antrian panjang.</p></div></div>
-          <div class="why-item reveal reveal-delay-2"><div class="why-bullet"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 5h10M3 8h8M3 11h6" stroke="#3a5ce8" stroke-width="1.8" stroke-linecap="round"/></svg></div><div><h4>Edukatif &amp; Holistik</h4><p>Tidak hanya mendeteksi, tetapi membekali Anda dengan pengetahuan untuk tidur lebih berkualitas.</p></div></div>
-          <div class="why-item reveal reveal-delay-3"><div class="why-bullet"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2L5 5H3a1 1 0 00-1 1v4a1 1 0 001 1h2l3 3V2z" stroke="#3a5ce8" stroke-width="1.5" stroke-linejoin="round"/><path d="M11 5.5a3 3 0 010 5" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div><div><h4>Privasi &amp; Keamanan Data</h4><p>Semua data kesehatan dienkripsi dan dikelola sesuai regulasi perlindungan data pribadi.</p></div></div>
+          <div class="why-item reveal"><div class="why-check">✓</div><div><h4>Akurat & Terpercaya</h4><p>Algoritma prediksi berbasis standar skrining medis yang tervalidasi secara klinis.</p></div></div>
+          <div class="why-item reveal reveal-delay-1"><div class="why-check">⚡</div><div><h4>Cepat & Tanpa Ribet</h4><p>Hasil prediksi instan tanpa perlu buat janji dokter atau antrian panjang.</p></div></div>
+          <div class="why-item reveal reveal-delay-2"><div class="why-check">📖</div><div><h4>Edukatif & Holistik</h4><p>Tidak hanya mendeteksi, tapi membekalimu dengan pengetahuan untuk tidur berkualitas.</p></div></div>
+          <div class="why-item reveal reveal-delay-3"><div class="why-check">🔐</div><div><h4>Privasi & Keamanan Data</h4><p>Semua data kesehatan dienkripsi sesuai regulasi perlindungan data pribadi.</p></div></div>
         </div>
       </div>
-      <div class="why-visual">
-        <div class="metric-card reveal"><span class="metric-emoji">😴</span><div class="metric-val">7–9 Jam<span>Durasi tidur ideal orang dewasa per malam</span></div></div>
-        <div class="metric-card reveal reveal-delay-1"><span class="metric-emoji">⚡</span><div class="metric-val">&lt; 5 Mnt<span>Rata-rata waktu penyelesaian kuesioner</span></div></div>
-        <div class="metric-card reveal reveal-delay-2"><span class="metric-emoji">🎯</span><div class="metric-val">PSQI<span>Standar skrining kualitas tidur yang digunakan</span></div></div>
-        <div class="metric-card reveal reveal-delay-3"><span class="metric-emoji">🌙</span><div class="metric-val">24/7<span>Akses kapan saja dan di mana saja</span></div></div>
+      <div class="metrics-grid">
+        <div class="metric-card card reveal"><span class="metric-emoji">😴</span><div class="metric-val">7–9 Jam</div><div class="metric-desc">Durasi tidur ideal orang dewasa per malam</div></div>
+        <div class="metric-card card reveal reveal-delay-1"><span class="metric-emoji">⚡</span><div class="metric-val">&lt; 5 Mnt</div><div class="metric-desc">Rata-rata waktu penyelesaian kuesioner</div></div>
+        <div class="metric-card card reveal reveal-delay-2"><span class="metric-emoji">🎯</span><div class="metric-val">PSQI</div><div class="metric-desc">Standar skrining kualitas tidur tervalidasi</div></div>
+        <div class="metric-card card reveal reveal-delay-3"><span class="metric-emoji">🌙</span><div class="metric-val">24/7</div><div class="metric-desc">Akses kapan saja dan di mana saja</div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════ TESTIMONIALS ══════════ -->
-<section class="testimonials" id="ulasan">
-  <div class="max-w">
-    <span class="section-tag reveal">Ulasan Pengguna</span>
-    <h2 class="section-title reveal">Mereka Sudah Merasakannya</h2>
-    <p class="section-sub reveal" style="margin:0 auto">Bergabunglah dengan ribuan pengguna yang sudah lebih peduli terhadap kualitas tidur mereka bersama NOCTURA.</p>
+<section class="section-light" id="ulasan">
+  <div class="container" style="text-align:center;">
+    <span class="tag reveal"><span class="tag-dot"></span>Ulasan Pengguna</span>
+    <h2 class="reveal">Mereka Sudah <span class="gradient-text">Merasakannya.</span></h2>
     <div class="testi-grid">
-      <div class="testi-card reveal"><div class="testi-stars">★★★★★</div><p class="testi-text">"Aplikasinya simpel banget. Saya jadi tahu kalau kebiasaan begadang saya sudah masuk risiko insomnia ringan. Sekarang saya lebih disiplin tidur."</p><div class="testi-author"><div class="testi-avatar">R</div><div><div class="testi-name">Rina Kusuma</div><div class="testi-role">Mahasiswi, 22 tahun</div></div></div></div>
-      <div class="testi-card reveal reveal-delay-1"><div class="testi-stars">★★★★★</div><p class="testi-text">"Saya tidak menyangka sering terbangun malam itu bisa jadi tanda sleep apnea. NOCTURA membantu saya sadar dan akhirnya konsultasi ke dokter."</p><div class="testi-author"><div class="testi-avatar">B</div><div><div class="testi-name">Budi Santoso</div><div class="testi-role">Karyawan Swasta, 35 tahun</div></div></div></div>
-      <div class="testi-card reveal reveal-delay-2"><div class="testi-stars">★★★★☆</div><p class="testi-text">"Konten edukasinya sangat bermanfaat. Saya belajar banyak tentang sleep hygiene yang ternyata selama ini saya abaikan."</p><div class="testi-author"><div class="testi-avatar">D</div><div><div class="testi-name">Dewi Rahayu</div><div class="testi-role">Ibu Rumah Tangga, 40 tahun</div></div></div></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══════════ FAQ ══════════ -->
-<section class="faq" id="faq">
-  <div class="max-w">
-    <div class="faq-inner">
-      <div>
-        <span class="section-tag reveal">FAQ</span>
-        <h2 class="section-title reveal">Pertanyaan yang Sering Diajukan</h2>
-        <p class="section-sub reveal">Belum menemukan jawaban? Hubungi kami melalui email atau media sosial.</p>
-        <a href="mailto:hello@noctura.id" class="btn-outline" style="margin-top:2rem;display:inline-flex;border-color:rgba(58,92,232,.3);color:var(--text-700);">
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="12" height="9" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M1 4l6 4 6-4" stroke="currentColor" stroke-width="1.2"/></svg>
-          Hubungi Kami
-        </a>
+      <div class="testi-card reveal">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"</div>
+        <p class="testi-text">Aplikasinya simpel banget. Saya jadi tahu kalau kebiasaan begadang saya sudah masuk risiko insomnia ringan. Sekarang lebih disiplin tidur.</p>
+        <div class="testi-author"><div class="testi-avatar">R</div><div><div class="testi-name">Rina Kusuma</div><div class="testi-role">Mahasiswi, 22 tahun</div></div></div>
       </div>
-      <div class="faq-list reveal">
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">Apakah NOCTURA menggantikan diagnosis dokter?<div class="faq-chevron"><svg viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div></button>
-          <div class="faq-a"><p>Tidak. NOCTURA adalah alat skrining dini berbasis kuesioner. Hasil prediksi bukan diagnosis medis. Jika hasil menunjukkan risiko tinggi, sangat disarankan untuk berkonsultasi dengan dokter atau tenaga kesehatan untuk pemeriksaan lebih lanjut.</p></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">Apakah aplikasi ini berbayar?<div class="faq-chevron"><svg viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div></button>
-          <div class="faq-a"><p>NOCTURA sepenuhnya gratis untuk diunduh dan digunakan untuk fitur-fitur dasar termasuk prediksi, riwayat, dan akses konten edukasi. Kami percaya setiap orang berhak mendapat akses informasi kesehatan tidur yang baik.</p></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">Bagaimana keamanan data kesehatan saya?<div class="faq-chevron"><svg viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div></button>
-          <div class="faq-a"><p>Kami mengutamakan privasi pengguna. Semua data kesehatan dienkripsi menggunakan standar enkripsi terkini dan dikelola sesuai regulasi perlindungan data pribadi yang berlaku di Indonesia.</p></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">Gangguan tidur apa saja yang bisa dideteksi?<div class="faq-chevron"><svg viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div></button>
-          <div class="faq-a"><p>NOCTURA dapat mendeteksi risiko insomnia, sleep apnea, hypersomnia, dan parasomnia berdasarkan pola jawaban kuesioner yang Anda berikan. Setiap hasil dilengkapi penjelasan dan rekomendasi awal.</p></div>
-        </div>
-        <div class="faq-item">
-          <button class="faq-q" onclick="toggleFaq(this)">Seberapa sering saya harus mengisi kuesioner?<div class="faq-chevron"><svg viewBox="0 0 10 10" fill="none"><path d="M2 3.5L5 6.5L8 3.5" stroke="#3a5ce8" stroke-width="1.5" stroke-linecap="round"/></svg></div></button>
-          <div class="faq-a"><p>Disarankan minimal sebulan sekali atau setelah ada perubahan signifikan pada pola tidur Anda. Fitur Riwayat membantu Anda memantau tren dari waktu ke waktu.</p></div>
-        </div>
+      <div class="testi-card reveal reveal-delay-1">
+        <div class="testi-stars">★★★★★</div>
+        <div class="testi-quote">"</div>
+        <p class="testi-text">Saya tidak menyangka sering terbangun malam itu bisa jadi tanda sleep apnea. NOCTURA membantu saya sadar dan akhirnya konsultasi ke dokter.</p>
+        <div class="testi-author"><div class="testi-avatar">B</div><div><div class="testi-name">Budi Santoso</div><div class="testi-role">Karyawan Swasta, 35 tahun</div></div></div>
+      </div>
+      <div class="testi-card reveal reveal-delay-2">
+        <div class="testi-stars">★★★★☆</div>
+        <div class="testi-quote">"</div>
+        <p class="testi-text">Konten edukasinya sangat bermanfaat. Saya belajar banyak tentang sleep hygiene yang ternyata selama ini saya abaikan.</p>
+        <div class="testi-author"><div class="testi-avatar">D</div><div><div class="testi-name">Dewi Rahayu</div><div class="testi-role">Ibu Rumah Tangga, 40 tahun</div></div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══════════ CTA ══════════ -->
-<section class="cta-section" id="download">
-  <div class="cta-inner reveal">
-    <span class="section-tag">Download Sekarang</span>
-    <h2 class="section-title">Tidur Nyenyak Dimulai<br>dari Satu Langkah Kecil</h2>
-    <p class="section-sub">Bergabunglah dengan ribuan pengguna yang sudah lebih peduli terhadap kesehatan tidur mereka. Gratis, mudah, dan tepercaya.</p>
-    <div class="store-btns">
-      <a href="#" class="store-btn">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M6 22l8-14 8 14" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M9.5 16.5h9" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <div class="store-btn-text"><small>Tersedia di</small><strong>Google Play</strong></div>
-      </a>
-      <a href="#" class="store-btn">
-        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><path d="M20 22c-1 1.5-2 3-3.5 3s-2-.8-3.5-.8-2.5.8-3.5.8C8 25 7 23.5 6 22c-2-3-3-7-1-10 1-2 3-3 5-3 1.5 0 2.5.8 3.5.8s2-.8 3.5-.8c1.7 0 3.5 1 4.5 2.5-3.5 2-3 7 0 8z" stroke="white" stroke-width="1.5" stroke-linejoin="round"/><path d="M17 5c-2 2-2 5 0 6" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
-        <div class="store-btn-text"><small>Unduh di</small><strong>App Store</strong></div>
-      </a>
+<section class="section-alt" id="faq">
+  <div class="container" style="text-align:center;">
+    <span class="tag reveal"><span class="tag-dot"></span>FAQ</span>
+    <h2 class="reveal">Pertanyaan yang <span class="gradient-text">Sering Diajukan.</span></h2>
+    <div class="faq-wrap">
+      <div class="faq-grid reveal">
+        <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Apakah NOCTURA menggantikan diagnosis dokter?<div class="faq-chevron"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></button><div class="faq-a"><p>Tidak. NOCTURA adalah alat skrining dini berbasis kuesioner. Hasil prediksi bukan diagnosis medis. Jika hasilnya menunjukkan risiko tinggi, sangat disarankan untuk berkonsultasi dengan dokter atau tenaga kesehatan.</p></div></div>
+        <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Apakah aplikasi ini berbayar?<div class="faq-chevron"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></button><div class="faq-a"><p>NOCTURA sepenuhnya gratis untuk diunduh dan digunakan. Semua fitur dasar termasuk prediksi, riwayat, dan konten edukasi tersedia tanpa biaya.</p></div></div>
+        <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Bagaimana keamanan data kesehatanku?<div class="faq-chevron"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></button><div class="faq-a"><p>Kami mengutamakan privasi pengguna. Semua data kesehatan dienkripsi menggunakan standar enkripsi terkini dan dikelola sesuai regulasi perlindungan data pribadi Indonesia.</p></div></div>
+        <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Gangguan tidur apa saja yang bisa dideteksi?<div class="faq-chevron"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></button><div class="faq-a"><p>NOCTURA dapat mendeteksi risiko insomnia, sleep apnea, hypersomnia, dan parasomnia. Setiap hasil dilengkapi penjelasan dan rekomendasi awal yang sesuai.</p></div></div>
+        <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Seberapa sering harus mengisi kuesioner?<div class="faq-chevron"><svg width="9" height="9" viewBox="0 0 9 9" fill="none"><path d="M1.5 3L4.5 6L7.5 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div></button><div class="faq-a"><p>Disarankan minimal sebulan sekali atau setelah ada perubahan signifikan pada pola tidurmu. Fitur Riwayat membantu memantau tren dari waktu ke waktu.</p></div></div>
+      </div>
     </div>
-    <p class="cta-disclaimer">⚠️ Hasil prediksi bukan diagnosis medis. Konsultasikan dengan dokter untuk pemeriksaan lebih lanjut.</p>
   </div>
 </section>
 
-<!-- ══════════ FOOTER ══════════ -->
+<section class="section-light" id="download">
+  <div class="container">
+    <div class="cta-wrap">
+      <div class="cta-card reveal">
+        <span class="tag" style="margin-bottom:1.3rem;color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.15);"><span class="tag-dot" style="background:rgba(255,255,255,0.7);"></span>Download Sekarang</span>
+        <h2>Tidur Nyenyak Dimulai<br>dari <span class="gradient-text">Satu Langkah.</span></h2>
+        <p style="margin-top:0.9rem;">Bergabunglah dengan ribuan pengguna yang sudah lebih peduli terhadap kualitas tidur mereka. Gratis, mudah, dan terpercaya.</p>
+        <div class="store-btns">
+          <a href="#" class="store-btn"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M11 2L4 8.5h3.5v8h7v-8H18L11 2z" stroke="white" stroke-width="1.4" stroke-linejoin="round"/></svg><div class="store-btn-txt"><small>Tersedia di</small><strong>Google Play</strong></div></a>
+          <a href="#" class="store-btn"><svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M15 18c-1 1.4-2 2.8-3.2 2.8s-1.8-.75-3.2-.75S6.2 21 5 21C3.8 21 2.8 19.6 1.8 18c-1.8-2.8-2.8-6.5-1-9.2.9-1.8 2.7-2.8 4.5-2.8 1.4 0 2.3.75 3.2.75s1.8-.75 3.2-.75c1.6 0 3.2.9 4.1 2.3-3.2 1.8-2.7 6.4 0 7.3z" stroke="white" stroke-width="1.4" stroke-linejoin="round"/><path d="M12 2c-1.8 1.8-1.8 4.5 0 5.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg><div class="store-btn-txt"><small>Unduh di</small><strong>App Store</strong></div></a>
+        </div>
+        <p class="cta-disclaimer">⚠️ Hasil prediksi bukan diagnosis medis. Konsultasikan dengan dokter untuk pemeriksaan lebih lanjut.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <footer>
-  <div class="footer-inner">
-    <div class="footer-brand">
-      <a href="#" class="nav-brand" style="text-decoration:none">
-        <svg class="nav-logo" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <mask id="m-footer-crescent">
-              <rect width="36" height="36" fill="white"/>
-              <!-- punch-out circle: cx = 18 + r*0.37 = 18 + 13.68*0.37 ≈ 23.06, r = 13.68*0.74 ≈ 10.12 -->
-              <circle cx="23.06" cy="18" r="10.12" fill="black"/>
-            </mask>
-          </defs>
-          <!-- outer ring background -->
-          <circle cx="18" cy="18" r="17" fill="#050d2e" stroke="#dde6ff" stroke-width="1.2"/>
-          <!-- white crescent: full circle masked by punch-out -->
-          <circle cx="18" cy="18" r="13.68" fill="white" mask="url(#m-footer-crescent)"/>
-        </svg>
-        <span class="nav-name" style="color:white">NOCTURA</span>
-      </a>
-      <p>Sistem Deteksi Dini Gangguan Tidur Berbasis Mobile. Membantu masyarakat Indonesia hidup lebih sehat melalui tidur yang berkualitas.</p>
-      <div class="footer-socials">
-        <a href="#" class="social-btn" title="Instagram"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="2" width="10" height="10" rx="3" stroke="currentColor" stroke-width="1.2"/><circle cx="7" cy="7" r="2.5" stroke="currentColor" stroke-width="1.2"/><circle cx="10.5" cy="3.5" r="0.6" fill="currentColor"/></svg></a>
-        <a href="#" class="social-btn" title="X"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M13 1.5H9.5L7 5.5 4.5 1.5H1L5.5 7.5 1 12.5H4.5L7 8.5 9.5 12.5H13L8.5 7.5 13 1.5Z" fill="currentColor"/></svg></a>
-        <a href="#" class="social-btn" title="YouTube"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="12" height="8" rx="2" stroke="currentColor" stroke-width="1.2"/><path d="M5.5 5l3.5 2-3.5 2V5z" fill="currentColor"/></svg></a>
-        <a href="mailto:hello@noctura.id" class="social-btn" title="Email"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="12" height="8" rx="1" stroke="currentColor" stroke-width="1.2"/><path d="M1 4l6 4 6-4" stroke="currentColor" stroke-width="1.2"/></svg></a>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div style="display:flex;align-items:center;gap:0.6rem;">
+          <svg width="26" height="26" viewBox="0 0 26 26" fill="none"><defs><mask id="mf"><rect width="26" height="26" fill="white"/><circle cx="16.6" cy="13" r="7.3" fill="black"/></mask></defs><circle cx="13" cy="13" r="12" fill="rgba(255,255,255,0.05)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/><circle cx="13" cy="13" r="9.8" fill="white" mask="url(#mf)"/></svg>
+          <span class="footer-name-white" style="font-family:var(--font-display);font-size:0.95rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;">NOCTURA</span>
+        </div>
+        <p>Sistem Deteksi Dini Gangguan Tidur Berbasis Mobile. Membantu masyarakat Indonesia hidup lebih sehat melalui tidur yang berkualitas.</p>
+        <div class="footer-socials">
+          <a href="#" class="social-btn"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1.5" y="1.5" width="9" height="9" rx="2.5" stroke="currentColor" stroke-width="1.1"/><circle cx="6" cy="6" r="2.1" stroke="currentColor" stroke-width="1.1"/><circle cx="9.2" cy="2.8" r="0.5" fill="currentColor"/></svg></a>
+          <a href="#" class="social-btn"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M11 1.5H8.5L6 4.8 3.5 1.5H1L4.7 6.5 1 11H3.5L6 7.7 8.5 11H11L7.3 6.5 11 1.5Z" fill="currentColor"/></svg></a>
+          <a href="#" class="social-btn"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><rect x="1" y="2.5" width="10" height="7" rx="1.1" stroke="currentColor" stroke-width="1.1"/><path d="M4.8 4.5l3.2 1.5-3.2 1.5V4.5z" fill="currentColor"/></svg></a>
+        </div>
       </div>
+      <div class="footer-col"><h5>Produk</h5><ul><li><a href="#fitur">Fitur Aplikasi</a></li><li><a href="#cara-kerja">Cara Kerja</a></li><li><a href="#download">Download</a></li><li><a href="#">Web Admin</a></li></ul></div>
+      <div class="footer-col"><h5>Info</h5><ul><li><a href="#masalah">Gangguan Tidur</a></li><li><a href="#">Artikel Edukasi</a></li><li><a href="#faq">FAQ</a></li><li><a href="#">Tentang Kami</a></li></ul></div>
+      <div class="footer-col"><h5>Legal</h5><ul><li><a href="#">Kebijakan Privasi</a></li><li><a href="#">Syarat Penggunaan</a></li><li><a href="#">Disclaimer Medis</a></li></ul></div>
     </div>
-    <div class="footer-col"><h5>Produk</h5><ul><li><a href="#fitur">Fitur Aplikasi</a></li><li><a href="#cara-kerja">Cara Kerja</a></li><li><a href="#download">Download</a></li><li><a href="#">Web Admin</a></li></ul></div>
-    <div class="footer-col"><h5>Informasi</h5><ul><li><a href="#masalah">Gangguan Tidur</a></li><li><a href="#">Artikel Edukasi</a></li><li><a href="#faq">FAQ</a></li><li><a href="#">Tentang Kami</a></li></ul></div>
-    <div class="footer-col"><h5>Legal</h5><ul><li><a href="#">Kebijakan Privasi</a></li><li><a href="#">Syarat Penggunaan</a></li><li><a href="#">Disclaimer Medis</a></li></ul></div>
-  </div>
-  <div class="footer-bottom">
-    <p>© 2025 NOCTURA – Sleep Intelligence. Hak Cipta Dilindungi.</p>
-    <p>Dibuat dengan ❤️ untuk kesehatan tidur Indonesia · <a href="#">Kebijakan Privasi</a></p>
+    <div class="footer-bottom">
+      <p>© 2025 NOCTURA – Sleep Intelligence. Hak Cipta Dilindungi.</p>
+      <p>Dibuat dengan ❤️ untuk tidur Indonesia · <a href="#">Kebijakan Privasi</a></p>
+    </div>
   </div>
 </footer>
 
 <script>
-// ── Star field
-(function(){
-  const c=document.getElementById('heroStars');
-  for(let i=0;i<90;i++){
-    const s=document.createElement('div');
-    s.className='star';
-    const sz=Math.random()*2+1;
-    Object.assign(s.style,{
-      width:sz+'px',height:sz+'px',
-      top:Math.random()*100+'%',left:Math.random()*100+'%',
-      '--dur':(Math.random()*3+2)+'s',
-      '--delay':(-Math.random()*5)+'s',
-    });
-    c.appendChild(s);
-  }
-})();
+// Cursor
+const cursor=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cursor.style.left=mx+'px';cursor.style.top=my+'px';});
+function animRing(){rx+=(mx-rx)*0.12;ry+=(my-ry)*0.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);}
+animRing();
+document.querySelectorAll('a,button,.card,.bento-card,.feat-card,.step-card,.metric-card,.testi-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>ring.classList.add('hovered'));
+  el.addEventListener('mouseleave',()=>ring.classList.remove('hovered'));
+});
 
-// ── Scroll reveal
+// Scroll reveal
 const obs=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
-},{threshold:.08});
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});
+},{threshold:0.01,rootMargin:'0px 0px -20px 0px'});
 document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 
-// ── Bar chart animate on scroll
+// Bar chart animate on scroll
 const barObs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
     if(e.isIntersecting){
-      e.target.querySelectorAll('.bar-fill').forEach(b=>b.classList.add('animated'));
+      e.target.querySelectorAll('.bento-bar-fill').forEach(b=>b.classList.add('animated'));
       barObs.unobserve(e.target);
     }
   });
-},{threshold:.3});
-const dataCard=document.querySelector('.data-card');
-if(dataCard)barObs.observe(dataCard);
+},{threshold:0.3});
+const bc=document.getElementById('bentoChart');
+if(bc)barObs.observe(bc);
 
-// ── Navbar scroll
+// Navbar scroll effect
 window.addEventListener('scroll',()=>{
   document.getElementById('navbar').classList.toggle('scrolled',scrollY>60);
 });
 
-// ── FAQ accordion
+// FAQ accordion
 function toggleFaq(btn){
   const item=btn.parentElement;
   const isOpen=item.classList.contains('open');
@@ -1771,7 +965,7 @@ function toggleFaq(btn){
   if(!isOpen)item.classList.add('open');
 }
 
-// ── Feature tab
+// Feature tabs
 function switchTab(tab,btn){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
@@ -1779,24 +973,23 @@ function switchTab(tab,btn){
   document.getElementById('featWeb').style.display=tab==='web'?'grid':'none';
 }
 
-// ── Mobile nav
+// Mobile nav toggle
 function toggleNav(){
   const links=document.getElementById('navLinks');
   const open=links.style.display==='flex';
-  if(open){links.style.display='none';return}
+  if(open){links.style.display='none';return;}
   Object.assign(links.style,{
-    display:'flex',flexDirection:'column',
-    position:'absolute',top:'100%',left:'0',right:'0',
-    background:'rgba(255,255,255,.97)',backdropFilter:'blur(24px)',
-    padding:'1.5rem 5%',borderBottom:'1px solid rgba(58,92,232,.1)',
-    gap:'1.2rem',boxShadow:'0 16px 40px rgba(5,13,46,.12)',zIndex:'999'
+    display:'flex',flexDirection:'column',position:'absolute',
+    top:'calc(100% + 10px)',left:'0',right:'0',
+    background:'rgba(255,255,255,0.97)',backdropFilter:'blur(20px)',
+    padding:'1.3rem 1.8rem',borderRadius:'18px',
+    border:'1px solid rgba(13,27,53,0.1)',gap:'1.1rem',
+    boxShadow:'0 20px 56px rgba(13,27,53,0.15)',zIndex:'999'
   });
 }
-document.querySelectorAll('#navLinks a').forEach(a=>{
-  a.addEventListener('click',()=>{
-    if(window.innerWidth<=640)document.getElementById('navLinks').style.display='none';
-  });
-});
+document.querySelectorAll('#navLinks a').forEach(a=>a.addEventListener('click',()=>{
+  if(window.innerWidth<=768)document.getElementById('navLinks').style.display='none';
+}));
 </script>
 </body>
 </html><?php /**PATH C:\xamppp\htdocs\Noctura-Web\resources\views/welcome.blade.php ENDPATH**/ ?>
