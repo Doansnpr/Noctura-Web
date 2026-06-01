@@ -93,6 +93,14 @@
                 </svg>
                 <span>Monitoring Prediksi</span>
             </a>
+
+            <a href="<?php echo e(route('api-tester.index')); ?>" class="nav-item <?php echo e(request()->routeIs('api-tester.*') ? 'active' : ''); ?>">
+                <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M16 18l6-6-6-6"/>
+                    <path d="M8 6l-6 6 6 6"/>
+                </svg>
+                <span>API Tester</span>
+            </a>
         </nav>
     </aside>
 

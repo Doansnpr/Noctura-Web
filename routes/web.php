@@ -60,3 +60,10 @@ Route::get('/storage/{path}', function ($path) {
         'Cache-Control' => 'public, max-age=86400',
     ]);
 })->where('path', '.*');
+
+use App\Http\Controllers\ApiTesterController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/api-tester', [ApiTesterController::class, 'index'])
+        ->name('api-tester.index');
+});
