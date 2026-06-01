@@ -32,4 +32,4 @@
         </div>
     </body>
 </html>
-<?php /**PATH C:\xampp\htdocs\sleep-detection-backend\vendor\laravel\framework\src\Illuminate\Foundation\Exceptions/views/minimal.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\xampp\htdocs\sleep-detection-backend\vendor\laravel\framework\src\Illuminate\Foundation\Exceptions/views/minimal.blade.php ENDPATH**/ ?>

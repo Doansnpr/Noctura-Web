@@ -11,13 +11,11 @@ use App\Models\Akun as AkunModel;
 
 class ProfileController extends Controller
 {
-    // ── Ambil user dari middleware ApiAuthenticate ─────────────────────────
     private function getUser(Request $request): AkunModel
     {
         return $request->attributes->get('auth_user');
     }
 
-    // ── Normalisasi nilai ke array (safe untuk semua tipe MongoDB return) ──
     private function toArray($value): array
     {
         if (is_null($value))   return [];
@@ -25,41 +23,25 @@ class ProfileController extends Controller
         if (is_string($value)) return json_decode($value, true) ?? [];
         return json_decode(json_encode($value), true) ?? [];
     }
-
-    // ── Bypass Eloquent cast, update langsung ke MongoDB ──────────────────
-    // Diperlukan karena MongoDB Laravel driver kadang tidak commit
-    // array field lewat ->save() jika tidak ada dirty tracking yang benar.
     private function rawUpdate(AkunModel $user, array $fields): void
     {
         AkunModel::where('_id', $user->_id)->update($fields);
     }
-
-    // ── Default preferences — single source of truth ──────────────────────
-    // Didefinisikan di satu tempat agar show() dan updatePreferences()
-    // selalu konsisten. Tambah key baru di sini saja.
     private function defaultPreferences(): array
     {
         return [
-            // ── Existing fields (tidak di-breaking) ───────────────────────
             'notification_enabled'  => true,
             'ai_prediction_enabled' => true,
-            // ── Flutter notification toggles ──────────────────────────────
             'weekly_report'         => true,
             'sleep_reminder'        => true,
         ];
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     // GET /api/profile
-    // ─────────────────────────────────────────────────────────────────────────
     public function show(Request $request): JsonResponse
     {
         $user  = $this->getUser($request);
         $attrs = $user->getAttributes();
-
-        // Merge stored preferences dengan defaults:
-        // → User lama yang belum punya weekly_report/sleep_reminder
-        //   otomatis mendapat nilai default tanpa perlu update dokumen.
         $storedPrefs = $this->toArray($attrs['preferences'] ?? []);
         $preferences = array_merge($this->defaultPreferences(), $storedPrefs);
 
@@ -84,9 +66,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
-    // PUT /api/profile
-    // ─────────────────────────────────────────────────────────────────────────
+    // PUT /api/profile───
     public function update(Request $request): JsonResponse
     {
         $request->validate([
@@ -117,9 +97,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     // PUT /api/profile/password
-    // ─────────────────────────────────────────────────────────────────────────
     public function updatePassword(Request $request): JsonResponse
     {
         $request->validate([
@@ -150,14 +128,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     // PUT /api/profile/email
-    //
-    // Security flow:
-    //   1. Validasi format + uniqueness email baru
-    //   2. Verifikasi current_password sebelum commit
-    //      → mencegah account takeover jika sesi aktif dicuri
-    // ─────────────────────────────────────────────────────────────────────────
     public function updateEmail(Request $request): JsonResponse
     {
         $user = $this->getUser($request);
@@ -198,9 +169,7 @@ class ProfileController extends Controller
         ]);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     // PUT /api/profile/sleep-goal
-    // ─────────────────────────────────────────────────────────────────────────
     public function updateSleepGoal(Request $request): JsonResponse
     {
         $request->validate([
@@ -228,38 +197,21 @@ class ProfileController extends Controller
         ]);
     }
 
-    // ─────────────────────────────────────────────────────────────────────────
     // PUT /api/profile/preferences
-    //
-    // Menerima kombinasi field lama dan baru sekaligus:
-    //   Field lama  : notification_enabled, ai_prediction_enabled
-    //   Field baru  : weekly_report, sleep_reminder  ← dari Flutter toggle
-    //
-    // Strategy: array_merge berlapis
-    //   defaults ← stored ← request
-    //   → tidak ada field yang hilang meski client hanya kirim sebagian key
-    // ─────────────────────────────────────────────────────────────────────────
+
     public function updatePreferences(Request $request): JsonResponse
     {
         $request->validate([
-            // Field lama — tetap support agar tidak breaking
             'notification_enabled'  => 'sometimes|boolean',
             'ai_prediction_enabled' => 'sometimes|boolean',
-            // Field baru dari Flutter notification toggles
             'weekly_report'         => 'sometimes|boolean',
             'sleep_reminder'        => 'sometimes|boolean',
         ]);
 
         $user = $this->getUser($request);
-
-        // Layer 1: defaults (semua key dengan nilai fallback)
         $defaults = $this->defaultPreferences();
-
-        // Layer 2: nilai yang sudah tersimpan di MongoDB
         $stored = $this->toArray($user->getAttributes()['preferences'] ?? []);
 
-        // Layer 3: hanya key yang dikirim request (filter null agar tidak
-        // menimpa stored value dengan null saat key tidak dikirim)
         $incoming = array_filter(
             $request->only([
                 'notification_enabled',
@@ -269,9 +221,6 @@ class ProfileController extends Controller
             ]),
             fn($v) => !is_null($v)
         );
-
-        // Merge berlapis: defaults → stored → incoming
-        // Prioritas: incoming > stored > defaults
         $preferences = array_merge($defaults, $stored, $incoming);
 
         $this->rawUpdate($user, [
@@ -285,6 +234,16 @@ class ProfileController extends Controller
             'data'    => [
                 'preferences' => $preferences,
             ],
+        ]);
+    }
+    public function destroy(Request $request): JsonResponse
+    {
+        $user = $this->getUser($request);
+        AkunModel::where('_id', $user->_id)->delete(); 
+
+        return response()->json([
+            'status'  => true,
+            'message' => 'Akun berhasil dihapus.',
         ]);
     }
 }
