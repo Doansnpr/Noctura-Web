@@ -18,8 +18,9 @@ OCCUPATION_MAP = {
     'Scientist': 8, 'Software Engineer': 9, 'Teacher': 10,
 }
 BMI_MAP = {
-    'Normal': 0, 'Normal Weight': 1,
-    'Obese': 2, 'Overweight': 3,
+    'Normal': 0,
+    'Obese': 1,
+    'Overweight': 2,
 }
 LABEL_MAP = {0: 'Healthy', 1: 'Insomnia', 2: 'Sleep Apnea'}
 

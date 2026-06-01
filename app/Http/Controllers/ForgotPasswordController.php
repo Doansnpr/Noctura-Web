@@ -158,7 +158,7 @@ class ForgotPasswordController extends Controller
 
         // Hapus OTP dan session
         DB::connection('mongodb')->table('otp_resets')->where('email', $email)->delete();
-        session()->forget(['reset_email', 'otp_verified']);
+        $request->session()->forget(['reset_email', 'otp_verified']);
 
         return redirect()->route('login')
             ->with('success', 'Kata sandi berhasil diperbarui. Silakan login.');
